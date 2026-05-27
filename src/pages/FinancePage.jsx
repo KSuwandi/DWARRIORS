@@ -300,6 +300,10 @@ export default function FinancePage() {
 
         return;
       }
+      if (!form.note.trim()) {
+  toast.error("Catatan transaksi wajib diisi");
+  return;
+}
 
       const amount =
         Number(form.amount);

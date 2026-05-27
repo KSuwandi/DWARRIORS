@@ -7,12 +7,15 @@ import {
 import toast from "react-hot-toast";
 
 import {
+  collection,
   collectionGroup,
+  addDoc,
   onSnapshot,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
-  updateDoc,
+  doc,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
@@ -117,7 +120,7 @@ export default function FinanceApprovalPage() {
       filter,
     ]);
 
-  // =====================================
+ // =====================================
 // APPROVE
 // =====================================
 const approveTransaction =
@@ -125,17 +128,108 @@ const approveTransaction =
 
     try {
 
-      await updateDoc(
-        ref,
-        {
-          status:
-            "Approved",
+      await runTransaction(
+        db,
+        async (
+          transaction
+        ) => {
 
-          approvedBy:
-            user.displayName,
+          // =========================
+          // GET DOCUMENT
+          // =========================
+          const financeDoc =
+            await transaction.get(
+              ref
+            );
 
-          approvedAt:
-            serverTimestamp(),
+          // DOCUMENT TIDAK ADA
+          if (
+            !financeDoc.exists()
+          ) {
+
+            throw new Error(
+              "Transaction not found"
+            );
+          }
+
+          const financeData =
+            financeDoc.data();
+
+          // =========================
+          // VALIDASI STATUS
+          // =========================
+          if (
+            financeData.status !==
+            "Pending"
+          ) {
+
+            throw new Error(
+              "Transaction already processed"
+            );
+          }
+
+          // =========================
+          // APPROVE TRANSACTION
+          // =========================
+          transaction.update(
+            ref,
+            {
+              status:
+                "Approved",
+
+              approvedBy:
+                user.displayName,
+
+              approvedByUid:
+                user.uid,
+
+              approvedAt:
+                serverTimestamp(),
+            }
+          );
+
+          // =========================
+          // CREATE FINANCE LOG
+          // =========================
+          const financeLogRef =
+            collection(
+              db,
+              "finance_logs"
+            );
+
+          transaction.set(
+            doc(
+              financeLogRef
+            ),
+            {
+              action:
+                "Approved",
+
+              transactionTitle:
+                financeData.title,
+
+              transactionType:
+                financeData.type,
+
+              amount:
+                financeData.amount,
+
+              createdBy:
+                financeData.createdBy,
+
+              approvedBy:
+                user.displayName,
+
+              approvedByUid:
+                user.uid,
+
+              status:
+                "Approved",
+
+              createdAt:
+                serverTimestamp(),
+            }
+          );
         }
       );
 
@@ -150,48 +244,140 @@ const approveTransaction =
       );
 
       toast.error(
+        error.message ||
         "Gagal approve transaksi"
       );
     }
   };
 
   // =====================================
-  // REJECT
-  // =====================================
-  const rejectTransaction =
-    async (ref) => {
+// REJECT
+// =====================================
+const rejectTransaction =
+  async (ref) => {
 
-      try {
+    try {
 
-        await updateDoc(
-          ref,
-          {
-            status:
-              "Rejected",
+      await runTransaction(
+        db,
+        async (
+          transaction
+        ) => {
 
-            approvedBy:
-              user.displayName,
+          // =========================
+          // GET DOCUMENT
+          // =========================
+          const financeDoc =
+            await transaction.get(
+              ref
+            );
 
-            approvedAt:
-              serverTimestamp(),
+          if (
+            !financeDoc.exists()
+          ) {
+
+            throw new Error(
+              "Transaction not found"
+            );
           }
-        );
 
-        toast.success(
-          "Transaksi berhasil ditolak"
-        );
+          const financeData =
+            financeDoc.data();
 
-      } catch (error) {
+          // =========================
+          // VALIDASI
+          // =========================
+          if (
+            financeData.status !==
+            "Pending"
+          ) {
 
-        console.error(
-          error
-        );
+            throw new Error(
+              "Transaction already processed"
+            );
+          }
 
-        toast.error(
-          "Gagal reject transaksi"
-        );
-      }
-    };
+          // =========================
+          // REJECT
+          // =========================
+          transaction.update(
+            ref,
+            {
+              status:
+                "Rejected",
+
+              rejectedBy:
+                user.displayName,
+
+              rejectedByUid:
+                user.uid,
+
+              rejectedAt:
+                serverTimestamp(),
+            }
+          );
+
+          // =========================
+          // FINANCE LOG
+          // =========================
+          const financeLogRef =
+            collection(
+              db,
+              "finance_logs"
+            );
+
+          transaction.set(
+            doc(
+              financeLogRef
+            ),
+            {
+              action:
+                "Rejected",
+
+              transactionTitle:
+                financeData.title,
+
+              transactionType:
+                financeData.type,
+
+              amount:
+                financeData.amount,
+
+              createdBy:
+                financeData.createdBy,
+
+              rejectedBy:
+                user.displayName,
+
+              rejectedByUid:
+                user.uid,
+
+              status:
+                "Rejected",
+
+              createdAt:
+                serverTimestamp(),
+            }
+          );
+        }
+      );
+
+      toast.success(
+        "Transaksi berhasil ditolak"
+      );
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+      toast.error(
+        error.message ||
+        "Gagal reject transaksi"
+      );
+    }
+  };
 
   // =====================================
   // ACCESS DENIED

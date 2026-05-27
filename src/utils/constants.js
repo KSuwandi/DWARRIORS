@@ -3,8 +3,6 @@ export const INVENTORY_CATEGORIES = [
   "Disnaker",
   "Barham",
   "Preparean",
-  "Keuangan",
-  "Crafting",
 ];
 
 export const CRAFTING_RECIPES = [

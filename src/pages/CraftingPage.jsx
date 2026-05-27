@@ -89,7 +89,7 @@ const CRAFTING_RECIPES = [
   },
 
   {
-    name: "Peluru 7.62",
+    name: "Peluru 7.62 X 39",
     materials: [
       { item: "Berlian", qty: 1 },
       { item: "Paketan Jamur", qty: 5 },
