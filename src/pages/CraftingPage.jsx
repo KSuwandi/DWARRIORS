@@ -95,7 +95,7 @@ const CRAFTING_RECIPES = [
   },
 
   {
-    name: "Peluru 7.62 X 39",
+    name: "Peluru Ak-47",
     outputAmount: 45,
     materials: [
       { item: "Berlian", qty: 1 },

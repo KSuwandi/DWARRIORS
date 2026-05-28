@@ -5,6 +5,8 @@ import {
   useState,
 } from "react";
 
+import axios from "axios";
+
 import toast from "react-hot-toast";
 
 import {
@@ -60,10 +62,13 @@ export default function ProfilePage() {
   ] = useState(0);
 
   // =====================================
-  // IMGBB API
+  // CLOUDINARY
   // =====================================
-  const IMGBB_API_KEY =
-    "699c6fb5dc80bf81c0f7251767598e13";
+  const CLOUDINARY_CLOUD_NAME =
+    "dpyhp3o66";
+
+  const CLOUDINARY_UPLOAD_PRESET =
+    "jigokubara";
 
   // =====================================
   // MASK EMAIL
@@ -145,132 +150,131 @@ export default function ProfilePage() {
 
   }, [user]);
 
-// =====================================
-// LOAD FINANCE DATA
-// =====================================
-useEffect(() => {
+  // =====================================
+  // LOAD FINANCE DATA
+  // =====================================
+  useEffect(() => {
 
-  if (!user)
-    return;
+    if (!user)
+      return;
 
-  const unsubscribe =
-    onSnapshot(
-      collection(
-        db,
-        "users",
-        user.uid,
-        "finance"
-      ),
-      (snapshot) => {
+    const unsubscribe =
+      onSnapshot(
+        collection(
+          db,
+          "users",
+          user.uid,
+          "finance"
+        ),
+        (snapshot) => {
 
-        const finance =
-          snapshot.docs.map(
-            (doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            })
-          );
+          const finance =
+            snapshot.docs.map(
+              (doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              })
+            );
 
           // =========================
-// HITUNG HUTANG FINAL
-// =========================
-const totalHutang = finance
-  .filter(
-    (item) =>
-      item.paymentType === "Hutang" &&
-      item.type === "Pengeluaran" &&
-      item.status === "Approved"
-  )
-  .reduce(
-    (a, b) =>
-      a + Number(b.amount || 0),
-    0
-  );
+          // HITUNG HUTANG FINAL
+          // =========================
+          const totalHutang = finance
+            .filter(
+              (item) =>
+                item.paymentType === "Hutang" &&
+                item.type === "Pengeluaran" &&
+                item.status === "Approved"
+            )
+            .reduce(
+              (a, b) =>
+                a + Number(b.amount || 0),
+              0
+            );
 
-const totalPembayaran = finance
-  .filter(
-    (item) =>
-      item.type === "Pembayaran Hutang" &&
-      item.status === "Approved"
-  )
-  .reduce(
-    (a, b) =>
-      a + Number(b.amount || 0),
-    0
-  );
+          const totalPembayaran = finance
+            .filter(
+              (item) =>
+                item.type === "Pembayaran Hutang" &&
+                item.status === "Approved"
+            )
+            .reduce(
+              (a, b) =>
+                a + Number(b.amount || 0),
+              0
+            );
 
-setTotalDebt(
-  Math.max(
-    totalHutang - totalPembayaran,
-    0
-  )
-);
-      }
+          setTotalDebt(
+            Math.max(
+              totalHutang - totalPembayaran,
+              0
+            )
+          );
+        }
+      );
+
+    return () =>
+      unsubscribe();
+
+  }, [user]);
+
+  // =====================================
+  // LOAD CRAFTING DATA
+  // =====================================
+  useEffect(() => {
+
+    if (!user) return;
+
+    const q = query(
+      collection(
+        db,
+        "activity_logs"
+      ),
+      where(
+        "userId",
+        "==",
+        user.uid
+      )
     );
 
-  return () =>
-    unsubscribe();
+    const unsubscribe =
+      onSnapshot(
+        q,
+        (snapshot) => {
 
-}, [user]);
+          let total = 0;
 
+          snapshot.docs.forEach(
+            (doc) => {
 
-// =====================================
-// LOAD CRAFTING DATA
-// =====================================
-useEffect(() => {
+              const data =
+                doc.data();
 
-  if (!user) return;
+              // crafting success
+              if (
+                data.type ===
+                "crafting_approved"
+              ) {
 
-  const q = query(
-    collection(
-      db,
-      "activity_logs"
-    ),
-    where(
-      "userId",
-      "==",
-      user.uid
-    )
-  );
-
-  const unsubscribe =
-    onSnapshot(
-      q,
-      (snapshot) => {
-
-        let total = 0;
-
-        snapshot.docs.forEach(
-          (doc) => {
-
-            const data =
-              doc.data();
-
-            // crafting success
-            if (
-              data.type ===
-              "crafting_approved"
-            ) {
-
-              total += Number(
-                data.successQty ||
-                data.quantity ||
-                1
-              );
+                total += Number(
+                  data.successQty ||
+                  data.quantity ||
+                  1
+                );
+              }
             }
-          }
-        );
+          );
 
-        setTotalCrafting(
-          total
-        );
-      }
-    );
+          setTotalCrafting(
+            total
+          );
+        }
+      );
 
-  return () =>
-    unsubscribe();
+    return () =>
+      unsubscribe();
 
-}, [user]);
+  }, [user]);
 
   // =====================================
   // FINANCE SCORE
@@ -294,13 +298,13 @@ useEffect(() => {
       }
 
       if (
-  totalDebt < 2000000
-) {
+        totalDebt < 2000000
+      ) {
 
-  return "B";
-}
+        return "B";
+      }
 
-return "C";
+      return "C";
 
     }, [totalDebt]);
 
@@ -380,7 +384,7 @@ return "C";
     };
 
   // =====================================
-  // UPDATE PHOTO
+  // UPDATE PHOTO CLOUDINARY
   // =====================================
   const handleChangePhoto =
     async (e) => {
@@ -394,6 +398,7 @@ return "C";
 
         setLoading(true);
 
+        // VALIDATE IMAGE
         if (
           !file.type.startsWith(
             "image/"
@@ -409,6 +414,7 @@ return "C";
           return;
         }
 
+        // MAX 5MB
         if (
           file.size >
           5 * 1024 * 1024
@@ -423,39 +429,32 @@ return "C";
           return;
         }
 
+        // FORM DATA
         const formData =
           new FormData();
 
         formData.append(
-          "image",
+          "file",
           file
         );
 
+        formData.append(
+  "upload_preset",
+  "jigokubara"
+);
+
+        // UPLOAD CLOUDINARY
         const response =
-          await fetch(
-            `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
-            {
-              method:
-                "POST",
-              body: formData,
-            }
+          await axios.post(
+            `https://api.cloudinary.com/v1_1/dpyhp3o66/image/upload`,
+            formData
           );
-
-        const data =
-          await response.json();
-
-        if (
-          !data.success
-        ) {
-
-          throw new Error(
-            "Failed upload image"
-          );
-        }
 
         const imageUrl =
-          data.data.url;
+          response.data
+            .secure_url;
 
+        // SAVE FIRESTORE
         await updateDoc(
           doc(
             db,
@@ -489,6 +488,7 @@ return "C";
       } finally {
 
         setLoading(false);
+
       }
     };
 
@@ -526,6 +526,7 @@ return "C";
                   "https://i.pravatar.cc/300"
                 }
                 alt="profile"
+                referrerPolicy="no-referrer"
                 className="w-44 h-44 rounded-3xl object-cover border-4 border-[#7A0019]"
               />
 
