@@ -184,18 +184,12 @@ export default function CraftingPage() {
   const [selectedRecipe, setSelectedRecipe] =
     useState("Light Armor");
 
-  // ============================================
-  // SUCCESS & FAILED QTY
-  // ============================================
   const [successQuantity, setSuccessQuantity] =
     useState(1);
 
   const [failedQuantity, setFailedQuantity] =
     useState(0);
 
-  // ============================================
-  // HISTORY
-  // ============================================
   const [
     craftingHistory,
     setCraftingHistory,
@@ -308,36 +302,27 @@ export default function CraftingPage() {
 
   }, [selectedRecipe]);
 
-// ============================================
-// SAFE NUMBER
-// ============================================
-const successQty =
-  parseInt(successQuantity) || 0;
+  // ============================================
+  // SAFE NUMBER
+  // ============================================
+  const successQty =
+    parseInt(successQuantity) || 0;
 
-const failedQty =
-  parseInt(failedQuantity) || 0;
+  const failedQty =
+    parseInt(failedQuantity) || 0;
 
-const outputPerCraft =
-  parseInt(recipe?.outputAmount) || 0;
+  const outputPerCraft =
+    parseInt(recipe?.outputAmount) || 0;
 
-// ============================================
-// TOTAL PROCESS
-// ============================================
-const totalCraftProcess =
-  successQty + failedQty;
+  const totalCraftProcess =
+    successQty + failedQty;
 
-// ============================================
-// TOTAL OUTPUT
-// LOGIC:
-// SUCCESS = menghasilkan output
-// FAILED = mengurangi output
-// ============================================
-const totalOutput =
-  Math.max(
-    0,
-    (successQty - failedQty) *
-      outputPerCraft
-  );
+  const totalOutput =
+    Math.max(
+      0,
+      (successQty - failedQty) *
+        outputPerCraft
+    );
 
   // ============================================
   // FIND INVENTORY ITEM
@@ -545,7 +530,7 @@ const totalOutput =
       );
     };
 
-      // ============================================
+  // ============================================
   // ADD ACTIVITY LOG
   // ============================================
   const addActivityLog =
@@ -589,8 +574,6 @@ const totalOutput =
       );
     };
 
-
-
   // ============================================
   // CREATE CRAFTING
   // ============================================
@@ -629,27 +612,21 @@ const totalOutput =
           return;
         }
 
-        // ====================================
-        // OYABUN AUTO CRAFT
-        // ====================================
         if (
           role ===
           "Oyabun"
         ) {
 
-          // KURANGI MATERIAL
           await reduceInventoryMaterials(
             recipe.materials,
             totalCraftProcess
           );
 
-          // ADD OUTPUT
           await addCraftedItemToInventory(
             recipe.name,
             totalOutput
           );
 
-          // HISTORY
           await addCraftingHistory({
             recipeName:
               recipe.name,
@@ -664,9 +641,9 @@ const totalOutput =
               totalOutput,
 
             status:
-  failedQty > 0
-    ? "Partial Failed"
-    : "Crafted",
+              failedQty > 0
+                ? "Partial Failed"
+                : "Crafted",
           });
 
           toast.success(
@@ -680,31 +657,27 @@ const totalOutput =
           return;
         }
 
-                  // ACTIVITY LOG
-          await addActivityLog({
-            type:
-              failedQty > 0
-                ? "crafting_failed"
-                : "crafting_approved",
+        await addActivityLog({
+          type:
+            failedQty > 0
+              ? "crafting_failed"
+              : "crafting_approved",
 
-            action:
-              failedQty > 0
-                ? "Craft Partial Failed"
-                : "Craft Completed",
+          action:
+            failedQty > 0
+              ? "Craft Partial Failed"
+              : "Craft Completed",
 
-            target:
-              recipe.name,
+          target:
+            recipe.name,
 
-            quantity:
-              totalOutput,
+          quantity:
+            totalOutput,
 
-            description:
-              `${user?.rpName || user?.name} crafted ${recipe.name} with ${successQty} success and ${failedQty} failed`,
-          });
+          description:
+            `${user?.rpName || user?.name} crafted ${recipe.name} with ${successQty} success and ${failedQty} failed`,
+        });
 
-        // ====================================
-        // SHATEI REQUEST
-        // ====================================
         await addDoc(
           collection(
             db,
@@ -765,7 +738,6 @@ const totalOutput =
           }
         );
 
-                // ACTIVITY LOG
         await addActivityLog({
           type:
             "crafting_request",
@@ -783,24 +755,22 @@ const totalOutput =
             `${user?.rpName || user?.name} requested crafting ${recipe.name} with ${successQty} success and ${failedQty} failed`,
         });
 
+        await addCraftingHistory({
+          recipeName:
+            recipe.name,
 
-       // HISTORY
-await addCraftingHistory({
-  recipeName:
-    recipe.name,
+          successQty:
+            successQty,
 
-  successQty:
-    successQty,
+          failedQty:
+            failedQty,
 
-  failedQty:
-    failedQty,
+          outputQty:
+            Number(totalOutput),
 
-  outputQty:
-    Number(totalOutput),
-
-  status:
-    "Pending",
-});
+          status:
+            "Pending",
+        });
 
         toast.success(
           "Request crafting dikirim"
@@ -826,8 +796,7 @@ await addCraftingHistory({
       }
     };
 
-
-      // ============================================
+  // ============================================
   // CLEAR HISTORY
   // ============================================
   const handleClearHistory = async () => {
@@ -873,7 +842,6 @@ await addCraftingHistory({
     }
   };
 
-
   // ============================================
   // PAGINATION HISTORY
   // ============================================
@@ -898,135 +866,301 @@ await addCraftingHistory({
       <div className="text-white">
 
         {/* HEADER */}
-        <div className="mb-8">
+        <div className="mb-6">
 
-          <h1 className="text-4xl font-bold">
-            Crafting
+          <h1 className="text-3xl font-black bg-gradient-to-r from-purple-300 to-fuchsia-500 bg-clip-text text-transparent">
+            Crafting System
           </h1>
 
-          <p className="text-gray-400 mt-2">
-            Crafting management system
+          <p className="text-sm text-purple-200/60 mt-1">
+            Jigokubara crafting management
           </p>
 
         </div>
 
         {/* STATS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
 
           <StatCard
-            title="Available Recipes"
+            title="Recipes"
             value={
               CRAFTING_RECIPES.length
             }
           />
 
           <StatCard
-            title="Your Role"
+            title="Role"
             value={role}
           />
 
         </div>
 
-        {/* FORM */}
-        <div className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-6 mb-10">
+        {/* MAIN */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
-          <h2 className="text-2xl font-bold mb-6">
-            Create Crafting
-          </h2>
+          {/* LEFT */}
+          <div className="xl:col-span-2 space-y-6">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* CREATE */}
+            <div className="bg-gradient-to-br from-[#14051f] to-[#0b0614] border border-purple-500/20 rounded-3xl p-5">
 
-            <div>
+              <div className="flex items-center justify-between mb-5">
 
-              <label className="text-sm text-gray-400">
-                Select Item
-              </label>
+                <h2 className="text-xl font-bold">
+                  Create Crafting
+                </h2>
 
-              <select
-                value={
-                  selectedRecipe
-                }
-                onChange={(e) =>
-                  setSelectedRecipe(
-                    e.target.value
-                  )
-                }
-                className="w-full mt-2 bg-black border border-gray-700 rounded-2xl px-4 py-3"
-              >
-
-                {CRAFTING_RECIPES.map(
-                  (
-                    recipe
-                  ) => (
-
-                    <option
-                      key={
-                        recipe.name
-                      }
-                      value={
-                        recipe.name
-                      }
-                    >
-                      {
-                        recipe.name
-                      }
-                    </option>
-                  )
-                )}
-
-              </select>
-
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-
-              <div>
-
-                <label className="text-sm text-green-400">
-                  Success Qty
-                </label>
-
-                <input
-                  type="number"
-                  min={0}
-                  value={
-                    successQuantity
-                  }
-                  onChange={(e) =>
-                    setSuccessQuantity(
-  Math.max(
-    0,
-    Number(e.target.value)
-                      )
-                    )
-                  }
-                  className="w-full mt-2 bg-black border border-green-700 rounded-2xl px-4 py-3"
-                />
+                <div className="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300">
+                  {role}
+                </div>
 
               </div>
 
-              <div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-                <label className="text-sm text-red-400">
-                  Failed Qty
-                </label>
+                <div className="md:col-span-2">
 
-                <input
-                  type="number"
-                  min={0}
-                  value={
-                    failedQuantity
-                  }
-                  onChange={(e) =>
-                    setFailedQuantity(
-  Math.max(
-    0,
-    Number(e.target.value)
+                  <label className="text-xs text-purple-200/60">
+                    Recipe
+                  </label>
+
+                  <select
+                    value={
+                      selectedRecipe
+                    }
+                    onChange={(e) =>
+                      setSelectedRecipe(
+                        e.target.value
                       )
-                    )
+                    }
+                    className="w-full mt-2 bg-[#0b0812] border border-purple-500/20 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
+                  >
+
+                    {CRAFTING_RECIPES.map(
+                      (
+                        recipe
+                      ) => (
+
+                        <option
+                          key={
+                            recipe.name
+                          }
+                          value={
+                            recipe.name
+                          }
+                        >
+                          {
+                            recipe.name
+                          }
+                        </option>
+                      )
+                    )}
+
+                  </select>
+
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+
+                  <div>
+
+                    <label className="text-xs text-green-300">
+                      Success
+                    </label>
+
+                    <input
+                      type="number"
+                      min={0}
+                      value={
+                        successQuantity
+                      }
+                      onChange={(e) =>
+                        setSuccessQuantity(
+                          Math.max(
+                            0,
+                            Number(
+                              e.target.value
+                            )
+                          )
+                        )
+                      }
+                      className="w-full mt-2 bg-[#0b0812] border border-green-500/20 rounded-2xl px-3 py-3"
+                    />
+
+                  </div>
+
+                  <div>
+
+                    <label className="text-xs text-red-300">
+                      Failed
+                    </label>
+
+                    <input
+                      type="number"
+                      min={0}
+                      value={
+                        failedQuantity
+                      }
+                      onChange={(e) =>
+                        setFailedQuantity(
+                          Math.max(
+                            0,
+                            Number(
+                              e.target.value
+                            )
+                          )
+                        )
+                      }
+                      className="w-full mt-2 bg-[#0b0812] border border-red-500/20 rounded-2xl px-3 py-3"
+                    />
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* OUTPUT */}
+              <div className="grid grid-cols-3 gap-3 mt-5">
+
+                <div className="bg-black/30 border border-purple-500/10 rounded-2xl p-4 text-center">
+
+                  <p className="text-xs text-gray-400">
+                    Success
+                  </p>
+
+                  <h2 className="text-2xl font-black text-green-400 mt-1">
+                    {successQty}
+                  </h2>
+
+                </div>
+
+                <div className="bg-black/30 border border-purple-500/10 rounded-2xl p-4 text-center">
+
+                  <p className="text-xs text-gray-400">
+                    Failed
+                  </p>
+
+                  <h2 className="text-2xl font-black text-red-400 mt-1">
+                    {failedQty}
+                  </h2>
+
+                </div>
+
+                <div className="bg-black/30 border border-purple-500/10 rounded-2xl p-4 text-center">
+
+                  <p className="text-xs text-gray-400">
+                    Output
+                  </p>
+
+                  <h2 className="text-2xl font-black text-purple-300 mt-1">
+                    {totalOutput}
+                  </h2>
+
+                </div>
+
+              </div>
+
+              <button
+                onClick={
+                  handleCreateCrafting
+                }
+                disabled={loading}
+                className="w-full mt-5 bg-gradient-to-r from-purple-700 to-fuchsia-700 hover:opacity-90 transition-all rounded-2xl py-4 font-bold shadow-lg shadow-purple-900/30"
+              >
+
+                {loading
+                  ? "Loading..."
+                  : role ===
+                    "Oyabun"
+                  ? "Craft Now"
+                  : "Request Crafting"}
+
+              </button>
+
+            </div>
+
+            {/* MATERIALS */}
+            <div className="bg-gradient-to-br from-[#14051f] to-[#0b0614] border border-purple-500/20 rounded-3xl p-5">
+
+              <div className="flex items-center justify-between mb-5">
+
+                <h2 className="text-xl font-bold">
+                  Materials
+                </h2>
+
+                <span className="text-xs text-purple-300">
+                  {recipe?.materials.length} Items
+                </span>
+
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+                {recipe?.materials.map(
+                  (
+                    material,
+                    index
+                  ) => {
+
+                    const inventoryItem =
+                      findInventoryItem(
+                        material.item
+                      );
+
+                    const required =
+                      Number(
+                        material.qty
+                      ) *
+                      Number(
+                        totalCraftProcess
+                      );
+
+                    const currentStock =
+                      Number(
+                        inventoryItem?.stock ||
+                          0
+                      );
+
+                    const enough =
+                      currentStock >=
+                      required;
+
+                    return (
+
+                      <div
+                        key={index}
+                        className="bg-black/30 border border-purple-500/10 rounded-2xl px-4 py-3 flex items-center justify-between"
+                      >
+
+                        <div>
+
+                          <h4 className="font-semibold text-sm">
+                            {
+                              material.item
+                            }
+                          </h4>
+
+                          <p className="text-xs text-gray-400 mt-1">
+                            Need {required}
+                          </p>
+
+                        </div>
+
+                        <span
+                          className={`text-xs px-3 py-1 rounded-full ${
+                            enough
+                              ? "bg-green-500/20 text-green-300"
+                              : "bg-red-500/20 text-red-300"
+                          }`}
+                        >
+                          {currentStock}
+                        </span>
+
+                      </div>
+                    );
                   }
-                  className="w-full mt-2 bg-black border border-red-700 rounded-2xl px-4 py-3"
-                />
+                )}
 
               </div>
 
@@ -1034,217 +1168,69 @@ await addCraftingHistory({
 
           </div>
 
-          {/* MATERIALS */}
-          <div className="mt-8">
+          {/* RIGHT */}
+          <div>
 
-            <h3 className="text-xl font-bold mb-4">
-              Required Materials
-            </h3>
+            <div className="bg-gradient-to-br from-[#14051f] to-[#0b0614] border border-purple-500/20 rounded-3xl p-5">
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="flex items-center justify-between mb-5">
 
-              {recipe?.materials.map(
-                (
-                  material,
-                  index
-                ) => {
+                <div>
 
-                  const inventoryItem =
-                    findInventoryItem(
-                      material.item
-                    );
+                  <h2 className="text-xl font-bold">
+                    History
+                  </h2>
 
-                  const required =
-                    Number(
-                      material.qty
-                    ) *
-                    Number(
-                      totalCraftProcess
-                    );
+                  <p className="text-xs text-purple-200/50 mt-1">
+                    Recent crafting activity
+                  </p>
 
-                  const currentStock =
-                    Number(
-                      inventoryItem?.stock ||
-                        0
-                    );
+                </div>
 
-                  const enough =
-                    currentStock >=
-                    required;
+                {role === "Oyabun" && (
 
-                  return (
+                  <button
+                    onClick={handleClearHistory}
+                    disabled={loading}
+                    className="bg-red-600/20 hover:bg-red-600/30 border border-red-500/20 text-red-300 px-3 py-2 rounded-xl text-xs"
+                  >
+                    Clear
+                  </button>
+
+                )}
+
+              </div>
+
+              <div className="space-y-3">
+
+                {paginatedHistory.map(
+                  (item) => (
 
                     <div
-                      key={index}
-                      className="bg-black border border-gray-700 rounded-2xl p-4"
+                      key={item.id}
+                      className="bg-black/30 border border-purple-500/10 rounded-2xl p-4"
                     >
 
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between gap-3">
 
                         <div>
 
-                          <h4 className="font-bold">
+                          <h3 className="font-bold text-sm">
                             {
-                              material.item
+                              item.recipeName
                             }
-                          </h4>
+                          </h3>
 
-                          <p className="text-gray-400 text-sm mt-1">
-                            Need:
-                            {" "}
+                          <p className="text-xs text-gray-400 mt-1">
                             {
-                              required
+                              item.craftedBy
                             }
                           </p>
 
                         </div>
 
                         <span
-                          className={`px-3 py-1 rounded-full text-xs ${
-                            enough
-                              ? "bg-green-600"
-                              : "bg-red-600"
-                          }`}
-                        >
-                          Stock:
-                          {" "}
-                          {
-                            currentStock
-                          }
-                        </span>
-
-                      </div>
-
-                    </div>
-                  );
-                }
-              )}
-
-            </div>
-
-          </div>
-
-          {/* OUTPUT INFO */}
-          <div className="mt-6 bg-black border border-gray-700 rounded-2xl p-4">
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-              <div>
-
-                <p className="text-gray-400 text-sm">
-                  Success Craft
-                </p>
-
-                <h2 className="text-3xl font-bold text-green-400 mt-2">
-                  {successQty}
-                </h2>
-
-              </div>
-
-              <div>
-
-                <p className="text-gray-400 text-sm">
-                  Failed Craft
-                </p>
-
-                <h2 className="text-3xl font-bold text-red-400 mt-2">
-                  {failedQty}
-                </h2>
-
-              </div>
-
-              <div>
-
-                <p className="text-gray-400 text-sm">
-                  Total Output
-                </p>
-
-                <h2 className="text-3xl font-bold mt-2 text-[#7A0019]">
-
-                  {Number(totalOutput || 0)} pcs
-
-                </h2>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          <button
-            onClick={
-              handleCreateCrafting
-            }
-            disabled={loading}
-            className="mt-8 bg-[#7A0019] hover:bg-[#99001f] disabled:opacity-50 rounded-2xl px-6 py-4 font-semibold"
-          >
-
-            {loading
-              ? "Loading..."
-              : role ===
-                "Oyabun"
-              ? "Craft Now"
-              : "Request Crafting"}
-
-          </button>
-
-        </div>
-
-        {/* HISTORY */}
-        <div className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-6">
-
-         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-8">
-
-  <div>
-
-    <h2 className="text-3xl font-bold">
-      Crafting History
-    </h2>
-
-    <p className="text-gray-400 mt-2">
-      Semua riwayat crafting player
-    </p>
-
-  </div>
-
-  {role === "Oyabun" && (
-    <button
-      onClick={handleClearHistory}
-      disabled={loading}
-      className="bg-red-700 hover:bg-red-800 disabled:opacity-50 transition-all px-6 py-3 rounded-2xl font-semibold shadow-lg shadow-red-900/30"
-    >
-      {loading
-        ? "Clearing..."
-        : "Clear History"}
-    </button>
-  )}
-
-</div>
-
-          <div className="space-y-5">
-
-            {paginatedHistory.map(
-              (item) => (
-
-                <div
-                  key={item.id}
-                  className="bg-black border border-gray-800 rounded-3xl p-6"
-                >
-
-                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-
-                    <div>
-
-                      <div className="flex items-center gap-3 flex-wrap">
-
-                        <h3 className="text-2xl font-bold">
-                          {
-                            item.recipeName
-                          }
-                        </h3>
-
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          className={`text-[10px] px-2 py-1 rounded-full ${
                             item.status ===
                             "Crafted"
                               ? "bg-green-500/20 text-green-300"
@@ -1261,147 +1247,143 @@ await addCraftingHistory({
 
                       </div>
 
-                      <div className="flex flex-wrap gap-3 mt-4">
+                      <div className="grid grid-cols-3 gap-2 mt-4">
 
-                        <span className="bg-[#111111] px-4 py-2 rounded-xl text-sm">
-                          Success:
-                          {" "}
-                          {
-                            item.successQty || 0
-                          }
-                        </span>
+                        <div className="bg-[#130d1c] rounded-xl p-2 text-center">
 
-                        <span className="bg-[#111111] px-4 py-2 rounded-xl text-sm">
-                          Failed:
-                          {" "}
-                          {
-                            item.failedQty || 0
-                          }
-                        </span>
+                          <p className="text-[10px] text-gray-400">
+                            S
+                          </p>
 
-                        <span className="bg-[#111111] px-4 py-2 rounded-xl text-sm">
-                          Output:
-                          {" "}
-                          {
-                            item.outputQty || 0
-                          }
-                        </span>
+                          <h4 className="font-bold text-green-400 text-sm mt-1">
+                            {
+                              item.successQty
+                            }
+                          </h4>
 
-                        <span className="bg-[#111111] px-4 py-2 rounded-xl text-sm">
-                          By:
-                          {" "}
-                          {
-                            item.craftedBy
-                          }
-                        </span>
+                        </div>
+
+                        <div className="bg-[#130d1c] rounded-xl p-2 text-center">
+
+                          <p className="text-[10px] text-gray-400">
+                            F
+                          </p>
+
+                          <h4 className="font-bold text-red-400 text-sm mt-1">
+                            {
+                              item.failedQty
+                            }
+                          </h4>
+
+                        </div>
+
+                        <div className="bg-[#130d1c] rounded-xl p-2 text-center">
+
+                          <p className="text-[10px] text-gray-400">
+                            OUT
+                          </p>
+
+                          <h4 className="font-bold text-purple-300 text-sm mt-1">
+                            {
+                              item.outputQty
+                            }
+                          </h4>
+
+                        </div>
 
                       </div>
 
                     </div>
+                  )
+                )}
 
-                    <div className="text-right">
+                {paginatedHistory.length ===
+                  0 && (
 
-                      <p className="text-gray-400 text-sm">
-                        Crafting Item
-                      </p>
+                  <div className="bg-black/20 border border-dashed border-purple-500/20 rounded-2xl p-6 text-center text-sm text-gray-400">
 
-                      <h2 className="text-4xl font-bold text-[#7A0019] mt-2">
-                        {
-                          item.recipeName
-                        }
-                      </h2>
-
-                    </div>
+                    No crafting history
 
                   </div>
 
-                </div>
-              )
-            )}
-
-            {paginatedHistory.length ===
-              0 && (
-
-              <div className="bg-black border border-dashed border-gray-700 rounded-3xl p-10 text-center text-gray-400">
-
-                Tidak ada history crafting
+                )}
 
               </div>
 
-            )}
+              {/* PAGINATION */}
+              {totalHistoryPages >
+                1 && (
 
-          </div>
-
-          {/* PAGINATION */}
-          {totalHistoryPages >
-            1 && (
-
-            <div className="flex items-center justify-center gap-3 mt-10 flex-wrap">
-
-              <button
-                disabled={
-                  historyPage === 1
-                }
-                onClick={() =>
-                  setHistoryPage(
-                    (
-                      prev
-                    ) =>
-                      prev - 1
-                  )
-                }
-                className="bg-black border border-gray-700 px-5 py-3 rounded-2xl disabled:opacity-40"
-              >
-                Previous
-              </button>
-
-              {Array.from({
-                length:
-                  totalHistoryPages,
-              }).map(
-                (_, index) => (
+                <div className="flex items-center justify-center gap-2 mt-5 flex-wrap">
 
                   <button
-                    key={index}
+                    disabled={
+                      historyPage === 1
+                    }
                     onClick={() =>
                       setHistoryPage(
-                        index + 1
+                        (
+                          prev
+                        ) =>
+                          prev - 1
                       )
                     }
-                    className={`px-5 py-3 rounded-2xl ${
-                      historyPage ===
-                      index + 1
-                        ? "bg-[#7A0019]"
-                        : "bg-black border border-gray-700"
-                    }`}
+                    className="bg-black/30 border border-purple-500/20 px-3 py-2 rounded-xl text-sm disabled:opacity-40"
                   >
-                    {index + 1}
+                    Prev
                   </button>
 
-                )
-              )}
+                  {Array.from({
+                    length:
+                      totalHistoryPages,
+                  }).map(
+                    (_, index) => (
 
-              <button
-                disabled={
-                  historyPage ===
-                  totalHistoryPages
-                }
-                onClick={() =>
-                  setHistoryPage(
-                    (
-                      prev
-                    ) =>
-                      prev + 1
-                  )
-                }
-                className="bg-black border border-gray-700 px-5 py-3 rounded-2xl disabled:opacity-40"
-              >
-                Next
-              </button>
+                      <button
+                        key={index}
+                        onClick={() =>
+                          setHistoryPage(
+                            index + 1
+                          )
+                        }
+                        className={`w-10 h-10 rounded-xl text-sm font-bold ${
+                          historyPage ===
+                          index + 1
+                            ? "bg-gradient-to-r from-purple-700 to-fuchsia-700"
+                            : "bg-black/30 border border-purple-500/20"
+                        }`}
+                      >
+                        {index + 1}
+                      </button>
+
+                    )
+                  )}
+
+                  <button
+                    disabled={
+                      historyPage ===
+                      totalHistoryPages
+                    }
+                    onClick={() =>
+                      setHistoryPage(
+                        (
+                          prev
+                        ) =>
+                          prev + 1
+                      )
+                    }
+                    className="bg-black/30 border border-purple-500/20 px-3 py-2 rounded-xl text-sm disabled:opacity-40"
+                  >
+                    Next
+                  </button>
+
+                </div>
+
+              )}
 
             </div>
 
-          )}
+          </div>
 
         </div>
 
