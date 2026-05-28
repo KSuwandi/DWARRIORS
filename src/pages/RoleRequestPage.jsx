@@ -98,67 +98,153 @@ export default function RoleRequestPage() {
 
     <AppLayout>
 
-      <div className="text-white max-w-2xl mx-auto">
+      <div className="min-h-screen relative overflow-hidden text-white flex items-center justify-center px-6 py-16">
 
-        <div className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-8">
+        {/* BACKGROUND */}
+        <div className="absolute inset-0 bg-black" />
 
-          <h1 className="text-4xl font-bold">
-            Request Role
-          </h1>
+        <div className="absolute top-[-150px] left-[-100px] w-[400px] h-[400px] bg-purple-700/30 blur-[140px] rounded-full" />
 
-          <p className="text-gray-400 mt-2">
-            Your account is waiting for approval
-          </p>
+        <div className="absolute bottom-[-150px] right-[-100px] w-[400px] h-[400px] bg-fuchsia-700/20 blur-[140px] rounded-full" />
 
-          <div className="mt-8">
+        {/* CARD */}
+        <div className="relative z-10 w-full max-w-2xl">
 
-            <label className="text-sm text-gray-400">
-              Select Role
-            </label>
+          <div className="bg-[#0f0b16]/90 backdrop-blur-2xl border border-purple-700/30 rounded-[40px] p-10 shadow-[0_0_60px_rgba(168,85,247,0.15)]">
 
-            <select
-              value={
-                requestedRole
+            {/* TOP */}
+            <div className="text-center">
+
+              <div className="inline-flex items-center gap-3 bg-purple-900/20 border border-purple-700/30 px-5 py-2 rounded-full mb-8">
+
+                <div className="w-3 h-3 rounded-full bg-purple-400 animate-pulse" />
+
+                <span className="text-purple-300 tracking-[0.2em] uppercase text-xs">
+                  Jigokubara Family
+                </span>
+
+              </div>
+
+              <h1 className="text-5xl font-black tracking-[0.15em]">
+
+                <span className="text-white">
+                  ROLE
+                </span>
+
+                <br />
+
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-500 to-red-500">
+                  REQUEST
+                </span>
+
+              </h1>
+
+              <div className="w-32 h-[3px] bg-gradient-to-r from-purple-500 to-red-500 rounded-full mx-auto mt-8" />
+
+              <p className="text-gray-400 mt-8 text-lg leading-relaxed">
+                Your account is currently awaiting approval
+                from the Jigokubara leadership.
+              </p>
+
+            </div>
+
+            {/* FORM */}
+            <div className="mt-12">
+
+              <label className="text-sm text-purple-300 tracking-[0.15em] uppercase">
+                Select Position
+              </label>
+
+              <div className="relative mt-4">
+
+                <select
+                  value={
+                    requestedRole
+                  }
+                  onChange={(e) =>
+                    setRequestedRole(
+                      e.target.value
+                    )
+                  }
+                  className="w-full bg-[#120d1b] border border-purple-700/30 rounded-3xl px-6 py-5 outline-none text-white appearance-none focus:border-purple-500 transition-all"
+                >
+
+                  <option value="Shatei">
+                    Shatei
+                  </option>
+
+                  <option value="Kepala Divisi">
+                    Oyabun
+                  </option>
+
+                </select>
+
+                {/* ICON */}
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 text-purple-400 pointer-events-none">
+                  ▼
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* STATUS */}
+            <div className="mt-8 bg-[#140f1d] border border-purple-700/20 rounded-3xl p-5">
+
+              <p className="text-gray-400 text-sm uppercase tracking-[0.15em]">
+                Current Status
+              </p>
+
+              <div className="flex items-center justify-between mt-4">
+
+                <span className="text-2xl font-bold">
+                  {role}
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/20 text-sm font-semibold">
+                  Pending
+                </span>
+
+              </div>
+
+            </div>
+
+            {/* BUTTON */}
+            <button
+              disabled={
+                loading
               }
-              onChange={(e) =>
-                setRequestedRole(
-                  e.target.value
-                )
+              onClick={
+                submitRequest
               }
-              className="w-full mt-3 bg-black border border-gray-700 rounded-2xl px-5 py-4 outline-none"
+              className="group relative overflow-hidden w-full mt-10 bg-gradient-to-r from-[#4d0066] via-[#7A0019] to-[#a0005a] hover:scale-[1.02] transition-all duration-300 py-5 rounded-3xl text-lg font-bold shadow-[0_0_35px_rgba(168,85,247,0.35)] disabled:opacity-50"
             >
 
-              <option value="Shatei">
-                Shatei
-              </option>
+              <span className="relative z-10">
 
-              <option value="Kepala Divisi">
-                Kepala Divisi
-              </option>
+                {loading
+                  ? "Submitting..."
+                  : "Submit Request"}
 
-            </select>
+              </span>
 
-          </div>
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-all" />
 
-          <button
-            disabled={
-              loading
-            }
-            onClick={
-              submitRequest
-            }
-            className="w-full mt-8 bg-[#7A0019] hover:bg-[#99001f] disabled:opacity-50 transition-all py-4 rounded-2xl font-semibold"
-          >
-            {loading
-              ? "Submitting..."
-              : "Submit Request"}
-          </button>
+            </button>
 
-          <div className="mt-5 text-sm text-gray-500">
-            Current Status:
-            <span className="text-yellow-400 ml-2">
-              {role}
-            </span>
+            {/* FOOTER */}
+            <div className="mt-10 text-center">
+
+              <p className="text-gray-500 text-sm italic">
+                「美しいものは破壊的でもある」
+              </p>
+
+              <p className="text-purple-400 text-xs tracking-[0.25em] mt-2 uppercase">
+                Jigokubara-gumi
+              </p>
+
+            </div>
+
           </div>
 
         </div>
