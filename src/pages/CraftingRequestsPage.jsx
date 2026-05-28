@@ -32,36 +32,36 @@ export default function CraftingRequestsPage() {
   const { user, role } =
     useAuth();
 
-    // =========================================
-// ACCESS DENIED
-// =========================================
-if (
-  role === "Shatei"
-) {
+  // =========================================
+  // ACCESS DENIED
+  // =========================================
+  if (
+    role === "Shatei"
+  ) {
 
-  return (
+    return (
 
-    <AppLayout>
+      <AppLayout>
 
-      <div className="flex items-center justify-center min-h-[70vh]">
+        <div className="flex items-center justify-center min-h-[70vh]">
 
-        <div className="bg-[#111111] border border-red-500/20 rounded-3xl p-10 text-center text-white">
+          <div className="bg-[#111111] border border-red-500/20 rounded-3xl p-10 text-center text-white">
 
-          <h1 className="text-4xl font-bold text-red-400">
-            ACCESS DENIED
-          </h1>
+            <h1 className="text-4xl font-bold text-red-400">
+              ACCESS DENIED
+            </h1>
 
-          <p className="text-gray-400 mt-4">
-            Shatei tidak memiliki akses ke halaman crafting requests
-          </p>
+            <p className="text-gray-400 mt-4">
+              Shatei tidak memiliki akses ke halaman crafting requests
+            </p>
+
+          </div>
 
         </div>
 
-      </div>
-
-    </AppLayout>
-  );
-}
+      </AppLayout>
+    );
+  }
 
   const [requests, setRequests] =
     useState([]);
@@ -156,6 +156,8 @@ if (
       target,
       quantity,
       description,
+      requestedBy,
+      requestedByUid,
     }) => {
 
       await addDoc(
@@ -169,8 +171,18 @@ if (
           action,
 
           user:
+            user?.rpName ||
             user?.displayName ||
             "Unknown",
+
+          userName:
+            user?.rpName ||
+            user?.displayName ||
+            "Unknown",
+
+          userId:
+            user?.uid ||
+            null,
 
           role:
             role || "-",
@@ -178,6 +190,14 @@ if (
           target,
 
           quantity,
+
+          requestedBy:
+            requestedBy ||
+            null,
+
+          requestedByUid:
+            requestedByUid ||
+            null,
 
           description,
 
@@ -271,7 +291,7 @@ if (
                   material.amount,
 
                 description:
-                  `${user.displayName} reduced ${material.item} stock by ${material.amount} for crafting ${request.recipeName}`,
+                  `${user.rpName} reduced ${material.item} stock by ${material.amount} for crafting ${request.recipeName}`,
               });
             }
           );
@@ -366,7 +386,7 @@ if (
             request.resultAmount,
 
           description:
-            `${user.displayName} added crafted item ${request.resultItem} x${request.resultAmount} into inventory`,
+            `${user.rpName} added crafted item ${request.resultItem} x${request.resultAmount} into inventory`,
         });
 
         // =====================================
@@ -383,12 +403,61 @@ if (
               "Approved",
 
             approvedBy:
-              user.displayName,
+              user.rpName,
 
             approvedAt:
               serverTimestamp(),
           }
         );
+
+        // =====================================
+// UPDATE CRAFTING HISTORY
+// =====================================
+const historyQuery = query(
+  collection(db, "crafting_history"),
+  where(
+    "craftedByUid",
+    "==",
+    request.requestedByUid
+  )
+);
+
+const historySnapshot =
+  await getDocs(historyQuery);
+
+historySnapshot.forEach(
+  async (historyDoc) => {
+
+    const historyData =
+      historyDoc.data();
+
+    if (
+      historyData.recipeName === request.recipeName &&
+      historyData.status === "Pending"
+    ) {
+
+      await updateDoc(
+        doc(
+          db,
+          "crafting_history",
+          historyDoc.id
+        ),
+        {
+          status:
+            request.failedQty > 0
+              ? "Partial Failed"
+              : "Crafted",
+
+          approvedBy:
+            user.rpName,
+
+          approvedAt:
+            serverTimestamp(),
+        }
+      );
+    }
+  }
+);
 
         // =====================================
         // ACTIVITY LOG
@@ -406,8 +475,17 @@ if (
           quantity:
             request.resultAmount,
 
+          requestedBy:
+            request.requestedBy,
+
+          requestedByUid:
+            request.requestedByUid,
+
           description:
-            `${user.displayName} approved crafting ${request.recipeName} requested by ${request.requestedBy}`,
+            `${user.rpName} approved crafting ${request.recipeName} requested by ${
+              request.requestedBy ||
+              "Unknown"
+            }`,
         });
 
         // =====================================
@@ -425,8 +503,14 @@ if (
             craftedBy:
               request.requestedBy,
 
+            craftedByUid:
+              request.requestedByUid,
+
             approvedBy:
-              user.displayName,
+              user.rpName,
+
+            approvedByUid:
+              user.uid,
 
             resultItem:
               request.resultItem,
@@ -478,7 +562,7 @@ if (
               "Rejected",
 
             rejectedBy:
-              user?.displayName ||
+              user?.rpName ||
               "Unknown",
 
             rejectedAt:
@@ -502,8 +586,17 @@ if (
           quantity:
             request.resultAmount,
 
+          requestedBy:
+            request.requestedBy,
+
+          requestedByUid:
+            request.requestedByUid,
+
           description:
-            `${user?.displayName} rejected crafting ${request.recipeName} requested by ${request.requestedBy}`,
+            `${user?.rpName} rejected crafting ${request.recipeName} requested by ${
+              request.requestedBy ||
+              "Unknown"
+            }`,
         });
 
         toast.success(

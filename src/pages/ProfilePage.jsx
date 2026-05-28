@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -7,10 +8,13 @@ import {
 import toast from "react-hot-toast";
 
 import {
+  collection,
   doc,
   onSnapshot,
+  query,
   serverTimestamp,
   updateDoc,
+  where,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
@@ -21,7 +25,8 @@ import { useAuth } from "../contexts/AuthContext";
 
 export default function ProfilePage() {
 
-  const { user } = useAuth();
+  const { user } =
+    useAuth();
 
   const fileInputRef =
     useRef(null);
@@ -35,11 +40,24 @@ export default function ProfilePage() {
   const [editing, setEditing] =
     useState(false);
 
-  const [newName, setNewName] =
+  const [newRpName, setNewRpName] =
     useState("");
 
   const [newPhone, setNewPhone] =
     useState("");
+
+  // ================================
+  // STATS
+  // ================================
+  const [
+    totalDebt,
+    setTotalDebt,
+  ] = useState(0);
+
+  const [
+    totalCrafting,
+    setTotalCrafting,
+  ] = useState(0);
 
   // =====================================
   // IMGBB API
@@ -47,14 +65,19 @@ export default function ProfilePage() {
   const IMGBB_API_KEY =
     "699c6fb5dc80bf81c0f7251767598e13";
 
-    // =====================================
+  // =====================================
   // MASK EMAIL
   // =====================================
-  const maskEmail = (email) => {
+  const maskEmail = (
+    email
+  ) => {
 
     if (!email) return "";
 
-    const [username, domain] =
+    const [
+      username,
+      domain,
+    ] =
       email.split("@");
 
     if (
@@ -77,7 +100,6 @@ export default function ProfilePage() {
 
     return `${firstChar}${masked}${lastTwoChars}@${domain}`;
   };
-
 
   // =====================================
   // REALTIME PROFILE
@@ -104,12 +126,15 @@ export default function ProfilePage() {
 
             setProfile(data);
 
-            setNewName(
-              data.name || ""
+            setNewRpName(
+              data.rpName ||
+                data.name ||
+                ""
             );
 
             setNewPhone(
-              data.phone || ""
+              data.phone ||
+                ""
             );
           }
         }
@@ -120,6 +145,165 @@ export default function ProfilePage() {
 
   }, [user]);
 
+// =====================================
+// LOAD FINANCE DATA
+// =====================================
+useEffect(() => {
+
+  if (!user)
+    return;
+
+  const unsubscribe =
+    onSnapshot(
+      collection(
+        db,
+        "users",
+        user.uid,
+        "finance"
+      ),
+      (snapshot) => {
+
+        const finance =
+          snapshot.docs.map(
+            (doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })
+          );
+
+          // =========================
+// HITUNG HUTANG FINAL
+// =========================
+const totalHutang = finance
+  .filter(
+    (item) =>
+      item.paymentType === "Hutang" &&
+      item.type === "Pengeluaran" &&
+      item.status === "Approved"
+  )
+  .reduce(
+    (a, b) =>
+      a + Number(b.amount || 0),
+    0
+  );
+
+const totalPembayaran = finance
+  .filter(
+    (item) =>
+      item.type === "Pembayaran Hutang" &&
+      item.status === "Approved"
+  )
+  .reduce(
+    (a, b) =>
+      a + Number(b.amount || 0),
+    0
+  );
+
+setTotalDebt(
+  Math.max(
+    totalHutang - totalPembayaran,
+    0
+  )
+);
+      }
+    );
+
+  return () =>
+    unsubscribe();
+
+}, [user]);
+
+
+// =====================================
+// LOAD CRAFTING DATA
+// =====================================
+useEffect(() => {
+
+  if (!user) return;
+
+  const q = query(
+    collection(
+      db,
+      "activity_logs"
+    ),
+    where(
+      "userId",
+      "==",
+      user.uid
+    )
+  );
+
+  const unsubscribe =
+    onSnapshot(
+      q,
+      (snapshot) => {
+
+        let total = 0;
+
+        snapshot.docs.forEach(
+          (doc) => {
+
+            const data =
+              doc.data();
+
+            // crafting success
+            if (
+              data.type ===
+              "crafting_approved"
+            ) {
+
+              total += Number(
+                data.successQty ||
+                data.quantity ||
+                1
+              );
+            }
+          }
+        );
+
+        setTotalCrafting(
+          total
+        );
+      }
+    );
+
+  return () =>
+    unsubscribe();
+
+}, [user]);
+
+  // =====================================
+  // FINANCE SCORE
+  // =====================================
+  const financeScore =
+    useMemo(() => {
+
+      if (
+        totalDebt <= 0
+      ) {
+
+        return "A+";
+      }
+
+      if (
+        totalDebt <
+        1000000
+      ) {
+
+        return "A";
+      }
+
+      if (
+  totalDebt < 2000000
+) {
+
+  return "B";
+}
+
+return "C";
+
+    }, [totalDebt]);
+
   // =====================================
   // UPDATE PROFILE
   // =====================================
@@ -129,11 +313,11 @@ export default function ProfilePage() {
       try {
 
         if (
-          !newName.trim()
+          !newRpName.trim()
         ) {
 
           toast.error(
-            "Name cannot be empty"
+            "Character name cannot be empty"
           );
 
           return;
@@ -141,7 +325,8 @@ export default function ProfilePage() {
 
         if (
           newPhone &&
-          newPhone.trim().length < 2
+          newPhone.trim()
+            .length < 2
         ) {
 
           toast.error(
@@ -160,12 +345,12 @@ export default function ProfilePage() {
             user.uid
           ),
           {
-            name:
-              newName.trim(),
+
+            rpName:
+              newRpName.trim(),
 
             phone:
-              newPhone
-                .trim(),
+              newPhone.trim(),
 
             updatedAt:
               serverTimestamp(),
@@ -173,7 +358,7 @@ export default function ProfilePage() {
         );
 
         toast.success(
-          "Profile updated successfully"
+          "Character updated successfully"
         );
 
         setEditing(false);
@@ -195,7 +380,7 @@ export default function ProfilePage() {
     };
 
   // =====================================
-  // UPDATE PHOTO USING IMGBB
+  // UPDATE PHOTO
   // =====================================
   const handleChangePhoto =
     async (e) => {
@@ -209,7 +394,6 @@ export default function ProfilePage() {
 
         setLoading(true);
 
-        // VALIDATION
         if (
           !file.type.startsWith(
             "image/"
@@ -225,7 +409,6 @@ export default function ProfilePage() {
           return;
         }
 
-        // MAX SIZE 5MB
         if (
           file.size >
           5 * 1024 * 1024
@@ -240,7 +423,6 @@ export default function ProfilePage() {
           return;
         }
 
-        // FORM DATA
         const formData =
           new FormData();
 
@@ -249,7 +431,6 @@ export default function ProfilePage() {
           file
         );
 
-        // UPLOAD TO IMGBB
         const response =
           await fetch(
             `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
@@ -275,7 +456,6 @@ export default function ProfilePage() {
         const imageUrl =
           data.data.url;
 
-        // SAVE TO FIREBASE
         await updateDoc(
           doc(
             db,
@@ -283,6 +463,7 @@ export default function ProfilePage() {
             user.uid
           ),
           {
+
             photo:
               imageUrl,
 
@@ -385,15 +566,16 @@ export default function ProfilePage() {
 
                   <h1 className="text-5xl font-bold">
                     {
+                      profile.rpName ||
                       profile.name
                     }
                   </h1>
 
                   <p className="text-gray-400 mt-2">
-  {maskEmail(
-    profile.email
-  )}
-</p>
+                    {maskEmail(
+                      profile.email
+                    )}
+                  </p>
 
                 </>
 
@@ -411,10 +593,10 @@ export default function ProfilePage() {
                     <input
                       type="text"
                       value={
-                        newName
+                        newRpName
                       }
                       onChange={(e) =>
-                        setNewName(
+                        setNewRpName(
                           e.target.value
                         )
                       }
@@ -440,13 +622,14 @@ export default function ProfilePage() {
                           e.target.value
                         )
                       }
-                      placeholder="123xx"
+                      placeholder="08xxxx"
                       className="w-full mt-2 bg-black border border-gray-700 rounded-2xl px-5 py-4 text-white outline-none"
                     />
 
                   </div>
 
                 </div>
+
               )}
 
               {/* BADGES */}
@@ -454,7 +637,8 @@ export default function ProfilePage() {
 
                 <span className="bg-red-500/20 text-red-300 px-4 py-2 rounded-xl border border-red-500/30">
                   {
-                    profile.role
+                    profile.role ||
+                    "Member"
                   }
                 </span>
 
@@ -505,14 +689,15 @@ export default function ProfilePage() {
                           false
                         );
 
-                        setNewName(
+                        setNewRpName(
+                          profile.rpName ||
                           profile.name ||
-                            ""
+                          ""
                         );
 
                         setNewPhone(
                           profile.phone ||
-                            ""
+                          ""
                         );
                       }}
                       className="bg-gray-700 hover:bg-gray-800 transition-all px-6 py-3 rounded-2xl font-semibold"
@@ -532,20 +717,20 @@ export default function ProfilePage() {
 
         </div>
 
-        {/* MONEY STATS */}
+        {/* STATS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
 
-          {/* HUTANG */}
+          {/* TOTAL HUTANG */}
           <div className="bg-[#111111] border border-red-500/20 rounded-3xl p-6">
 
             <p className="text-gray-400">
-              Hutang
+              Total Hutang
             </p>
 
             <h2 className="text-4xl font-bold text-red-400 mt-3">
               Rp{" "}
               {Number(
-                profile.money || 0
+                totalDebt || 0
               ).toLocaleString(
                 "id-ID"
               )}
@@ -586,6 +771,7 @@ export default function ProfilePage() {
 
               <h3 className="text-2xl font-bold mt-2">
                 {
+                  profile.rpName ||
                   profile.name
                 }
               </h3>
@@ -600,7 +786,8 @@ export default function ProfilePage() {
 
               <h3 className="text-2xl font-bold mt-2">
                 {
-                  profile.role
+                  profile.role ||
+                  "Member"
                 }
               </h3>
 
@@ -613,10 +800,10 @@ export default function ProfilePage() {
               </p>
 
               <h3 className="text-2xl font-bold mt-2">
-  {maskEmail(
-    profile.email
-  )}
-</h3>
+                {maskEmail(
+                  profile.email
+                )}
+              </h3>
 
             </div>
 
@@ -640,7 +827,7 @@ export default function ProfilePage() {
         <div className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-6 mt-8">
 
           <h2 className="text-3xl font-bold mb-5">
-             Statistics
+            Statistics
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -653,7 +840,7 @@ export default function ProfilePage() {
               </p>
 
               <h2 className="text-3xl font-bold text-yellow-400 mt-3">
-                38
+                {totalCrafting}
               </h2>
 
             </div>
@@ -666,7 +853,7 @@ export default function ProfilePage() {
               </p>
 
               <h2 className="text-3xl font-bold text-green-400 mt-3">
-                A+
+                {financeScore}
               </h2>
 
             </div>

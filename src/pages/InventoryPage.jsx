@@ -138,7 +138,7 @@ export default function InventoryPage() {
           name: form.name,
           category: normalizedCategory,
           stock: Number(form.stock),
-          requestedBy: user?.displayName || "Unknown",
+          requestedBy: user?.rpName || "Unknown",
           status: "pending",
           createdAt: serverTimestamp(),
         });
@@ -159,7 +159,7 @@ export default function InventoryPage() {
 
       await createActivityLog({
         action: "ADD_INVENTORY",
-        user: user?.displayName || "Unknown",
+        user: user?.rpName || "Unknown",
         role,
         target: form.name,
       });
@@ -199,7 +199,7 @@ export default function InventoryPage() {
           itemId: item.id,
           itemName: item.name,
           amount,
-          requestedBy: user?.displayName || "Unknown",
+          requestedBy: user?.rpName || "Unknown",
           status: "pending",
           createdAt: serverTimestamp(),
         });
@@ -311,7 +311,7 @@ export default function InventoryPage() {
           </div>
         </div>
 
-        {/* FILTER (CLEAN - NO KEUANGAN / CRAFTING HERE ANYMORE) */}
+        {/* FILTER */}
         <div className="flex gap-3 flex-wrap mb-6">
           {INVENTORY_CATEGORIES.map((category) => (
             <button
@@ -404,6 +404,7 @@ export default function InventoryPage() {
 
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold">{item.name}</h2>
+
                 <span className="text-xs bg-[#7A0019]/20 text-red-300 px-3 py-1 rounded-full">
                   {item.category}
                 </span>
@@ -411,42 +412,68 @@ export default function InventoryPage() {
 
               <div className="mt-5">
                 <p className="text-gray-400 text-sm">Current Stock</p>
+
                 <h3 className="text-4xl font-bold">{item.stock}</h3>
               </div>
 
-              <div className="flex gap-3 mt-5">
-                <button
-                  onClick={() => updateStock(item, "add")}
-                  className="flex-1 bg-green-600 hover:bg-green-700 rounded-xl py-3"
-                >
-                  + Stock
-                </button>
+              {/* HIDE +STOCK & -STOCK FOR SHATEI */}
+              {role !== "Shatei" && (
+                <div className="flex gap-3 mt-5">
 
-                <button
-                  onClick={() => updateStock(item, "reduce")}
-                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 rounded-xl py-3"
-                >
-                  - Stock
-                </button>
-              </div>
-
-              {role === "Oyabun" && (
-                <div className="flex flex-col gap-3 mt-3">
                   <button
-                    onClick={() => handleEditItem(item)}
-                    className="bg-blue-600 hover:bg-blue-700 rounded-xl py-3"
+                    onClick={() => updateStock(item, "add")}
+                    className="flex-1 bg-green-600 hover:bg-green-700 rounded-xl py-3"
                   >
-                    Edit
+                    + Stock
                   </button>
 
                   <button
-                    onClick={() => deleteItem(item)}
-                    className="bg-red-700 hover:bg-red-800 rounded-xl py-3"
+                    onClick={() => updateStock(item, "reduce")}
+                    className="flex-1 bg-yellow-600 hover:bg-yellow-700 rounded-xl py-3"
                   >
-                    Delete
+                    - Stock
                   </button>
+
                 </div>
               )}
+
+              {role === "Oyabun" && (
+  <div className="flex flex-col gap-3 mt-3">
+
+    <button
+      onClick={() => handleEditItem(item)}
+      className="bg-blue-600 hover:bg-blue-700 rounded-xl py-3 transition-all"
+    >
+      Edit
+    </button>
+
+    <button
+      onClick={() => deleteItem(item)}
+      className="bg-red-700 hover:bg-red-800 rounded-xl py-3 transition-all"
+    >
+      Delete
+    </button>
+
+    <label className="bg-purple-700 hover:bg-purple-800 rounded-xl py-3 text-center cursor-pointer transition-all">
+      {uploadingImage
+        ? "Uploading..."
+        : "Upload Photo"}
+
+      <input
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={(e) =>
+          handleUploadPhoto(
+            item,
+            e.target.files[0]
+          )
+        }
+      />
+    </label>
+
+  </div>
+)}
             </div>
           ))}
         </div>
@@ -454,6 +481,7 @@ export default function InventoryPage() {
         {/* PAGINATION */}
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-3 mt-10">
+
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               disabled={currentPage === 1}
@@ -475,6 +503,7 @@ export default function InventoryPage() {
             >
               Next
             </button>
+
           </div>
         )}
 
@@ -484,6 +513,7 @@ export default function InventoryPage() {
             <EmptyState title="No inventory items found" />
           </div>
         )}
+
       </div>
     </AppLayout>
   );

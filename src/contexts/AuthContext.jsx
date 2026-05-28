@@ -10,6 +10,7 @@ import {
   getDoc,
   setDoc,
   serverTimestamp,
+  onSnapshot,
 } from "firebase/firestore";
 
 import {
@@ -24,10 +25,13 @@ import {
   db,
 } from "../services/firebase/config";
 
-const AuthContext = createContext();
+const AuthContext =
+  createContext();
 
-export const useAuth = () =>
-  useContext(AuthContext);
+export const useAuth =
+  () => useContext(
+    AuthContext
+  );
 
 const googleProvider =
   new GoogleAuthProvider();
@@ -35,7 +39,11 @@ const googleProvider =
 export function AuthProvider({
   children,
 }) {
+
   const [user, setUser] =
+    useState(null);
+
+  const [profile, setProfile] =
     useState(null);
 
   const [role, setRole] =
@@ -44,9 +52,14 @@ export function AuthProvider({
   const [loading, setLoading] =
     useState(true);
 
+  // =====================================
+  // LOGIN
+  // =====================================
   const loginWithGoogle =
     async () => {
+
       try {
+
         const result =
           await signInWithPopup(
             auth,
@@ -56,75 +69,85 @@ export function AuthProvider({
         const firebaseUser =
           result.user;
 
-        const userRef = doc(
-          db,
-          "users",
-          firebaseUser.uid
-        );
+        const userRef =
+          doc(
+            db,
+            "users",
+            firebaseUser.uid
+          );
 
         const userSnap =
-          await getDoc(userRef);
+          await getDoc(
+            userRef
+          );
 
-        /*
-          USER BARU
-        */
-        if (!userSnap.exists()) {
-          /*
-            GANTI EMAIL INI
-            DENGAN EMAIL GOOGLE KAMU
-          */
+        // =====================================
+        // USER BARU
+        // =====================================
+        if (
+          !userSnap.exists()
+        ) {
 
+          // EMAIL OYABUN
           const isOyabun =
             firebaseUser.email ===
             "kevinsports05@gmail.com";
 
+          // ROLE DEFAULT
           const newRole =
             isOyabun
               ? "Oyabun"
-              : "Shatei";
+              : "Pending";
 
-          await setDoc(userRef, {
-            uid: firebaseUser.uid,
+          await setDoc(
+            userRef,
+            {
 
-            name:
-              firebaseUser.displayName ||
-              "Unknown",
+              uid:
+                firebaseUser.uid,
 
-            email:
-              firebaseUser.email,
+              // GOOGLE NAME
+              name:
+                firebaseUser.displayName ||
+                "Unknown",
 
-            photo:
-              firebaseUser.photoURL ||
-              "",
+              // RP NAME
+              rpName:
+                firebaseUser.displayName ||
+                "Unknown",
 
-            role: newRole,
+              email:
+                firebaseUser.email,
 
-            debtLimit:
-              newRole === "Oyabun"
-                ? 999999999
-                : 500000,
+              photo:
+                firebaseUser.photoURL ||
+                "",
 
-            totalDebt: 0,
+              role:
+                newRole,
 
-            status: "Active",
+              debtLimit:
+                newRole ===
+                "Oyabun"
+                  ? 999999999
+                  : 500000,
 
-            createdAt:
-              serverTimestamp(),
-          });
+              totalDebt: 0,
 
-          setRole(newRole);
-        } else {
-          /*
-            USER SUDAH ADA
-          */
+              status:
+                "Active",
 
-          const userData =
-            userSnap.data();
-
-          setRole(userData.role);
+              createdAt:
+                serverTimestamp(),
+            }
+          );
         }
+
       } catch (error) {
-        console.error(error);
+
+        console.error(
+          error
+        );
 
         alert(
           "Failed to login with Google"
@@ -132,60 +155,138 @@ export function AuthProvider({
       }
     };
 
-  const logout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // =====================================
+  // LOGOUT
+  // =====================================
+  const logout =
+    async () => {
 
+      try {
+
+        await signOut(
+          auth
+        );
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+      }
+    };
+
+  // =====================================
+  // AUTH LISTENER
+  // =====================================
   useEffect(() => {
-    const unsubscribe =
+
+    let unsubscribeUser =
+      null;
+
+    const unsubscribeAuth =
       onAuthStateChanged(
         auth,
-        async (currentUser) => {
-          setUser(currentUser);
+        async (
+          currentUser
+        ) => {
 
-          if (currentUser) {
-            try {
-              const userRef = doc(
-                db,
-                "users",
-                currentUser.uid
-              );
+          try {
 
-              const userSnap =
-                await getDoc(userRef);
+            if (
+              currentUser
+            ) {
 
-              if (
-                userSnap.exists()
-              ) {
-                const userData =
-                  userSnap.data();
-
-                setRole(
-                  userData.role
+              const userRef =
+                doc(
+                  db,
+                  "users",
+                  currentUser.uid
                 );
-              }
-            } catch (error) {
-              console.error(error);
+
+              // REALTIME USER
+              unsubscribeUser =
+                onSnapshot(
+                  userRef,
+                  (
+                    snapshot
+                  ) => {
+
+                    if (
+                      snapshot.exists()
+                    ) {
+
+                      const userData =
+                        snapshot.data();
+
+                      setProfile(
+                        userData
+                      );
+
+                      setUser({
+
+                        ...currentUser,
+
+                        rpName:
+                          userData.rpName ||
+                          userData.name ||
+                          currentUser.displayName ||
+                          "Unknown",
+
+                        photo:
+                          userData.photo ||
+                          currentUser.photoURL,
+
+                        role:
+                          userData.role,
+                      });
+
+                      setRole(
+                        userData.role
+                      );
+                    }
+                  }
+                );
+
+            } else {
+
+              setUser(null);
+
+              setProfile(null);
+
+              setRole(null);
             }
-          } else {
-            setRole(null);
+
+          } catch (error) {
+
+            console.error(
+              error
+            );
           }
 
           setLoading(false);
         }
       );
 
-    return unsubscribe;
+    return () => {
+
+      unsubscribeAuth();
+
+      if (
+        unsubscribeUser
+      ) {
+
+        unsubscribeUser();
+      }
+    };
+
   }, []);
 
   return (
+
     <AuthContext.Provider
       value={{
         user,
+        profile,
         role,
         loading,
         loginWithGoogle,

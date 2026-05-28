@@ -16,6 +16,8 @@ import {
   query,
   serverTimestamp,
   updateDoc,
+  deleteDoc,
+  getDocs,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
@@ -32,6 +34,7 @@ import { db } from "../services/firebase/config";
 const CRAFTING_RECIPES = [
   {
     name: "Light Armor",
+    outputAmount: 1,
     materials: [
       { item: "Paketan Jamur", qty: 2 },
       { item: "Paketan Singkong", qty: 3 },
@@ -54,6 +57,7 @@ const CRAFTING_RECIPES = [
 
   {
     name: "Peluru .44 Magnum",
+    outputAmount: 16,
     materials: [
       { item: "Berlian", qty: 1 },
       { item: "Paketan Jamur", qty: 3 },
@@ -66,6 +70,7 @@ const CRAFTING_RECIPES = [
 
   {
     name: "Peluru 9mm",
+    outputAmount: 35,
     materials: [
       { item: "Berlian", qty: 1 },
       { item: "Paketan Jamur", qty: 3 },
@@ -78,6 +83,7 @@ const CRAFTING_RECIPES = [
 
   {
     name: "Peluru Double Action",
+    outputAmount: 16,
     materials: [
       { item: "Berlian", qty: 1 },
       { item: "Paketan Jamur", qty: 3 },
@@ -90,6 +96,7 @@ const CRAFTING_RECIPES = [
 
   {
     name: "Peluru 7.62 X 39",
+    outputAmount: 45,
     materials: [
       { item: "Berlian", qty: 1 },
       { item: "Paketan Jamur", qty: 5 },
@@ -101,7 +108,21 @@ const CRAFTING_RECIPES = [
   },
 
   {
+    name: "Peluru .50 MBG",
+    outputAmount: 5,
+    materials: [
+      { item: "Berlian", qty: 1 },
+      { item: "Paketan Jamur", qty: 5 },
+      { item: "Paketan Borax", qty: 6 },
+      { item: "Kaca", qty: 15 },
+      { item: "Besi", qty: 35 },
+      { item: "Tembaga", qty: 40 },
+    ],
+  },
+
+  {
     name: "Lockpick",
+    outputAmount: 1,
     materials: [
       { item: "Berlian", qty: 1 },
       { item: "Paketan Jamur", qty: 2 },
@@ -114,6 +135,7 @@ const CRAFTING_RECIPES = [
 
   {
     name: "Alat Peretas",
+    outputAmount: 1,
     materials: [
       { item: "Berlian", qty: 1 },
       { item: "Paketan Jamur", qty: 4 },
@@ -125,6 +147,7 @@ const CRAFTING_RECIPES = [
 
   {
     name: "Thermite",
+    outputAmount: 1,
     materials: [
       { item: "Berlian", qty: 1 },
       { item: "Paketan Jamur", qty: 2 },
@@ -136,6 +159,7 @@ const CRAFTING_RECIPES = [
 
   {
     name: "Drill",
+    outputAmount: 1,
     materials: [
       { item: "Berlian", qty: 1 },
       { item: "Borax", qty: 3 },
@@ -160,8 +184,14 @@ export default function CraftingPage() {
   const [selectedRecipe, setSelectedRecipe] =
     useState("Light Armor");
 
-  const [quantity, setQuantity] =
+  // ============================================
+  // SUCCESS & FAILED QTY
+  // ============================================
+  const [successQuantity, setSuccessQuantity] =
     useState(1);
+
+  const [failedQuantity, setFailedQuantity] =
+    useState(0);
 
   // ============================================
   // HISTORY
@@ -226,7 +256,7 @@ export default function CraftingPage() {
   }, []);
 
   // ============================================
-  // REALTIME CRAFTING HISTORY
+  // REALTIME HISTORY
   // ============================================
   useEffect(() => {
 
@@ -277,6 +307,37 @@ export default function CraftingPage() {
     );
 
   }, [selectedRecipe]);
+
+// ============================================
+// SAFE NUMBER
+// ============================================
+const successQty =
+  parseInt(successQuantity) || 0;
+
+const failedQty =
+  parseInt(failedQuantity) || 0;
+
+const outputPerCraft =
+  parseInt(recipe?.outputAmount) || 0;
+
+// ============================================
+// TOTAL PROCESS
+// ============================================
+const totalCraftProcess =
+  successQty + failedQty;
+
+// ============================================
+// TOTAL OUTPUT
+// LOGIC:
+// SUCCESS = menghasilkan output
+// FAILED = mengurangi output
+// ============================================
+const totalOutput =
+  Math.max(
+    0,
+    (successQty - failedQty) *
+      outputPerCraft
+  );
 
   // ============================================
   // FIND INVENTORY ITEM
@@ -384,6 +445,9 @@ export default function CraftingPage() {
       qty
     ) => {
 
+      if (Number(qty) <= 0)
+        return;
+
       const craftedItem =
         findInventoryItem(
           itemName
@@ -436,7 +500,9 @@ export default function CraftingPage() {
   const addCraftingHistory =
     async ({
       recipeName,
-      quantity,
+      successQty,
+      failedQty,
+      outputQty,
       status,
     }) => {
 
@@ -448,13 +514,24 @@ export default function CraftingPage() {
         {
           recipeName,
 
-          quantity:
-            Number(quantity),
+          successQty:
+            Number(successQty),
+
+          failedQty:
+            Number(failedQty),
+
+          outputQty:
+            Number(outputQty),
+
+          totalProcess:
+            Number(successQty) +
+            Number(failedQty),
 
           status,
 
           craftedBy:
-            user?.displayName ||
+            user?.rpName ||
+            user?.name ||
             "Unknown",
 
           craftedByUid:
@@ -468,6 +545,52 @@ export default function CraftingPage() {
       );
     };
 
+      // ============================================
+  // ADD ACTIVITY LOG
+  // ============================================
+  const addActivityLog =
+    async ({
+      type,
+      action,
+      target,
+      quantity,
+      description,
+    }) => {
+
+      await addDoc(
+        collection(
+          db,
+          "activity_logs"
+        ),
+        {
+          type,
+
+          action,
+
+          target,
+
+          quantity,
+
+          description,
+
+          role,
+
+          userId:
+            user?.uid,
+
+          userName:
+            user?.rpName ||
+            user?.name ||
+            "Unknown",
+
+          createdAt:
+            serverTimestamp(),
+        }
+      );
+    };
+
+
+
   // ============================================
   // CREATE CRAFTING
   // ============================================
@@ -479,12 +602,11 @@ export default function CraftingPage() {
         setLoading(true);
 
         if (
-          !quantity ||
-          Number(quantity) <= 0
+          totalCraftProcess <= 0
         ) {
 
           toast.error(
-            "Invalid quantity"
+            "Masukkan quantity crafting"
           );
 
           return;
@@ -493,7 +615,7 @@ export default function CraftingPage() {
         const validation =
           checkMaterials(
             recipe,
-            quantity
+            totalCraftProcess
           );
 
         if (
@@ -515,33 +637,70 @@ export default function CraftingPage() {
           "Oyabun"
         ) {
 
+          // KURANGI MATERIAL
           await reduceInventoryMaterials(
             recipe.materials,
-            quantity
+            totalCraftProcess
           );
 
+          // ADD OUTPUT
           await addCraftedItemToInventory(
             recipe.name,
-            quantity
+            totalOutput
           );
 
           // HISTORY
           await addCraftingHistory({
             recipeName:
               recipe.name,
-            quantity,
+
+            successQty:
+              successQty,
+
+            failedQty:
+              failedQty,
+
+            outputQty:
+              totalOutput,
+
             status:
-              "Crafted",
+  failedQty > 0
+    ? "Partial Failed"
+    : "Crafted",
           });
 
           toast.success(
-            "Crafting berhasil"
+            "Crafting berhasil diproses"
           );
 
-          setQuantity(1);
+          setSuccessQuantity(1);
+
+          setFailedQuantity(0);
 
           return;
         }
+
+                  // ACTIVITY LOG
+          await addActivityLog({
+            type:
+              failedQty > 0
+                ? "crafting_failed"
+                : "crafting_approved",
+
+            action:
+              failedQty > 0
+                ? "Craft Partial Failed"
+                : "Craft Completed",
+
+            target:
+              recipe.name,
+
+            quantity:
+              totalOutput,
+
+            description:
+              `${user?.rpName || user?.name} crafted ${recipe.name} with ${successQty} success and ${failedQty} failed`,
+          });
 
         // ====================================
         // SHATEI REQUEST
@@ -559,10 +718,19 @@ export default function CraftingPage() {
               recipe.name,
 
             resultAmount:
-              Number(quantity),
+              Number(totalOutput),
 
             category:
               "CRAFTING",
+
+            successQty:
+              Number(successQuantity),
+
+            failedQty:
+              Number(failedQuantity),
+
+            totalProcess:
+              totalCraftProcess,
 
             materials:
               recipe.materials.map(
@@ -577,15 +745,14 @@ export default function CraftingPage() {
                       material.qty
                     ) *
                     Number(
-                      quantity
+                      totalCraftProcess
                     ),
                 })
               ),
 
             requestedBy:
-              user
-                ?.displayName ||
-              "Unknown",
+              user?.rpName ||
+              user?.name,
 
             requestedByUid:
               user?.uid,
@@ -598,20 +765,50 @@ export default function CraftingPage() {
           }
         );
 
-        // HISTORY
-        await addCraftingHistory({
-          recipeName:
+                // ACTIVITY LOG
+        await addActivityLog({
+          type:
+            "crafting_request",
+
+          action:
+            "Craft Request",
+
+          target:
             recipe.name,
-          quantity,
-          status:
-            "Pending",
+
+          quantity:
+            totalOutput,
+
+          description:
+            `${user?.rpName || user?.name} requested crafting ${recipe.name} with ${successQty} success and ${failedQty} failed`,
         });
+
+
+       // HISTORY
+await addCraftingHistory({
+  recipeName:
+    recipe.name,
+
+  successQty:
+    successQty,
+
+  failedQty:
+    failedQty,
+
+  outputQty:
+    Number(totalOutput),
+
+  status:
+    "Pending",
+});
 
         toast.success(
           "Request crafting dikirim"
         );
 
-        setQuantity(1);
+        setSuccessQuantity(1);
+
+        setFailedQuantity(0);
 
       } catch (error) {
 
@@ -628,6 +825,54 @@ export default function CraftingPage() {
         setLoading(false);
       }
     };
+
+
+      // ============================================
+  // CLEAR HISTORY
+  // ============================================
+  const handleClearHistory = async () => {
+
+    if (role !== "Oyabun") {
+      toast.error("Only Oyabun can clear history");
+      return;
+    }
+
+    const confirmDelete = window.confirm(
+      "Yakin ingin menghapus semua crafting history?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+
+      setLoading(true);
+
+      const snapshot = await getDocs(
+        collection(db, "crafting_history")
+      );
+
+      const promises = snapshot.docs.map((item) =>
+        deleteDoc(
+          doc(db, "crafting_history", item.id)
+        )
+      );
+
+      await Promise.all(promises);
+
+      toast.success("Crafting history cleared");
+
+    } catch (error) {
+
+      console.error(error);
+
+      toast.error("Failed clear history");
+
+    } finally {
+
+      setLoading(false);
+    }
+  };
+
 
   // ============================================
   // PAGINATION HISTORY
@@ -733,27 +978,57 @@ export default function CraftingPage() {
 
             </div>
 
-            <div>
+            <div className="grid grid-cols-2 gap-4">
 
-              <label className="text-sm text-gray-400">
-                Quantity
-              </label>
+              <div>
 
-              <input
-                type="number"
-                min={1}
-                value={
-                  quantity
-                }
-                onChange={(e) =>
-                  setQuantity(
-                    Number(
-                      e.target.value
+                <label className="text-sm text-green-400">
+                  Success Qty
+                </label>
+
+                <input
+                  type="number"
+                  min={0}
+                  value={
+                    successQuantity
+                  }
+                  onChange={(e) =>
+                    setSuccessQuantity(
+  Math.max(
+    0,
+    Number(e.target.value)
+                      )
                     )
-                  )
-                }
-                className="w-full mt-2 bg-black border border-gray-700 rounded-2xl px-4 py-3"
-              />
+                  }
+                  className="w-full mt-2 bg-black border border-green-700 rounded-2xl px-4 py-3"
+                />
+
+              </div>
+
+              <div>
+
+                <label className="text-sm text-red-400">
+                  Failed Qty
+                </label>
+
+                <input
+                  type="number"
+                  min={0}
+                  value={
+                    failedQuantity
+                  }
+                  onChange={(e) =>
+                    setFailedQuantity(
+  Math.max(
+    0,
+    Number(e.target.value)
+                      )
+                    )
+                  }
+                  className="w-full mt-2 bg-black border border-red-700 rounded-2xl px-4 py-3"
+                />
+
+              </div>
 
             </div>
 
@@ -784,7 +1059,7 @@ export default function CraftingPage() {
                       material.qty
                     ) *
                     Number(
-                      quantity
+                      totalCraftProcess
                     );
 
                   const currentStock =
@@ -849,6 +1124,53 @@ export default function CraftingPage() {
 
           </div>
 
+          {/* OUTPUT INFO */}
+          <div className="mt-6 bg-black border border-gray-700 rounded-2xl p-4">
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+              <div>
+
+                <p className="text-gray-400 text-sm">
+                  Success Craft
+                </p>
+
+                <h2 className="text-3xl font-bold text-green-400 mt-2">
+                  {successQty}
+                </h2>
+
+              </div>
+
+              <div>
+
+                <p className="text-gray-400 text-sm">
+                  Failed Craft
+                </p>
+
+                <h2 className="text-3xl font-bold text-red-400 mt-2">
+                  {failedQty}
+                </h2>
+
+              </div>
+
+              <div>
+
+                <p className="text-gray-400 text-sm">
+                  Total Output
+                </p>
+
+                <h2 className="text-3xl font-bold mt-2 text-[#7A0019]">
+
+                  {Number(totalOutput || 0)} pcs
+
+                </h2>
+
+              </div>
+
+            </div>
+
+          </div>
+
           <button
             onClick={
               handleCreateCrafting
@@ -871,21 +1193,33 @@ export default function CraftingPage() {
         {/* HISTORY */}
         <div className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-6">
 
-          <div className="flex items-center justify-between mb-8">
+         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-8">
 
-            <div>
+  <div>
 
-              <h2 className="text-3xl font-bold">
-                Crafting History
-              </h2>
+    <h2 className="text-3xl font-bold">
+      Crafting History
+    </h2>
 
-              <p className="text-gray-400 mt-2">
-                Semua riwayat crafting player
-              </p>
+    <p className="text-gray-400 mt-2">
+      Semua riwayat crafting player
+    </p>
 
-            </div>
+  </div>
 
-          </div>
+  {role === "Oyabun" && (
+    <button
+      onClick={handleClearHistory}
+      disabled={loading}
+      className="bg-red-700 hover:bg-red-800 disabled:opacity-50 transition-all px-6 py-3 rounded-2xl font-semibold shadow-lg shadow-red-900/30"
+    >
+      {loading
+        ? "Clearing..."
+        : "Clear History"}
+    </button>
+  )}
+
+</div>
 
           <div className="space-y-5">
 
@@ -914,6 +1248,9 @@ export default function CraftingPage() {
                             item.status ===
                             "Crafted"
                               ? "bg-green-500/20 text-green-300"
+                              : item.status ===
+                                "Partial Failed"
+                              ? "bg-red-500/20 text-red-300"
                               : "bg-yellow-500/20 text-yellow-300"
                           }`}
                         >
@@ -927,10 +1264,26 @@ export default function CraftingPage() {
                       <div className="flex flex-wrap gap-3 mt-4">
 
                         <span className="bg-[#111111] px-4 py-2 rounded-xl text-sm">
-                          Qty:
+                          Success:
                           {" "}
                           {
-                            item.quantity
+                            item.successQty || 0
+                          }
+                        </span>
+
+                        <span className="bg-[#111111] px-4 py-2 rounded-xl text-sm">
+                          Failed:
+                          {" "}
+                          {
+                            item.failedQty || 0
+                          }
+                        </span>
+
+                        <span className="bg-[#111111] px-4 py-2 rounded-xl text-sm">
+                          Output:
+                          {" "}
+                          {
+                            item.outputQty || 0
                           }
                         </span>
 
@@ -939,14 +1292,6 @@ export default function CraftingPage() {
                           {" "}
                           {
                             item.craftedBy
-                          }
-                        </span>
-
-                        <span className="bg-[#111111] px-4 py-2 rounded-xl text-sm">
-                          Role:
-                          {" "}
-                          {
-                            item.role
                           }
                         </span>
 

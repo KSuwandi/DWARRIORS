@@ -10,7 +10,6 @@ import DashboardPage from "./pages/DashboardPage";
 import InventoryPage from "./pages/InventoryPage";
 import FinancePage from "./pages/FinancePage";
 import MembersPage from "./pages/MembersPage";
-import { useAuth } from "./contexts/AuthContext";
 import CraftingPage from "./pages/CraftingPage";
 import CraftingRequestsPage from "./pages/CraftingRequestsPage";
 import CraftingLogsPage from "./pages/CraftingLogsPage";
@@ -21,113 +20,305 @@ import InventoryApprovalPage from "./pages/InventoryApprovalPage";
 import ActivityLogsPage from "./pages/ActivityLogsPage";
 import RequestsPage from "./pages/RequestsPage";
 import FinanceApprovalPage from "./pages/FinanceApprovalPage";
+import RoleRequestPage from "./pages/RoleRequestPage";
+import RoleApprovalPage from "./pages/RoleApprovalPage";
+
+import {
+  useAuth,
+} from "./contexts/AuthContext";
+
 export default function App() {
-  const { user } = useAuth();
+
+  const {
+    user,
+    role,
+  } = useAuth();
+
+  // =====================================
+  // PENDING USER
+  // =====================================
+  const isPending =
+    user &&
+    role === "Pending";
 
   return (
+
     <Routes>
+
+      {/* HOME */}
       <Route
         path="/"
         element={<HomePage />}
       />
 
+      {/* LOGIN */}
       <Route
         path="/login"
         element={
           user ? (
-            <Navigate to="/dashboard" />
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <Navigate to="/dashboard" />
+            )
           ) : (
             <LoginPage />
           )
         }
       />
 
+      {/* ROLE REQUEST */}
+      <Route
+        path="/request-role"
+        element={
+          user ? (
+            <RoleRequestPage />
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+
+      {/* ROLE APPROVAL */}
+      <Route
+        path="/role-approval"
+        element={
+          user ? (
+            role === "Oyabun" ? (
+              <RoleApprovalPage />
+            ) : (
+              <Navigate to="/dashboard" />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+
+      {/* DASHBOARD */}
       <Route
         path="/dashboard"
         element={
           user ? (
-            <DashboardPage />
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <DashboardPage />
+            )
           ) : (
             <Navigate to="/login" />
           )
         }
       />
 
+      {/* INVENTORY */}
       <Route
         path="/inventory"
         element={
           user ? (
-            <InventoryPage />
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <InventoryPage />
+            )
           ) : (
             <Navigate to="/login" />
           )
         }
       />
 
+      {/* FINANCE */}
       <Route
         path="/finance"
         element={
           user ? (
-            <FinancePage />
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <FinancePage />
+            )
           ) : (
             <Navigate to="/login" />
           )
         }
       />
 
+      {/* MEMBERS */}
       <Route
-      path="/members"
-      element={<MembersPage />}
-    />
+        path="/members"
+        element={
+          user ? (
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <MembersPage />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
 
-    <Route
-      path="/crafting"
-    element={<CraftingPage />}
-    />
+      {/* CRAFTING */}
+      <Route
+        path="/crafting"
+        element={
+          user ? (
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <CraftingPage />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
 
-    <Route
-  path="/crafting-requests"
-  element={<CraftingRequestsPage />}
-/>
+      {/* CRAFTING REQUESTS */}
+      <Route
+        path="/crafting-requests"
+        element={
+          user ? (
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <CraftingRequestsPage />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
 
-    <Route
-      path="/crafting-logs"
-      element={<CraftingLogsPage />}
-    />
+      {/* CRAFTING LOGS */}
+      <Route
+        path="/crafting-logs"
+        element={
+          user ? (
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <CraftingLogsPage />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
 
-        <Route
-  path="/profile"
-  element={<ProfilePage />}
-/>
+      {/* PROFILE */}
+      <Route
+        path="/profile"
+        element={
+          user ? (
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <ProfilePage />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
 
-        <Route
-    path="/notifications"
-    element={<NotificationsPage />}
-  />
+      {/* NOTIFICATIONS */}
+      <Route
+        path="/notifications"
+        element={
+          user ? (
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <NotificationsPage />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
 
-        <Route
-  path="/recycle-bin"
-  element={<RecycleBinPage />}
-/>
+      {/* RECYCLE BIN */}
+      <Route
+        path="/recycle-bin"
+        element={
+          user ? (
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <RecycleBinPage />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
 
-    <Route
-      path="/inventory-approval"
-      element={<InventoryApprovalPage />}
-    />
+      {/* INVENTORY APPROVAL */}
+      <Route
+        path="/inventory-approval"
+        element={
+          user ? (
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <InventoryApprovalPage />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
 
-    <Route
-      path="/activity-logs"
-      element={<ActivityLogsPage />}
-    />
-    <Route
-  path="/requests"
-  element={<RequestsPage />}
-/>
+      {/* ACTIVITY LOGS */}
+      <Route
+        path="/activity-logs"
+        element={
+          user ? (
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <ActivityLogsPage />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
 
-        <Route
-  path="/finance-approval"
-  element={<FinanceApprovalPage />}
-/>
+      {/* REQUESTS */}
+      <Route
+        path="/requests"
+        element={
+          user ? (
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <RequestsPage />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+
+      {/* FINANCE APPROVAL */}
+      <Route
+        path="/finance-approval"
+        element={
+          user ? (
+            isPending ? (
+              <Navigate to="/request-role" />
+            ) : (
+              <FinanceApprovalPage />
+            )
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+
     </Routes>
   );
 }

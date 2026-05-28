@@ -56,6 +56,57 @@ export default function FinancePage() {
       note: "",
     });
 
+      // =====================================
+  // CREATE ACTIVITY LOG
+  // =====================================
+  const createActivityLog =
+    async ({
+      type,
+      action,
+      target,
+      quantity,
+      description,
+    }) => {
+
+      try {
+
+        await addDoc(
+          collection(
+            db,
+            "activity_logs"
+          ),
+          {
+            type,
+
+            action,
+
+            user:
+              user?.rpName ||
+              "Unknown",
+
+            role:
+              role || "-",
+
+            target,
+
+            quantity,
+
+            description,
+
+            createdAt:
+              serverTimestamp(),
+          }
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Activity log error:",
+          error
+        );
+      }
+    };
+
   // =====================================
   // REALTIME TRANSACTIONS
   // =====================================
@@ -269,7 +320,7 @@ export default function FinancePage() {
         currentPageLimit
     );
 
-  // =====================================
+    // =====================================
   // ADD TRANSACTION
   // =====================================
   const handleSubmit =
@@ -300,10 +351,15 @@ export default function FinancePage() {
 
         return;
       }
+
       if (!form.note.trim()) {
-  toast.error("Catatan transaksi wajib diisi");
-  return;
-}
+
+        toast.error(
+          "Catatan transaksi wajib diisi"
+        );
+
+        return;
+      }
 
       const amount =
         Number(form.amount);
@@ -349,19 +405,41 @@ export default function FinancePage() {
               form.note.trim(),
 
             createdBy:
-              user.displayName ||
+              user.rpName ||
               "Unknown",
 
             status:
-              "Approved",
+              "Pending",
 
             createdAt:
               serverTimestamp(),
           }
         );
 
+        // =====================================
+        // ACTIVITY LOG
+        // =====================================
+        await createActivityLog({
+          type:
+            "finance_create",
+
+          action:
+            "Finance Transaction Created",
+
+          target:
+            form.title,
+
+          quantity:
+            amount,
+
+          description:
+            `${user.rpName} created ${form.type} transaction ${form.title} sebesar Rp ${amount.toLocaleString(
+              "id-ID"
+            )}`,
+        });
+
         toast.success(
-          `${form.type} berhasil ditambahkan`
+          `${form.type} berhasil dikirim untuk approval`
         );
 
         setForm({
@@ -391,188 +469,237 @@ export default function FinancePage() {
       }
     };
 
+    // =====================================
+  // BAYAR HUTANG
   // =====================================
-// BAYAR HUTANG
-// =====================================
-const handlePayDebt =
-  async () => {
-
-    if (
-      totalDebt <= 0
-    ) {
-
-      toast.error(
-        "Tidak ada hutang"
-      );
-
-      return;
-    }
-
-    const input =
-      prompt(
-        `Masukkan nominal pembayaran hutang\n\nTotal Hutang: Rp ${totalDebt.toLocaleString(
-          "id-ID"
-        )}`
-      );
-
-    if (!input) return;
-
-    const amount =
-      Number(input);
-
-    if (
-      !amount ||
-      amount <= 0
-    ) {
-
-      toast.error(
-        "Jumlah pembayaran tidak valid"
-      );
-
-      return;
-    }
-
-    if (
-      amount >
-      totalDebt
-    ) {
-
-      toast.error(
-        "Pembayaran melebihi total hutang"
-      );
-
-      return;
-    }
-
-    try {
-
-      setLoading(true);
-
-      await addDoc(
-        collection(
-          db,
-          "users",
-          user.uid,
-          "finance"
-        ),
-        {
-          type:
-            "Pembayaran Hutang",
-
-          paymentType:
-            "Cash",
-
-          moneyType:
-            "Uang Putih",
-
-          title:
-            "Pembayaran Hutang",
-
-          amount,
-
-          remainingDebt:
-            totalDebt - amount,
-
-          previousDebt:
-            totalDebt,
-
-          isDebtPayment:
-            true,
-
-          note:
-            `Request pembayaran hutang sebesar Rp ${amount.toLocaleString(
-              "id-ID"
-            )}`,
-
-          createdBy:
-            user.displayName ||
-            "Unknown",
-
-          createdByUid:
-            user.uid,
-
-          status:
-            "Pending",
-
-          createdAt:
-            serverTimestamp(),
-        }
-      );
-
-      toast.success(
-        "Request pembayaran hutang berhasil dikirim"
-      );
-
-    } catch (error) {
-
-      console.error(
-        error
-      );
-
-      toast.error(
-        "Gagal request pembayaran hutang"
-      );
-
-    } finally {
-
-      setLoading(false);
-    }
-  };
-
-  // =====================================
-// APPROVE PAYMENT
-// =====================================
-const approvePayment =
-  async (ref) => {
-
-    try {
+  const handlePayDebt =
+    async () => {
 
       if (
-        role !== "Oyabun"
+        totalDebt <= 0
       ) {
 
         toast.error(
-          "Hanya Oyabun yang bisa approve"
+          "Tidak ada hutang"
         );
 
         return;
       }
 
-      await updateDoc(
-        ref,
-        {
-          status:
-            "Approved",
+      const input =
+        prompt(
+          `Masukkan nominal pembayaran hutang\n\nTotal Hutang: Rp ${totalDebt.toLocaleString(
+            "id-ID"
+          )}`
+        );
 
-          approvedBy:
-            user.displayName,
+      if (!input) return;
 
-          approvedAt:
-            serverTimestamp(),
-        }
-      );
+      const amount =
+        Number(input);
 
-      toast.success(
-        "Pembayaran hutang di approve"
-      );
+      if (
+        !amount ||
+        amount <= 0
+      ) {
 
-    } catch (error) {
+        toast.error(
+          "Jumlah pembayaran tidak valid"
+        );
 
-      console.error(
-        error
-      );
+        return;
+      }
+
+      if (
+        amount >
+        totalDebt
+      ) {
+
+        toast.error(
+          "Pembayaran melebihi total hutang"
+        );
+
+        return;
+      }
+
+      try {
+
+        setLoading(true);
+
+        await addDoc(
+          collection(
+            db,
+            "users",
+            user.uid,
+            "finance"
+          ),
+          {
+            type:
+              "Pembayaran Hutang",
+
+            paymentType:
+              "Cash",
+
+            moneyType:
+              "Uang Putih",
+
+            title:
+              "Pembayaran Hutang",
+
+            amount,
+
+            remainingDebt:
+              totalDebt - amount,
+
+            previousDebt:
+              totalDebt,
+
+            isDebtPayment:
+              true,
+
+            note:
+              `Request pembayaran hutang sebesar Rp ${amount.toLocaleString(
+                "id-ID"
+              )}`,
+
+            createdBy:
+              user.rpName ||
+              "Unknown",
+
+            createdByUid:
+              user.uid,
+
+            status:
+              "Pending",
+
+            createdAt:
+              serverTimestamp(),
+          }
+        );
+
+        // =====================================
+        // ACTIVITY LOG
+        // =====================================
+        await createActivityLog({
+          type:
+            "finance_debt_request",
+
+          action:
+            "Debt Payment Requested",
+
+          target:
+            "Pembayaran Hutang",
+
+          quantity:
+            amount,
+
+          description:
+            `${user.rpName} requested debt payment sebesar Rp ${amount.toLocaleString(
+              "id-ID"
+            )}`,
+        });
+
+        toast.success(
+          "Request pembayaran hutang berhasil dikirim"
+        );
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+        toast.error(
+          "Gagal request pembayaran hutang"
+        );
+
+      } finally {
+
+        setLoading(false);
+      }
+    };
+
+    // =====================================
+// APPROVE PAYMENT
+// =====================================
+const approvePayment = async (item) => {
+
+  try {
+
+    if (role !== "Oyabun") {
 
       toast.error(
-        "Gagal approve pembayaran"
+        "Hanya Oyabun yang bisa approve"
       );
-    }
-  };
 
-  // =====================================
+      return;
+    }
+
+    // REF DOCUMENT
+    const transactionRef = doc(
+      db,
+      "users",
+      item.createdByUid || user.uid,
+      "finance",
+      item.id
+    );
+
+    await updateDoc(
+      transactionRef,
+      {
+        status: "Approved",
+
+        approvedBy:
+          user.rpName,
+
+        approvedAt:
+          serverTimestamp(),
+      }
+    );
+
+    // =====================================
+    // ACTIVITY LOG
+    // =====================================
+    await createActivityLog({
+      type:
+        "finance_approved",
+
+      action:
+        "Finance Approved",
+
+      target:
+        item.title,
+
+      quantity:
+        item.amount,
+
+      description:
+        `${user.rpName} approved transaction ${item.title}`,
+    });
+
+    toast.success(
+      "Transaksi berhasil di approve"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    toast.error(
+      "Gagal approve transaksi"
+    );
+  }
+};
+
+
+    // =====================================
   // DELETE TRANSACTION
   // =====================================
   const deleteTransaction =
-    async (id) => {
+    async (
+      id,
+      title
+    ) => {
 
       try {
 
@@ -598,6 +725,26 @@ const approvePayment =
             id
           )
         );
+
+        // =====================================
+        // ACTIVITY LOG
+        // =====================================
+        await createActivityLog({
+          type:
+            "finance_delete",
+
+          action:
+            "Finance Deleted",
+
+          target:
+            title,
+
+          quantity:
+            1,
+
+          description:
+            `${user.rpName} deleted finance transaction ${title}`,
+        });
 
         toast.success(
           "History berhasil dihapus"
@@ -1035,9 +1182,7 @@ const approvePayment =
 
                       <button
                         onClick={() =>
-                          approvePayment(
-                            item.ref
-                          )
+                          approvePayment(item)
                         }
                         className="bg-green-700 hover:bg-green-800 px-5 py-3 rounded-2xl transition-all"
                       >
@@ -1053,8 +1198,9 @@ const approvePayment =
                       <button
                         onClick={() =>
                           deleteTransaction(
-                            item.id
-                          )
+                          item.id,
+                          item.title
+                        )
                         }
                         className="bg-red-700 hover:bg-red-800 px-5 py-3 rounded-2xl transition-all"
                       >

@@ -225,7 +225,8 @@ export default function RequestsPage() {
           status: "approved",
 
           approvedBy:
-            user?.displayName ||
+            user?.rpName ||
+              user?.displayName ||
             "Oyabun",
 
           approvedAt:
@@ -241,7 +242,8 @@ export default function RequestsPage() {
           "APPROVE_REQUEST",
 
         user:
-          user?.displayName ||
+          user?.rpName ||
+              user?.displayName ||
           "Unknown",
 
         role,
@@ -307,7 +309,8 @@ export default function RequestsPage() {
           status: "rejected",
 
           rejectedBy:
-            user?.displayName ||
+            user?.rpName ||
+              user?.displayName ||
             "Oyabun",
 
           rejectedAt:
@@ -320,7 +323,8 @@ export default function RequestsPage() {
           "REJECT_REQUEST",
 
         user:
-          user?.displayName ||
+          user?.rpName ||
+              user?.displayName ||
           "Unknown",
 
         role,
