@@ -56,7 +56,7 @@ export default function FinancePage() {
       note: "",
     });
 
-      // =====================================
+  // =====================================
   // CREATE ACTIVITY LOG
   // =====================================
   const createActivityLog =
@@ -320,7 +320,7 @@ export default function FinancePage() {
         currentPageLimit
     );
 
-    // =====================================
+  // =====================================
   // ADD TRANSACTION
   // =====================================
   const handleSubmit =
@@ -408,6 +408,9 @@ export default function FinancePage() {
               user.rpName ||
               "Unknown",
 
+            createdByUid:
+              user.uid,
+
             status:
               "Pending",
 
@@ -416,9 +419,6 @@ export default function FinancePage() {
           }
         );
 
-        // =====================================
-        // ACTIVITY LOG
-        // =====================================
         await createActivityLog({
           type:
             "finance_create",
@@ -469,7 +469,7 @@ export default function FinancePage() {
       }
     };
 
-    // =====================================
+  // =====================================
   // BAYAR HUTANG
   // =====================================
   const handlePayDebt =
@@ -577,9 +577,6 @@ export default function FinancePage() {
           }
         );
 
-        // =====================================
-        // ACTIVITY LOG
-        // =====================================
         await createActivityLog({
           type:
             "finance_debt_request",
@@ -619,80 +616,75 @@ export default function FinancePage() {
       }
     };
 
-    // =====================================
-// APPROVE PAYMENT
-// =====================================
-const approvePayment = async (item) => {
+  // =====================================
+  // APPROVE PAYMENT
+  // =====================================
+  const approvePayment = async (item) => {
 
-  try {
+    try {
 
-    if (role !== "Oyabun") {
+      if (role !== "Oyabun") {
 
-      toast.error(
-        "Hanya Oyabun yang bisa approve"
+        toast.error(
+          "Hanya Oyabun yang bisa approve"
+        );
+
+        return;
+      }
+
+      const transactionRef = doc(
+        db,
+        "users",
+        item.createdByUid || user.uid,
+        "finance",
+        item.id
       );
 
-      return;
+      await updateDoc(
+        transactionRef,
+        {
+          status: "Approved",
+
+          approvedBy:
+            user.rpName,
+
+          approvedAt:
+            serverTimestamp(),
+        }
+      );
+
+      await createActivityLog({
+        type:
+          "finance_approved",
+
+        action:
+          "Finance Approved",
+
+        target:
+          item.title,
+
+        quantity:
+          item.amount,
+
+        description:
+          `${user.rpName} approved transaction ${item.title}`,
+      });
+
+      toast.success(
+        "Transaksi berhasil di approve"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      toast.error(
+        "Gagal approve transaksi"
+      );
     }
+  };
 
-    // REF DOCUMENT
-    const transactionRef = doc(
-      db,
-      "users",
-      item.createdByUid || user.uid,
-      "finance",
-      item.id
-    );
-
-    await updateDoc(
-      transactionRef,
-      {
-        status: "Approved",
-
-        approvedBy:
-          user.rpName,
-
-        approvedAt:
-          serverTimestamp(),
-      }
-    );
-
-    // =====================================
-    // ACTIVITY LOG
-    // =====================================
-    await createActivityLog({
-      type:
-        "finance_approved",
-
-      action:
-        "Finance Approved",
-
-      target:
-        item.title,
-
-      quantity:
-        item.amount,
-
-      description:
-        `${user.rpName} approved transaction ${item.title}`,
-    });
-
-    toast.success(
-      "Transaksi berhasil di approve"
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    toast.error(
-      "Gagal approve transaksi"
-    );
-  }
-};
-
-
-    // =====================================
+  // =====================================
   // DELETE TRANSACTION
   // =====================================
   const deleteTransaction =
@@ -726,9 +718,6 @@ const approvePayment = async (item) => {
           )
         );
 
-        // =====================================
-        // ACTIVITY LOG
-        // =====================================
         await createActivityLog({
           type:
             "finance_delete",
@@ -766,25 +755,24 @@ const approvePayment = async (item) => {
 
     <AppLayout>
 
-      <div className="text-white w-full">
+      <div className="text-white">
 
         {/* HEADER */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
 
           <div>
 
             <div className="flex items-center gap-3 flex-wrap">
 
-              <h1 className="text-4xl font-bold">
+              <h1 className="text-3xl font-bold tracking-tight">
                 Finance System
               </h1>
 
               <span
-                className={`px-4 py-2 rounded-full text-xs font-semibold border ${
-                  role ===
-                  "Oyabun"
-                    ? "bg-red-500/20 text-red-300 border-red-500/30"
-                    : "bg-gray-700/30 text-gray-300 border-gray-600"
+                className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                  role === "Oyabun"
+                    ? "bg-purple-500/20 text-purple-300 border-purple-500/30"
+                    : "bg-[#1A1330] text-gray-300 border-purple-900/40"
                 }`}
               >
                 {role}
@@ -792,7 +780,7 @@ const approvePayment = async (item) => {
 
             </div>
 
-            <p className="text-gray-400 mt-2">
+            <p className="text-gray-400 mt-2 text-sm">
               Sistem keuangan Jigokubara Family
             </p>
 
@@ -802,7 +790,7 @@ const approvePayment = async (item) => {
             onClick={
               handlePayDebt
             }
-            className="bg-yellow-600 hover:bg-yellow-700 px-6 py-4 rounded-2xl font-semibold transition-all"
+            className="bg-gradient-to-r from-purple-700 to-violet-700 hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-purple-900/30"
           >
             Bayar Hutang
           </button>
@@ -810,15 +798,15 @@ const approvePayment = async (item) => {
         </div>
 
         {/* STATS */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
 
-          <div className="bg-[#111111] border border-green-500/20 rounded-3xl p-6">
+          <div className="bg-[#141021] border border-purple-900/30 rounded-2xl p-5">
 
-            <p className="text-gray-400">
+            <p className="text-gray-400 text-sm">
               Total Pemasukan
             </p>
 
-            <h2 className="text-4xl font-bold mt-3 text-green-400">
+            <h2 className="text-2xl font-bold mt-2 text-green-400">
               Rp{" "}
               {totalIncome.toLocaleString(
                 "id-ID"
@@ -827,13 +815,13 @@ const approvePayment = async (item) => {
 
           </div>
 
-          <div className="bg-[#111111] border border-red-500/20 rounded-3xl p-6">
+          <div className="bg-[#141021] border border-purple-900/30 rounded-2xl p-5">
 
-            <p className="text-gray-400">
+            <p className="text-gray-400 text-sm">
               Total Pengeluaran
             </p>
 
-            <h2 className="text-4xl font-bold mt-3 text-red-400">
+            <h2 className="text-2xl font-bold mt-2 text-red-400">
               Rp{" "}
               {totalExpense.toLocaleString(
                 "id-ID"
@@ -842,13 +830,13 @@ const approvePayment = async (item) => {
 
           </div>
 
-          <div className="bg-[#111111] border border-yellow-500/20 rounded-3xl p-6">
+          <div className="bg-[#141021] border border-purple-900/30 rounded-2xl p-5">
 
-            <p className="text-gray-400">
+            <p className="text-gray-400 text-sm">
               Total Hutang
             </p>
 
-            <h2 className="text-4xl font-bold mt-3 text-yellow-300">
+            <h2 className="text-2xl font-bold mt-2 text-yellow-300">
               Rp{" "}
               {totalDebt.toLocaleString(
                 "id-ID"
@@ -857,13 +845,13 @@ const approvePayment = async (item) => {
 
           </div>
 
-          <div className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-6">
+          <div className="bg-[#141021] border border-purple-900/30 rounded-2xl p-5">
 
-            <p className="text-gray-400">
+            <p className="text-gray-400 text-sm">
               Saldo Saat Ini
             </p>
 
-            <h2 className="text-4xl font-bold mt-3 text-blue-300">
+            <h2 className="text-2xl font-bold mt-2 text-purple-300">
               Rp{" "}
               {totalBalance.toLocaleString(
                 "id-ID"
@@ -879,10 +867,10 @@ const approvePayment = async (item) => {
           onSubmit={
             handleSubmit
           }
-          className="bg-[#111111] border border-[#7A0019]/40 rounded-3xl p-6 mb-10"
+          className="bg-[#141021] border border-purple-900/30 rounded-3xl p-5 mb-6"
         >
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
 
             <select
               value={
@@ -896,7 +884,7 @@ const approvePayment = async (item) => {
                       .value,
                 })
               }
-              className="bg-black border border-gray-700 rounded-2xl px-5 py-4 outline-none"
+              className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
             >
 
               <option>
@@ -921,7 +909,7 @@ const approvePayment = async (item) => {
                       .value,
                 })
               }
-              className="bg-black border border-gray-700 rounded-2xl px-5 py-4 outline-none"
+              className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
             >
 
               <option>
@@ -946,7 +934,7 @@ const approvePayment = async (item) => {
                       .value,
                 })
               }
-              className="bg-black border border-gray-700 rounded-2xl px-5 py-4 outline-none"
+              className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
             >
 
               <option>
@@ -973,7 +961,7 @@ const approvePayment = async (item) => {
                       .value,
                 })
               }
-              className="bg-black border border-gray-700 rounded-2xl px-5 py-4 outline-none"
+              className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
             />
 
             <input
@@ -990,7 +978,7 @@ const approvePayment = async (item) => {
                       .value,
                 })
               }
-              className="bg-black border border-gray-700 rounded-2xl px-5 py-4 outline-none"
+              className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
             />
 
           </div>
@@ -1008,7 +996,7 @@ const approvePayment = async (item) => {
                     .value,
               })
             }
-            className="w-full mt-5 bg-black border border-gray-700 rounded-2xl px-5 py-4 min-h-[140px] outline-none"
+            className="w-full mt-4 bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 min-h-[110px] outline-none focus:border-purple-500"
           />
 
           <button
@@ -1016,7 +1004,7 @@ const approvePayment = async (item) => {
             disabled={
               loading
             }
-            className="mt-5 bg-[#7A0019] hover:bg-[#99001f] disabled:opacity-50 rounded-2xl px-6 py-4 font-semibold transition-all"
+            className="mt-4 bg-gradient-to-r from-purple-700 to-violet-700 hover:opacity-90 disabled:opacity-50 rounded-2xl px-5 py-3 font-semibold transition-all shadow-lg shadow-purple-900/30"
           >
             {loading
               ? "Menyimpan..."
@@ -1026,7 +1014,7 @@ const approvePayment = async (item) => {
         </form>
 
         {/* FILTER */}
-        <div className="flex flex-wrap gap-3 mb-8">
+        <div className="flex flex-wrap gap-2 mb-6">
 
           {[
             "Semua",
@@ -1050,10 +1038,10 @@ const approvePayment = async (item) => {
                   1
                 );
               }}
-              className={`px-5 py-3 rounded-2xl border transition-all ${
+              className={`px-4 py-2 rounded-xl text-sm border transition-all ${
                 filter === type
-                  ? "bg-[#7A0019] border-[#7A0019]"
-                  : "border-gray-700"
+                  ? "bg-gradient-to-r from-purple-700 to-violet-700 border-transparent"
+                  : "bg-[#141021] border-purple-900/30 hover:border-purple-500/40"
               }`}
             >
               {type}
@@ -1064,24 +1052,24 @@ const approvePayment = async (item) => {
         </div>
 
         {/* HISTORY */}
-        <div className="space-y-5">
+        <div className="space-y-4">
 
           {paginatedTransactions.map(
             (item) => (
 
               <div
                 key={item.id}
-                className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-6"
+                className="bg-[#141021] border border-purple-900/30 rounded-3xl p-5 hover:border-purple-500/30 transition-all"
               >
 
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
                   {/* LEFT */}
-                  <div>
+                  <div className="flex-1">
 
-                    <div className="flex items-center gap-3 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap">
 
-                      <h2 className="text-2xl font-bold">
+                      <h2 className="text-xl font-bold">
                         {
                           item.title
                         }
@@ -1107,7 +1095,7 @@ const approvePayment = async (item) => {
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           item.status ===
                           "Approved"
-                            ? "bg-green-500/20 text-green-300"
+                            ? "bg-purple-500/20 text-purple-300"
                             : "bg-yellow-500/20 text-yellow-300"
                         }`}
                       >
@@ -1118,26 +1106,26 @@ const approvePayment = async (item) => {
 
                     </div>
 
-                    <p className="text-gray-400 mt-3">
+                    <p className="text-gray-400 mt-3 text-sm leading-relaxed">
                       {item.note ||
                         "Tidak ada catatan"}
                     </p>
 
-                    <div className="flex flex-wrap gap-3 mt-4">
+                    <div className="flex flex-wrap gap-2 mt-4">
 
-                      <span className="bg-black px-4 py-2 rounded-xl text-sm">
+                      <span className="bg-[#0F0B18] border border-purple-900/20 px-3 py-2 rounded-xl text-xs">
                         {
                           item.paymentType
                         }
                       </span>
 
-                      <span className="bg-black px-4 py-2 rounded-xl text-sm">
+                      <span className="bg-[#0F0B18] border border-purple-900/20 px-3 py-2 rounded-xl text-xs">
                         {
                           item.moneyType
                         }
                       </span>
 
-                      <span className="bg-black px-4 py-2 rounded-xl text-sm">
+                      <span className="bg-[#0F0B18] border border-purple-900/20 px-3 py-2 rounded-xl text-xs">
                         By{" "}
                         {
                           item.createdBy
@@ -1149,10 +1137,10 @@ const approvePayment = async (item) => {
                   </div>
 
                   {/* RIGHT */}
-                  <div className="flex flex-col items-end gap-4">
+                  <div className="flex flex-col items-start lg:items-end gap-3">
 
                     <h3
-                      className={`text-4xl font-bold ${
+                      className={`text-3xl font-bold ${
                         item.type ===
                         "Pemasukan"
                           ? "text-green-400"
@@ -1174,40 +1162,44 @@ const approvePayment = async (item) => {
                       )}
                     </h3>
 
-                    {/* APPROVE */}
-                    {role ===
-                      "Oyabun" &&
-                      item.status ===
-                        "Pending" && (
+                    <div className="flex gap-2 flex-wrap">
 
-                      <button
-                        onClick={() =>
-                          approvePayment(item)
-                        }
-                        className="bg-green-700 hover:bg-green-800 px-5 py-3 rounded-2xl transition-all"
-                      >
-                        Approve
-                      </button>
+                      {/* APPROVE */}
+                      {role ===
+                        "Oyabun" &&
+                        item.status ===
+                          "Pending" && (
 
-                    )}
+                        <button
+                          onClick={() =>
+                            approvePayment(item)
+                          }
+                          className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl text-sm transition-all"
+                        >
+                          Approve
+                        </button>
 
-                    {/* DELETE */}
-                    {role ===
-                      "Oyabun" && (
+                      )}
 
-                      <button
-                        onClick={() =>
-                          deleteTransaction(
-                          item.id,
-                          item.title
-                        )
-                        }
-                        className="bg-red-700 hover:bg-red-800 px-5 py-3 rounded-2xl transition-all"
-                      >
-                        Hapus
-                      </button>
+                      {/* DELETE */}
+                      {role ===
+                        "Oyabun" && (
 
-                    )}
+                        <button
+                          onClick={() =>
+                            deleteTransaction(
+                              item.id,
+                              item.title
+                            )
+                          }
+                          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl text-sm transition-all"
+                        >
+                          Hapus
+                        </button>
+
+                      )}
+
+                    </div>
 
                   </div>
 
@@ -1221,7 +1213,7 @@ const approvePayment = async (item) => {
           {paginatedTransactions.length ===
             0 && (
 
-            <div className="bg-[#111111] border border-dashed border-gray-700 rounded-3xl p-10 text-center text-gray-400">
+            <div className="bg-[#141021] border border-dashed border-purple-900/30 rounded-3xl p-10 text-center text-gray-400">
 
               Tidak ada history transaksi
 
@@ -1234,7 +1226,7 @@ const approvePayment = async (item) => {
         {/* PAGINATION */}
         {totalPages > 1 && (
 
-          <div className="flex items-center justify-center gap-3 mt-10 flex-wrap">
+          <div className="flex items-center justify-center gap-2 mt-8 flex-wrap">
 
             <button
               disabled={
@@ -1248,7 +1240,7 @@ const approvePayment = async (item) => {
                     prev - 1
                 )
               }
-              className="bg-[#111111] border border-gray-700 px-5 py-3 rounded-2xl disabled:opacity-40"
+              className="bg-[#141021] border border-purple-900/30 px-4 py-2 rounded-xl disabled:opacity-40"
             >
               Previous
             </button>
@@ -1266,11 +1258,11 @@ const approvePayment = async (item) => {
                       index + 1
                     )
                   }
-                  className={`px-5 py-3 rounded-2xl ${
+                  className={`px-4 py-2 rounded-xl ${
                     currentPage ===
                     index + 1
-                      ? "bg-[#7A0019]"
-                      : "bg-[#111111] border border-gray-700"
+                      ? "bg-gradient-to-r from-purple-700 to-violet-700"
+                      : "bg-[#141021] border border-purple-900/30"
                   }`}
                 >
                   {index + 1}
@@ -1292,7 +1284,7 @@ const approvePayment = async (item) => {
                     prev + 1
                 )
               }
-              className="bg-[#111111] border border-gray-700 px-5 py-3 rounded-2xl disabled:opacity-40"
+              className="bg-[#141021] border border-purple-900/30 px-4 py-2 rounded-xl disabled:opacity-40"
             >
               Next
             </button>
