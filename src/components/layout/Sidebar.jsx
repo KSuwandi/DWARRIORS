@@ -321,8 +321,25 @@ export default function Sidebar() {
             </h2>
 
             <p className="text-gray-400 text-xs truncate">
-              {user?.email}
-            </p>
+  {user?.email
+    ? (() => {
+        const [name, domain] =
+          user.email.split("@");
+
+        const masked =
+          name.length > 2
+            ? `${name[0]}${"*".repeat(
+                Math.max(
+                  name.length - 3,
+                  1
+                )
+              )}${name.slice(-2)}`
+            : `${name[0]}***`;
+
+        return `${masked}@${domain}`;
+      })()
+    : "No Email"}
+</p>
 
             <span
               className={`mt-2 text-[10px] px-3 py-1 rounded-full w-fit border ${
