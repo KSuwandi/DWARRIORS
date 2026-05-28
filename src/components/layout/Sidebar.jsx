@@ -303,13 +303,14 @@ export default function Sidebar() {
             <div className="absolute inset-0 bg-purple-500 blur-xl opacity-40 rounded-full" />
 
             <img
-              src={
-                user?.photoURL ||
-                "https://i.pravatar.cc/150"
-              }
-              alt="profile"
-              className="relative w-14 h-14 rounded-full border-2 border-purple-400 object-cover"
-            />
+  src={
+    user?.photo ||
+    "https://i.pravatar.cc/150"
+  }
+  alt="profile"
+  referrerPolicy="no-referrer"
+  className="relative w-14 h-14 rounded-full border-2 border-purple-400 object-cover"
+/>
 
           </div>
 
@@ -321,25 +322,35 @@ export default function Sidebar() {
             </h2>
 
             <p className="text-gray-400 text-xs truncate">
-  {user?.email
-    ? (() => {
-        const [name, domain] =
-          user.email.split("@");
+    {(() => {
 
-        const masked =
-          name.length > 2
-            ? `${name[0]}${"*".repeat(
-                Math.max(
-                  name.length - 3,
-                  1
-                )
-              )}${name.slice(-2)}`
-            : `${name[0]}***`;
+      const email =
+        user?.email || "";
 
-        return `${masked}@${domain}`;
-      })()
-    : "No Email"}
-</p>
+      if (!email.includes("@"))
+        return "No Email";
+
+      const [name, domain] =
+        email.split("@");
+
+      const first =
+        name.charAt(0);
+
+      const lastTwo =
+        name.slice(-2);
+
+      const stars =
+        "*".repeat(
+          Math.max(
+            name.length - 3,
+            5
+          )
+        );
+
+      return `${first}${stars}${lastTwo}@${domain}`;
+
+    })()}
+  </p>
 
             <span
               className={`mt-2 text-[10px] px-3 py-1 rounded-full w-fit border ${
