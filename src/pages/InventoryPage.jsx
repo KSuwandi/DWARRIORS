@@ -248,7 +248,10 @@ export default function InventoryPage() {
         formData
       );
 
-      const imageUrl = response.data.data.image.url;
+      const imageUrl =
+  response.data.data.medium?.url ||
+  response.data.data.thumb?.url ||
+  response.data.data.url;
 
       await updateDoc(doc(db, "inventory", item.id), {
         imageUrl,
