@@ -469,11 +469,12 @@ export default function MemberPage() {
                   >
 
                     <img
-                      src={getPhoto(
-                        m
-                      )}
-                      className="w-11 h-11 rounded-full object-cover border border-gray-700"
-                    />
+  src={getPhoto(
+    m
+  )}
+  referrerPolicy="no-referrer"
+  className="w-11 h-11 rounded-full object-cover border border-gray-700"
+/>
 
                     <div className="text-left">
 
@@ -521,11 +522,12 @@ export default function MemberPage() {
                 <div className="bg-gradient-to-br from-[#111] to-[#181818] border border-[#7A0019]/30 p-6 rounded-3xl flex items-center gap-5 shadow-xl">
 
                   <img
-                    src={getPhoto(
-                      selectedMember
-                    )}
-                    className="w-24 h-24 rounded-3xl object-cover border-2 border-[#7A0019]"
-                  />
+  src={getPhoto(
+    selectedMember
+  )}
+  referrerPolicy="no-referrer"
+  className="w-24 h-24 rounded-3xl object-cover border-2 border-[#7A0019]"
+/>
 
                   <div>
 
