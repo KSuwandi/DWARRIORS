@@ -173,7 +173,7 @@ export default function RoleRequestPage() {
                     Shatei
                   </option>
 
-                  <option value="Kepala Divisi">
+                  <option value="Oyabun">
                     Oyabun
                   </option>
 
