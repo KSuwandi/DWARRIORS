@@ -58,10 +58,10 @@ export default function LoginPage() {
             <div className="relative">
 
               <img
-                src="/jigokubara-logo.png"
-                alt="Jigokubara"
-                className="w-32 drop-shadow-[0_0_25px_rgba(192,132,252,0.5)]"
-              />
+  src="/jigokubara-logo.png"
+  alt="Jigokubara"
+  className="w-32 drop-shadow-[0_0_25px_rgba(192,132,252,0.5)]"
+/>
 
               <div className="absolute inset-0 bg-purple-500/20 blur-2xl rounded-full" />
 
