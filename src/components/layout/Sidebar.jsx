@@ -410,7 +410,7 @@ export default function Sidebar() {
 
           <p className="text-gray-500 text-[10px] text-center mt-2 tracking-[0.2em] uppercase">
 
-            JULIAN 
+            Demon • Fox • Rose
 
           </p>
 

@@ -58,7 +58,7 @@ export default function LoginPage() {
             <div className="relative">
 
               <img
-                src="/logo.png"
+                src="/jigokubara-logo.png"
                 alt="Jigokubara"
                 className="w-32 drop-shadow-[0_0_25px_rgba(192,132,252,0.5)]"
               />
