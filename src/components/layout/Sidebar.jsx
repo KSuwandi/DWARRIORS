@@ -207,19 +207,14 @@ export default function Sidebar() {
     },
   ];
 
-  // =====================================
-  // MEMBERS (OYABUN ONLY)
-  // =====================================
-  if (
-    role === "Oyabun"
-  ) {
-
-    menu.push({
-      name: "Members",
-      icon: Users,
-      path: "/members",
-    });
-  }
+ // =====================
+// MEMBERS
+// =====================
+menu.push({
+  name: "Members",
+  icon: Users,
+  path: "/members",
+});
 
   // =====================================
   // FILTER ROLE
