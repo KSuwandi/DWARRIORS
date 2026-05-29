@@ -39,6 +39,16 @@ export default function FinancePage() {
   const [filter, setFilter] =
     useState("Semua");
 
+  const [
+    showWeaponPriceList,
+    setShowWeaponPriceList,
+  ] = useState(false);
+
+  const [
+    showDisnakerPriceList,
+    setShowDisnakerPriceList,
+  ] = useState(false);
+
   const currentPageLimit = 5;
 
   const [
@@ -419,25 +429,6 @@ export default function FinancePage() {
           }
         );
 
-        await createActivityLog({
-          type:
-            "finance_create",
-
-          action:
-            "Finance Transaction Created",
-
-          target:
-            form.title,
-
-          quantity:
-            amount,
-
-          description:
-            `${user.rpName} created ${form.type} transaction ${form.title} sebesar Rp ${amount.toLocaleString(
-              "id-ID"
-            )}`,
-        });
-
         toast.success(
           `${form.type} berhasil dikirim untuk approval`
         );
@@ -577,25 +568,6 @@ export default function FinancePage() {
           }
         );
 
-        await createActivityLog({
-          type:
-            "finance_debt_request",
-
-          action:
-            "Debt Payment Requested",
-
-          target:
-            "Pembayaran Hutang",
-
-          quantity:
-            amount,
-
-          description:
-            `${user.rpName} requested debt payment sebesar Rp ${amount.toLocaleString(
-              "id-ID"
-            )}`,
-        });
-
         toast.success(
           "Request pembayaran hutang berhasil dikirim"
         );
@@ -653,23 +625,6 @@ export default function FinancePage() {
         }
       );
 
-      await createActivityLog({
-        type:
-          "finance_approved",
-
-        action:
-          "Finance Approved",
-
-        target:
-          item.title,
-
-        quantity:
-          item.amount,
-
-        description:
-          `${user.rpName} approved transaction ${item.title}`,
-      });
-
       toast.success(
         "Transaksi berhasil di approve"
       );
@@ -718,23 +673,6 @@ export default function FinancePage() {
           )
         );
 
-        await createActivityLog({
-          type:
-            "finance_delete",
-
-          action:
-            "Finance Deleted",
-
-          target:
-            title,
-
-          quantity:
-            1,
-
-          description:
-            `${user.rpName} deleted finance transaction ${title}`,
-        });
-
         toast.success(
           "History berhasil dihapus"
         );
@@ -756,6 +694,440 @@ export default function FinancePage() {
     <AppLayout>
 
       <div className="text-white">
+
+        {/* PRICE LIST SENJATA */}
+        {showWeaponPriceList && (
+
+          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+
+            <div className="w-full max-w-5xl bg-[#14091F] border border-purple-700/40 rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/50">
+
+              <div className="bg-gradient-to-r from-purple-900 to-violet-700 px-6 py-5 flex items-center justify-between">
+
+                <div>
+
+                  <h2 className="text-3xl font-bold">
+                    PRICE LIST SENJATA
+                  </h2>
+
+                  <p className="text-purple-200 text-sm mt-1">
+                    Jigokubara Family
+                  </p>
+
+                </div>
+
+                <button
+                  onClick={() =>
+                    setShowWeaponPriceList(false)
+                  }
+                  className="bg-white/10 hover:bg-white/20 w-10 h-10 rounded-xl text-xl"
+                >
+                  ✕
+                </button>
+
+              </div>
+
+              <div className="p-6 overflow-auto max-h-[80vh]">
+
+                <div className="overflow-x-auto">
+
+                  <table className="w-full border-collapse">
+
+                    <thead>
+
+                      <tr className="bg-gradient-to-r from-purple-800 to-violet-700 text-white">
+
+                        <th className="p-4 text-left border border-purple-500">
+                          BARANG
+                        </th>
+
+                        <th className="p-4 text-left border border-purple-500">
+                          UANG MERAH
+                        </th>
+
+                        <th className="p-4 text-left border border-purple-500">
+                          UANG PUTIH
+                        </th>
+
+                      </tr>
+
+                    </thead>
+
+                    <tbody>
+
+  {[
+    {
+      item: "PELURU 9MM",
+      merah: "150.000/clip [ISI 150x]",
+      putih: "150.000/clip [ISI 150x]",
+    },
+    {
+      item: "PELURU .44 (MAGNUM)",
+      merah: "70.000/clip [ISI 50x]",
+      putih: "70.000/clip [ISI 50x]",
+    },
+    {
+      item: "PELURU Double Action",
+      merah: "75.000/clip [ISI 50x]",
+      putih: "75.000/clip [ISI 50x]",
+    },
+    {
+      item: "PELURU 7.62 (AK-47)",
+      merah: "-",
+      putih: "-",
+    },
+    {
+      item: "PELURU .50 BMG (SNIPER)",
+      merah: "-",
+      putih: "-",
+    },
+    {
+      item: "VEST PULAU",
+      merah: "80.000/pcs (MAX 4)",
+      putih: "70.000/pcs (MAX 4)",
+    },
+    {
+      item: "COMBAT PISTOL",
+      merah: "200.000",
+      putih: "180.000",
+    },
+    {
+      item: "SMG MK2",
+      merah: "500.000",
+      putih: "450.000",
+    },
+    {
+      item: "MINI SMG",
+      merah: "450.000",
+      putih: "415.000",
+    },
+    {
+      item: "PYTHON",
+      merah: "400.000",
+      putih: "360.000",
+    },
+    {
+      item: "AK 47",
+      merah: "650.000",
+      putih: "585.000",
+    },
+    {
+      item: "HEAVY SNIPER",
+      merah: "1.250.000",
+      putih: "1.125.000",
+    },
+    {
+      item: "DOUBLE ACTION",
+      merah: "450.000",
+      putih: "350.000",
+    },
+  ].map((row, index) => (
+
+    <tr
+      key={index}
+      className="bg-[#1A1028] hover:bg-[#241437] transition-all"
+    >
+
+      <td className="p-4 border border-purple-900/40 font-semibold">
+        {row.item}
+      </td>
+
+      <td className="p-4 border border-purple-900/40 text-red-300">
+        {row.merah}
+      </td>
+
+      <td className="p-4 border border-purple-900/40 text-yellow-200">
+        {row.putih}
+      </td>
+
+    </tr>
+
+  ))}
+
+</tbody>
+
+
+                  </table>
+
+</div>
+
+{/* PACKAGE */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
+
+  <div className="bg-gradient-to-br from-red-900/40 to-purple-900/40 border border-red-500/30 rounded-3xl p-5">
+
+    <h3 className="text-xl font-bold text-red-300">
+      1 SET FULL CASH UANG MERAH
+    </h3>
+
+    <p className="text-4xl font-black mt-3">
+      Rp 1.715.000
+    </p>
+
+  </div>
+
+  <div className="bg-gradient-to-br from-yellow-700/30 to-purple-900/40 border border-yellow-400/30 rounded-3xl p-5">
+
+    <h3 className="text-xl font-bold text-yellow-200">
+      1 SET FULL CASH UANG PUTIH
+    </h3>
+
+    <p className="text-4xl font-black mt-3">
+      Rp 1.565.000
+    </p>
+
+  </div>
+
+  <div className="bg-gradient-to-br from-red-900/40 to-purple-900/40 border border-red-500/30 rounded-3xl p-5">
+
+    <h3 className="text-xl font-bold text-red-300">
+      1 SET PYTHON UANG MERAH
+    </h3>
+
+    <p className="text-4xl font-black mt-3">
+      Rp 790.000
+    </p>
+
+  </div>
+
+  <div className="bg-gradient-to-br from-yellow-700/30 to-purple-900/40 border border-yellow-400/30 rounded-3xl p-5">
+
+    <h3 className="text-xl font-bold text-yellow-200">
+      1 SET PYTHON UANG PUTIH
+    </h3>
+
+    <p className="text-4xl font-black mt-3">
+      Rp 710.000
+    </p>
+
+  </div>
+
+</div>
+
+</div>
+
+  
+
+              </div>
+
+            </div>
+
+
+        )}
+
+        {/* PRICE LIST DISNAKER */}
+        {showDisnakerPriceList && (
+
+          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+
+            <div className="w-full max-w-4xl bg-[#14091F] border border-purple-700/40 rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/50">
+
+              <div className="bg-gradient-to-r from-purple-900 to-violet-700 px-6 py-5 flex items-center justify-between">
+
+                <div>
+
+                  <h2 className="text-3xl font-bold">
+                    PRICE LIST DISNAKER
+                  </h2>
+
+                  <p className="text-purple-200 text-sm mt-1">
+                    Jigokubara Family
+                  </p>
+
+                </div>
+
+                <button
+                  onClick={() =>
+                    setShowDisnakerPriceList(false)
+                  }
+                  className="bg-white/10 hover:bg-white/20 w-10 h-10 rounded-xl text-xl"
+                >
+                  ✕
+                </button>
+
+              </div>
+
+              <div className="p-6 overflow-auto max-h-[80vh]">
+
+                <div className="overflow-x-auto">
+
+                  <table className="w-full border-collapse">
+
+                  <thead>
+
+  <tr className="bg-gradient-to-r from-purple-800 to-violet-700 text-white">
+
+    <th className="p-4 text-left border border-purple-500">
+      NAMA BARANG
+    </th>
+
+    <th className="p-4 text-center border border-purple-500">
+      /PAKET
+    </th>
+
+    <th className="p-4 text-left border border-purple-500">
+      HARGA
+    </th>
+
+  </tr>
+
+</thead>
+
+<tbody>
+
+  {[
+    {
+      paket: "KAIN",
+      perPaket: "80",
+      harga: "Rp16.000",
+    },
+    {
+      paket: "BAJU",
+      perPaket: "40",
+      harga: "Rp17.000",
+    },
+    {
+      paket: "PAKETAN TAMBANG",
+      perPaket: "100",
+      harga: "Rp6.000",
+    },
+    {
+      paket: "ALUMINIUM POWDER",
+      perPaket: "100",
+      harga: "Rp10.000",
+    },
+    {
+      paket: "IRON POWDER",
+      perPaket: "100",
+      harga: "Rp10.000",
+    },
+    {
+      paket: "METALSCRAP",
+      perPaket: "100",
+      harga: "Rp10.000",
+    },
+    {
+      paket: "ALUMINIUM",
+      perPaket: "100",
+      harga: "Rp10.000",
+    },
+    {
+      paket: "BERLIAN",
+      perPaket: "1",
+      harga: "Rp2.000",
+    },
+    {
+      paket: "KACA",
+      perPaket: "100",
+      harga: "Rp15.000",
+    },
+    {
+      paket: "BOTOL",
+      perPaket: "100",
+      harga: "Rp15.000",
+    },
+    {
+      paket: "PLASTIK",
+      perPaket: "100",
+      harga: "Rp10.000",
+    },
+    {
+      paket: "KARET",
+      perPaket: "100",
+      harga: "Rp13.000",
+    },
+    {
+      paket: "KARUNG",
+      perPaket: "100",
+      harga: "Rp11.000",
+    },
+    {
+      paket: "BAJA",
+      perPaket: "100",
+      harga: "Rp10.000",
+    },
+    {
+      paket: "KAYU KEMASAN",
+      perPaket: "100",
+      harga: "Rp16.000",
+    },
+    {
+      paket: "KOTORAN HEWAN",
+      perPaket: "100",
+      harga: "Rp11.000",
+    },
+    {
+      paket: "KULIT BABI",
+      perPaket: "36",
+      harga: "Rp18.000",
+    },
+    {
+      paket: "KULIT RUSA",
+      perPaket: "16",
+      harga: "Rp15.000",
+    },
+    {
+      paket: "KULIT SINGA",
+      perPaket: "4",
+      harga: "Rp16.000",
+    },
+    {
+      paket: "KULIT JADI",
+      perPaket: "1",
+      harga: "Rp800",
+    },
+    {
+      paket: "BULU AYAM",
+      perPaket: "100",
+      harga: "Rp15.000",
+    },
+    {
+      paket: "BULU RUSA",
+      perPaket: "100",
+      harga: "Rp22.000",
+    },
+    {
+      paket: "BULU SINGA",
+      perPaket: "100",
+      harga: "Rp30.000",
+    },
+  ].map((row, index) => (
+
+    <tr
+      key={index}
+      className="bg-[#1A1028] hover:bg-[#241437]"
+    >
+
+      <td className="p-4 border border-purple-900/40 font-semibold">
+        {row.paket}
+      </td>
+
+      <td className="p-4 border border-purple-900/40 text-center text-cyan-200">
+        {row.perPaket}
+      </td>
+
+      <td className="p-4 border border-purple-900/40 text-yellow-200">
+        {row.harga}
+      </td>
+
+    </tr>
+
+  ))}
+
+</tbody>
+
+                    
+                  </table>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        )}
 
         {/* HEADER */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
@@ -786,83 +1158,40 @@ export default function FinancePage() {
 
           </div>
 
-          <button
-            onClick={
-              handlePayDebt
-            }
-            className="bg-gradient-to-r from-purple-700 to-violet-700 hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-purple-900/30"
-          >
-            Bayar Hutang
-          </button>
+          <div className="flex gap-3 flex-wrap">
 
-        </div>
+            <button
+              onClick={() =>
+                setShowWeaponPriceList(true)
+              }
+              className="bg-gradient-to-r from-fuchsia-700 to-purple-700 hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-purple-900/30"
+            >
+              Pricelist Senjata
+            </button>
 
-        {/* STATS */}
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+            <button
+              onClick={() =>
+                setShowDisnakerPriceList(true)
+              }
+              className="bg-gradient-to-r from-indigo-700 to-blue-700 hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-blue-900/30"
+            >
+              Pricelist Disnaker
+            </button>
 
-          <div className="bg-[#141021] border border-purple-900/30 rounded-2xl p-5">
-
-            <p className="text-gray-400 text-sm">
-              Total Pemasukan
-            </p>
-
-            <h2 className="text-2xl font-bold mt-2 text-green-400">
-              Rp{" "}
-              {totalIncome.toLocaleString(
-                "id-ID"
-              )}
-            </h2>
-
-          </div>
-
-          <div className="bg-[#141021] border border-purple-900/30 rounded-2xl p-5">
-
-            <p className="text-gray-400 text-sm">
-              Total Pengeluaran
-            </p>
-
-            <h2 className="text-2xl font-bold mt-2 text-red-400">
-              Rp{" "}
-              {totalExpense.toLocaleString(
-                "id-ID"
-              )}
-            </h2>
-
-          </div>
-
-          <div className="bg-[#141021] border border-purple-900/30 rounded-2xl p-5">
-
-            <p className="text-gray-400 text-sm">
-              Total Hutang
-            </p>
-
-            <h2 className="text-2xl font-bold mt-2 text-yellow-300">
-              Rp{" "}
-              {totalDebt.toLocaleString(
-                "id-ID"
-              )}
-            </h2>
-
-          </div>
-
-          <div className="bg-[#141021] border border-purple-900/30 rounded-2xl p-5">
-
-            <p className="text-gray-400 text-sm">
-              Saldo Saat Ini
-            </p>
-
-            <h2 className="text-2xl font-bold mt-2 text-purple-300">
-              Rp{" "}
-              {totalBalance.toLocaleString(
-                "id-ID"
-              )}
-            </h2>
+            <button
+              onClick={
+                handlePayDebt
+              }
+              className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-yellow-900/30"
+            >
+              Bayar Hutang
+            </button>
 
           </div>
 
         </div>
 
-        {/* FORM */}
+                {/* FORM */}
         <form
           onSubmit={
             handleSubmit
