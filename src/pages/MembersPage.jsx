@@ -95,41 +95,35 @@ export default function MemberPage() {
   };
 
   // =========================
-  // LOAD USERS
-  // =========================
-  useEffect(() => {
+// LOAD USERS
+// =========================
+useEffect(() => {
 
-    if (
-      role !== "Oyabun"
-    )
-      return;
+  const unsub =
+    onSnapshot(
+      collection(
+        db,
+        "users"
+      ),
+      (snap) => {
 
-    const unsub =
-      onSnapshot(
-        collection(
-          db,
-          "users"
-        ),
-        (snap) => {
+        setMembers(
+          snap.docs.map(
+            (d) => ({
+              id: d.id,
+              uid:
+                d.data()
+                  .uid,
+              ...d.data(),
+            })
+          )
+        );
+      }
+    );
 
-          setMembers(
-            snap.docs.map(
-              (d) => ({
-                id: d.id,
-                uid:
-                  d.data()
-                    .uid,
-                ...d.data(),
-              })
-            )
-          );
-        }
-      );
+  return () => unsub();
 
-    return () => unsub();
-
-  }, [role]);
-
+}, []);
   // =========================
   // LOAD FINANCE
   // =========================
@@ -398,21 +392,6 @@ export default function MemberPage() {
         ITEMS_PER_PAGE
     );
 
-  // =========================
-  // ACCESS
-  // =========================
-  if (
-    role !== "Oyabun"
-  ) {
-
-    return (
-      <AppLayout>
-        <div className="text-white">
-          Access Denied
-        </div>
-      </AppLayout>
-    );
-  }
 
   return (
 
