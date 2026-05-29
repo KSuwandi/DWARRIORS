@@ -15,7 +15,7 @@ import {
   collection,
   doc,
   increment,
-  onSnapshot,
+  getDocs,
   orderBy,
   query,
   serverTimestamp,
@@ -108,49 +108,58 @@ export default function InventoryPage() {
   // =========================
   useEffect(() => {
 
-    const inventoryRef =
-      query(
-        collection(
-          db,
-          "inventory"
-        ),
-        orderBy(
-          "createdAt",
-          "desc"
-        )
-      );
+  const loadInventory =
+    async () => {
 
-    const unsubscribe =
-      onSnapshot(
-        inventoryRef,
-        (snapshot) => {
+      try {
 
-          const data =
-            snapshot.docs
-              .map(
-                (doc) => ({
-                  id: doc.id,
-                  ...doc.data(),
-                  category:
-                    normalizeCategory(
-                      doc.data()
-                        .category
-                    ),
-                })
+        const snapshot =
+          await getDocs(
+            query(
+              collection(
+                db,
+                "inventory"
+              ),
+              orderBy(
+                "createdAt",
+                "desc"
               )
-              .filter(
-                (item) =>
-                  !item.deleted
-              );
+            )
+          );
 
-          setItems(data);
-        }
-      );
+        const data =
+          snapshot.docs
+            .map(
+              (doc) => ({
+                id: doc.id,
+                ...doc.data(),
+                category:
+                  normalizeCategory(
+                    doc.data()
+                      .category
+                  ),
+              })
+            )
+            .filter(
+              (item) =>
+                !item.deleted
+            );
 
-    return () =>
-      unsubscribe();
+        setItems(data);
 
-  }, []);
+      } catch (error) {
+
+        console.error(error);
+
+        toast.error(
+          "Failed load inventory"
+        );
+      }
+    };
+
+  loadInventory();
+
+}, []);
 
   useEffect(() => {
 

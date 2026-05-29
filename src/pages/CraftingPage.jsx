@@ -18,6 +18,8 @@ import {
   updateDoc,
   deleteDoc,
   getDocs,
+  runTransaction,
+  limit,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
@@ -255,15 +257,16 @@ export default function CraftingPage() {
   useEffect(() => {
 
     const q = query(
-      collection(
-        db,
-        "crafting_history"
-      ),
-      orderBy(
-        "createdAt",
-        "desc"
-      )
-    );
+  collection(
+    db,
+    "crafting_history"
+  ),
+  orderBy(
+    "createdAt",
+    "desc"
+  ),
+  limit(20)
+);
 
     const unsubscribe =
       onSnapshot(
@@ -385,41 +388,147 @@ export default function CraftingPage() {
   // ============================================
   // REDUCE MATERIALS
   // ============================================
-  const reduceInventoryMaterials =
-    async (
-      materials,
-      qty
-    ) => {
+  const processCraftingTransaction =
+  async ({
+    recipe,
+    totalCraftProcess,
+    totalOutput,
+  }) => {
 
-      for (const material of materials) {
+    await runTransaction(
+      db,
+      async (transaction) => {
 
-        const inventoryItem =
-          findInventoryItem(
-            material.item
-          );
+        for (const material of recipe.materials) {
 
-        if (!inventoryItem)
-          continue;
+          const inventoryItem =
+            findInventoryItem(
+              material.item
+            );
 
-        const reduceAmount =
-          Number(material.qty) *
-          Number(qty);
+          if (!inventoryItem) {
 
-        await updateDoc(
-          doc(
+            throw new Error(
+              `${material.item} not found`
+            );
+          }
+
+          const itemRef = doc(
             db,
             "inventory",
             inventoryItem.id
-          ),
-          {
-            stock:
-              increment(
-                -reduceAmount
-              ),
+          );
+
+          const itemSnap =
+            await transaction.get(
+              itemRef
+            );
+
+          if (!itemSnap.exists()) {
+
+            throw new Error(
+              `${material.item} missing`
+            );
           }
-        );
+
+          const currentStock =
+            Number(
+              itemSnap.data()
+                .stock || 0
+            );
+
+          const required =
+            Number(material.qty) *
+            Number(totalCraftProcess);
+
+          if (
+            currentStock <
+            required
+          ) {
+
+            throw new Error(
+              `Stock ${material.item} insufficient`
+            );
+          }
+
+          transaction.update(
+            itemRef,
+            {
+              stock:
+                currentStock -
+                required,
+            }
+          );
+        }
+
+        // RESULT ITEM
+        const craftedItem =
+          findInventoryItem(
+            recipe.name
+          );
+
+        if (craftedItem) {
+
+          const craftedRef = doc(
+            db,
+            "inventory",
+            craftedItem.id
+          );
+
+          const craftedSnap =
+            await transaction.get(
+              craftedRef
+            );
+
+          const currentCraftedStock =
+            Number(
+              craftedSnap.data()
+                .stock || 0
+            );
+
+          transaction.update(
+            craftedRef,
+            {
+              stock:
+                currentCraftedStock +
+                Number(totalOutput),
+            }
+          );
+
+        } else {
+
+          const newItemRef =
+            doc(
+              collection(
+                db,
+                "inventory"
+              )
+            );
+
+          transaction.set(
+            newItemRef,
+            {
+              name:
+                recipe.name,
+
+              category:
+                "CRAFTING",
+
+              stock:
+                Number(
+                  totalOutput
+                ),
+
+              imageUrl: "",
+
+              createdAt:
+                serverTimestamp(),
+            }
+          );
+        }
       }
-    };
+    );
+  };
 
   // ============================================
   // ADD RESULT ITEM
@@ -617,10 +726,11 @@ export default function CraftingPage() {
           "Oyabun"
         ) {
 
-          await reduceInventoryMaterials(
-            recipe.materials,
-            totalCraftProcess
-          );
+          await processCraftingTransaction({
+  recipe,
+  totalCraftProcess,
+  totalOutput,
+});
 
           await addCraftedItemToInventory(
             recipe.name,
