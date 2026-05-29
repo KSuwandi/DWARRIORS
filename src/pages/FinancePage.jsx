@@ -11,15 +11,17 @@ import {
   collection,
   deleteDoc,
   doc,
-  onSnapshot,
   orderBy,
   query,
   serverTimestamp,
   updateDoc,
+  limit,
+  getDocs,
+  startAfter,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
-
+import imageCompression from "browser-image-compression";
 import { useAuth } from "../contexts/AuthContext";
 import { db } from "../services/firebase/config";
 
@@ -54,10 +56,17 @@ export default function FinancePage() {
 
   const currentPageLimit = 5;
 
-  const [
-    currentPage,
-    setCurrentPage,
-  ] = useState(1);
+  const [lastDoc, setLastDoc] =
+  useState(null);
+
+const [firstLoading, setFirstLoading] =
+  useState(true);
+
+const [hasMore, setHasMore] =
+  useState(true);
+
+  const [loadingMore, setLoadingMore] =
+  useState(false);
 
   const [form, setForm] =
   useState({
@@ -73,59 +82,7 @@ export default function FinancePage() {
   // =====================================
   // CREATE ACTIVITY LOG
   // =====================================
-  const createActivityLog =
-    async ({
-      type,
-      action,
-      target,
-      quantity,
-      description,
-    }) => {
-
-      try {
-
-        await addDoc(
-          collection(
-            db,
-            "activity_logs"
-          ),
-          {
-            type,
-
-            action,
-
-            user:
-              user?.rpName ||
-              "Unknown",
-
-            role:
-              role || "-",
-
-            target,
-
-            quantity,
-
-            description,
-
-            createdAt:
-              serverTimestamp(),
-          }
-        );
-
-      } catch (error) {
-
-        console.error(
-          "Activity log error:",
-          error
-        );
-      }
-    };
-
-
-    // =====================================
-// UPLOAD IMAGE CLOUDINARY
-// =====================================
-const handleImageUpload =
+  const handleImageUpload =
   async (e) => {
 
     try {
@@ -135,13 +92,12 @@ const handleImageUpload =
 
       if (!file) return;
 
-      const allowed =
-        [
-          "image/png",
-          "image/jpeg",
-          "image/jpg",
-          "image/webp",
-        ];
+      const allowed = [
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "image/webp",
+      ];
 
       if (
         !allowed.includes(
@@ -156,26 +112,25 @@ const handleImageUpload =
         return;
       }
 
-      if (
-        file.size >
-        5 * 1024 * 1024
-      ) {
-
-        toast.error(
-          "Max upload 5MB"
-        );
-
-        return;
-      }
-
       setUploadingImage(true);
+
+      // COMPRESS IMAGE
+      const compressedFile =
+        await imageCompression(
+          file,
+          {
+            maxSizeMB: 0.4,
+            maxWidthOrHeight: 1280,
+            useWebWorker: true,
+          }
+        );
 
       const body =
         new FormData();
 
       body.append(
         "file",
-        file
+        compressedFile
       );
 
       body.append(
@@ -204,8 +159,11 @@ const handleImageUpload =
 
       setForm((prev) => ({
         ...prev,
-        imageUrl:
-          data.secure_url,
+       imageUrl:
+      data.secure_url.replace(
+    "/upload/",
+    "/upload/f_auto,q_auto/"
+  )
       }));
 
       toast.success(
@@ -226,49 +184,173 @@ const handleImageUpload =
     }
   };
 
-  // =====================================
-  // REALTIME TRANSACTIONS
-  // =====================================
+  const loadTransactions =
+  async () => {
+
+    try {
+
+      if (!user) return;
+
+      setFirstLoading(true);
+
+      // QUERY FIRESTORE
+      const q = query(
+
+        collection(
+          db,
+          "users",
+          user.uid,
+          "finance"
+        ),
+
+        orderBy(
+          "createdAt",
+          "desc"
+        ),
+
+        limit(currentPageLimit)
+
+      );
+
+      // AMBIL DATA
+      const snapshot =
+        await getDocs(q);
+
+      // UBAH DATA FIRESTORE
+      // MENJADI ARRAY
+      const data =
+        snapshot.docs.map(
+          (doc) => ({
+
+            id: doc.id,
+
+            ...doc.data(),
+
+          })
+        );
+
+      // SIMPAN KE STATE
+      setTransactions(data);
+
+      // AMBIL DOCUMENT TERAKHIR
+      const lastVisible =
+        snapshot.docs[
+          snapshot.docs.length - 1
+        ];
+
+      // SIMPAN lastDoc
+      setLastDoc(lastVisible);
+
+      // CEK MASIH ADA DATA ATAU TIDAK
+      setHasMore(
+        snapshot.docs.length ===
+          currentPageLimit
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      toast.error(
+        "Gagal load transaksi"
+      );
+
+    } finally {
+
+      setFirstLoading(false);
+
+    }
+    };
+
   useEffect(() => {
 
     if (!user) return;
 
-    const financeRef = query(
-      collection(
-        db,
-        "users",
-        user.uid,
-        "finance"
-      ),
-      orderBy(
-        "createdAt",
-        "desc"
-      )
-    );
+  loadTransactions();
 
-    const unsubscribe =
-      onSnapshot(
-        financeRef,
-        (snapshot) => {
+}, [user]);
 
-          const data =
-            snapshot.docs.map(
-              (doc) => ({
-                id: doc.id,
-                ...doc.data(),
-              })
-            );
+  const loadMoreTransactions =
+  async () => {
 
-          setTransactions(
-            data
-          );
-        }
+    try {
+
+      setLoadingMore(true);
+
+      if (!lastDoc) return;
+
+      const q = query(
+
+        collection(
+          db,
+          "users",
+          user.uid,
+          "finance"
+        ),
+
+        orderBy(
+          "createdAt",
+          "desc"
+        ),
+
+        startAfter(lastDoc),
+
+        limit(currentPageLimit)
+
       );
 
-    return () =>
-      unsubscribe();
+      const snapshot =
+        await getDocs(q);
 
-  }, [user]);
+      const newData =
+        snapshot.docs.map(
+          (doc) => ({
+
+            id: doc.id,
+
+            ...doc.data(),
+
+          })
+        );
+
+      // GABUNG DATA LAMA + BARU
+      setTransactions((prev) => [
+        ...prev,
+        ...newData,
+      ]);
+
+      // UPDATE lastDoc
+      const lastVisible =
+        snapshot.docs[
+          snapshot.docs.length - 1
+        ];
+
+      setLastDoc(lastVisible);
+
+      // CEK MASIH ADA DATA?
+      setHasMore(
+        snapshot.docs.length ===
+          currentPageLimit
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      toast.error(
+        "Gagal load data berikutnya"
+      );
+
+    } finally {
+
+      setLoadingMore(false);
+
+    }
+};
+
+  // =====================================
+  // REALTIME TRANSACTIONS
+  // =====================================
 
   // =====================================
   // TOTAL PEMASUKAN
@@ -425,19 +507,6 @@ const handleImageUpload =
   // =====================================
   // PAGINATION
   // =====================================
-  const totalPages =
-    Math.ceil(
-      filteredTransactions.length /
-        currentPageLimit
-    );
-
-  const paginatedTransactions =
-    filteredTransactions.slice(
-      (currentPage - 1) *
-        currentPageLimit,
-      currentPage *
-        currentPageLimit
-    );
 
   // =====================================
   // ADD TRANSACTION
@@ -769,10 +838,16 @@ const handleImageUpload =
   // DELETE TRANSACTION
   // =====================================
   const deleteTransaction =
-    async (
-      id,
-      title
-    ) => {
+  async (
+    item
+  ) => {
+
+     const confirmDelete =
+    window.confirm(
+      "Yakin ingin menghapus transaksi ini?"
+    );
+
+  if (!confirmDelete) return;
 
       try {
 
@@ -790,18 +865,21 @@ const handleImageUpload =
         }
 
         await deleteDoc(
-          doc(
-            db,
-            "users",
-            user.uid,
-            "finance",
-            id
-          )
-        );
+  doc(
+    db,
+    "users",
+    item.createdByUid,
+    "finance",
+    item.id
+  )
+);
 
-        toast.success(
-          "History berhasil dihapus"
-        );
+await loadTransactions();
+
+toast.success(
+  "History berhasil dihapus"
+);
+
 
       } catch (error) {
 
@@ -814,6 +892,26 @@ const handleImageUpload =
         );
       }
     };
+if (firstLoading) {
+
+  return (
+
+    <AppLayout>
+
+      <div className="flex flex-col items-center justify-center py-24">
+
+  <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+
+  <p className="text-gray-300 mt-4">
+    Loading transaksi...
+  </p>
+
+</div>
+
+    </AppLayout>
+
+  );
+}
 
   return (
 
@@ -1591,12 +1689,9 @@ const handleImageUpload =
               key={type}
               onClick={() => {
 
-                setFilter(type);
+  setFilter(type);
 
-                setCurrentPage(
-                  1
-                );
-              }}
+}}
               className={`px-4 py-2 rounded-xl text-sm border transition-all ${
                 filter === type
                   ? "bg-gradient-to-r from-purple-700 to-violet-700 border-transparent"
@@ -1613,7 +1708,7 @@ const handleImageUpload =
         {/* HISTORY */}
         <div className="space-y-4">
 
-          {paginatedTransactions.map(
+          {filteredTransactions.map(
             (item) => (
 
               <div
@@ -1672,7 +1767,8 @@ const handleImageUpload =
                     {item.imageUrl && (
 
   <img
-    src={item.imageUrl}
+  loading="lazy"
+  src={item.imageUrl}
     alt="bukti"
     className="mt-4 w-56 rounded-2xl border border-purple-500/30 object-cover"
   />
@@ -1754,16 +1850,13 @@ const handleImageUpload =
                         "Oyabun" && (
 
                         <button
-                          onClick={() =>
-                            deleteTransaction(
-                              item.id,
-                              item.title
-                            )
-                          }
-                          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl text-sm transition-all"
-                        >
-                          Hapus
-                        </button>
+  onClick={() =>
+    deleteTransaction(item)
+  }
+  className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl text-sm transition-all"
+>
+  Hapus
+</button>
 
                       )}
 
@@ -1778,7 +1871,7 @@ const handleImageUpload =
           )}
 
           {/* EMPTY */}
-          {paginatedTransactions.length ===
+          {filteredTransactions.length ===
             0 && (
 
             <div className="bg-[#141021] border border-dashed border-purple-900/30 rounded-3xl p-10 text-center text-gray-400">
@@ -1788,78 +1881,28 @@ const handleImageUpload =
             </div>
 
           )}
+          {/* LOAD MORE */}
+{hasMore && (
+
+  <div className="flex justify-center mt-6">
+
+    <button
+  onClick={loadMoreTransactions}
+  disabled={loadingMore}
+  className="bg-purple-700 hover:bg-purple-800 disabled:opacity-50 transition-all px-6 py-3 rounded-2xl font-semibold"
+>
+  {loadingMore
+    ? "Loading..."
+    : "Load More"}
+</button>
+
+  </div>
+
+)}
 
         </div>
 
-        {/* PAGINATION */}
-        {totalPages > 1 && (
-
-          <div className="flex items-center justify-center gap-2 mt-8 flex-wrap">
-
-            <button
-              disabled={
-                currentPage === 1
-              }
-              onClick={() =>
-                setCurrentPage(
-                  (
-                    prev
-                  ) =>
-                    prev - 1
-                )
-              }
-              className="bg-[#141021] border border-purple-900/30 px-4 py-2 rounded-xl disabled:opacity-40"
-            >
-              Previous
-            </button>
-
-            {Array.from({
-              length:
-                totalPages,
-            }).map(
-              (_, index) => (
-
-                <button
-                  key={index}
-                  onClick={() =>
-                    setCurrentPage(
-                      index + 1
-                    )
-                  }
-                  className={`px-4 py-2 rounded-xl ${
-                    currentPage ===
-                    index + 1
-                      ? "bg-gradient-to-r from-purple-700 to-violet-700"
-                      : "bg-[#141021] border border-purple-900/30"
-                  }`}
-                >
-                  {index + 1}
-                </button>
-
-              )
-            )}
-
-            <button
-              disabled={
-                currentPage ===
-                totalPages
-              }
-              onClick={() =>
-                setCurrentPage(
-                  (
-                    prev
-                  ) =>
-                    prev + 1
-                )
-              }
-              className="bg-[#141021] border border-purple-900/30 px-4 py-2 rounded-xl disabled:opacity-40"
-            >
-              Next
-            </button>
-
-          </div>
-
-        )}
+        
 
       </div>
 

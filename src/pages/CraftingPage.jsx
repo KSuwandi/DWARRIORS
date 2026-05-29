@@ -386,9 +386,9 @@ export default function CraftingPage() {
   };
 
   // ============================================
-  // REDUCE MATERIALS
-  // ============================================
-  const processCraftingTransaction =
+// REDUCE MATERIALS
+// ============================================
+const processCraftingTransaction =
   async ({
     recipe,
     totalCraftProcess,
@@ -399,6 +399,11 @@ export default function CraftingPage() {
       db,
       async (transaction) => {
 
+        const materialDocs = [];
+
+        // ====================================
+        // READ ALL MATERIALS FIRST
+        // ====================================
         for (const material of recipe.materials) {
 
           const inventoryItem =
@@ -431,28 +436,78 @@ export default function CraftingPage() {
             );
           }
 
+          materialDocs.push({
+            material,
+            itemRef,
+            data: itemSnap.data(),
+          });
+        }
+
+        // ====================================
+        // READ RESULT ITEM
+        // ====================================
+        const craftedItem =
+          findInventoryItem(
+            recipe.name
+          );
+
+        let craftedRef = null;
+        let craftedSnap = null;
+
+        if (craftedItem) {
+
+          craftedRef = doc(
+            db,
+            "inventory",
+            craftedItem.id
+          );
+
+          craftedSnap =
+            await transaction.get(
+              craftedRef
+            );
+        }
+
+        // ====================================
+        // VALIDATE STOCK
+        // ====================================
+        for (const item of materialDocs) {
+
           const currentStock =
             Number(
-              itemSnap.data()
-                .stock || 0
+              item.data.stock || 0
             );
 
           const required =
-            Number(material.qty) *
+            Number(item.material.qty) *
             Number(totalCraftProcess);
 
           if (
-            currentStock <
-            required
+            currentStock < required
           ) {
 
             throw new Error(
-              `Stock ${material.item} insufficient`
+              `Stock ${item.material.item} insufficient`
             );
           }
+        }
+
+        // ====================================
+        // UPDATE MATERIALS
+        // ====================================
+        for (const item of materialDocs) {
+
+          const currentStock =
+            Number(
+              item.data.stock || 0
+            );
+
+          const required =
+            Number(item.material.qty) *
+            Number(totalCraftProcess);
 
           transaction.update(
-            itemRef,
+            item.itemRef,
             {
               stock:
                 currentStock -
@@ -461,24 +516,10 @@ export default function CraftingPage() {
           );
         }
 
-        // RESULT ITEM
-        const craftedItem =
-          findInventoryItem(
-            recipe.name
-          );
-
-        if (craftedItem) {
-
-          const craftedRef = doc(
-            db,
-            "inventory",
-            craftedItem.id
-          );
-
-          const craftedSnap =
-            await transaction.get(
-              craftedRef
-            );
+        // ====================================
+        // UPDATE RESULT ITEM
+        // ====================================
+        if (craftedSnap?.exists()) {
 
           const currentCraftedStock =
             Number(
@@ -530,63 +571,6 @@ export default function CraftingPage() {
     );
   };
 
-  // ============================================
-  // ADD RESULT ITEM
-  // ============================================
-  const addCraftedItemToInventory =
-    async (
-      itemName,
-      qty
-    ) => {
-
-      if (Number(qty) <= 0)
-        return;
-
-      const craftedItem =
-        findInventoryItem(
-          itemName
-        );
-
-      if (craftedItem) {
-
-        await updateDoc(
-          doc(
-            db,
-            "inventory",
-            craftedItem.id
-          ),
-          {
-            stock:
-              increment(
-                Number(qty)
-              ),
-          }
-        );
-
-      } else {
-
-        await addDoc(
-          collection(
-            db,
-            "inventory"
-          ),
-          {
-            name: itemName,
-
-            category:
-              "CRAFTING",
-
-            stock:
-              Number(qty),
-
-            imageUrl: "",
-
-            createdAt:
-              serverTimestamp(),
-          }
-        );
-      }
-    };
 
   // ============================================
   // ADD HISTORY
@@ -722,50 +706,45 @@ export default function CraftingPage() {
         }
 
         if (
-          role ===
-          "Oyabun"
-        ) {
+  role ===
+  "Oyabun"
+) {
 
-          await processCraftingTransaction({
-  recipe,
-  totalCraftProcess,
-  totalOutput,
-});
+  await processCraftingTransaction({
+    recipe,
+    totalCraftProcess,
+    totalOutput,
+  });
 
-          await addCraftedItemToInventory(
-            recipe.name,
-            totalOutput
-          );
+  await addCraftingHistory({
+    recipeName:
+      recipe.name,
 
-          await addCraftingHistory({
-            recipeName:
-              recipe.name,
+    successQty:
+      successQty,
 
-            successQty:
-              successQty,
+    failedQty:
+      failedQty,
 
-            failedQty:
-              failedQty,
+    outputQty:
+      totalOutput,
 
-            outputQty:
-              totalOutput,
+    status:
+      failedQty > 0
+        ? "Partial Failed"
+        : "Crafted",
+  });
 
-            status:
-              failedQty > 0
-                ? "Partial Failed"
-                : "Crafted",
-          });
+  toast.success(
+    "Crafting berhasil diproses"
+  );
 
-          toast.success(
-            "Crafting berhasil diproses"
-          );
+  setSuccessQuantity(1);
 
-          setSuccessQuantity(1);
+  setFailedQuantity(0);
 
-          setFailedQuantity(0);
-
-          return;
-        }
+  return;
+}
 
         await addActivityLog({
           type:
