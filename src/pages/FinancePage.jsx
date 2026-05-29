@@ -36,6 +36,9 @@ export default function FinancePage() {
   const [loading, setLoading] =
     useState(false);
 
+  const [uploadingImage, setUploadingImage] =
+  useState(false);
+
   const [filter, setFilter] =
     useState("Semua");
 
@@ -57,14 +60,15 @@ export default function FinancePage() {
   ] = useState(1);
 
   const [form, setForm] =
-    useState({
-      type: "Pemasukan",
-      paymentType: "Cash",
-      moneyType: "Uang Putih",
-      title: "",
-      amount: "",
-      note: "",
-    });
+  useState({
+    type: "Pemasukan",
+    paymentType: "Cash",
+    moneyType: "Uang Putih",
+    title: "",
+    amount: "",
+    note: "",
+    imageUrl: "",
+  });
 
   // =====================================
   // CREATE ACTIVITY LOG
@@ -116,6 +120,111 @@ export default function FinancePage() {
         );
       }
     };
+
+
+    // =====================================
+// UPLOAD IMAGE CLOUDINARY
+// =====================================
+const handleImageUpload =
+  async (e) => {
+
+    try {
+
+      const file =
+        e.target.files?.[0];
+
+      if (!file) return;
+
+      const allowed =
+        [
+          "image/png",
+          "image/jpeg",
+          "image/jpg",
+          "image/webp",
+        ];
+
+      if (
+        !allowed.includes(
+          file.type
+        )
+      ) {
+
+        toast.error(
+          "Format gambar tidak didukung"
+        );
+
+        return;
+      }
+
+      if (
+        file.size >
+        5 * 1024 * 1024
+      ) {
+
+        toast.error(
+          "Max upload 5MB"
+        );
+
+        return;
+      }
+
+      setUploadingImage(true);
+
+      const body =
+        new FormData();
+
+      body.append(
+        "file",
+        file
+      );
+
+      body.append(
+        "upload_preset",
+        "jigokubara"
+      );
+
+      const response =
+        await fetch(
+          "https://api.cloudinary.com/v1_1/dpyhp3o66/image/upload",
+          {
+            method: "POST",
+            body,
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (!data.secure_url) {
+
+        throw new Error(
+          "Upload gagal"
+        );
+      }
+
+      setForm((prev) => ({
+        ...prev,
+        imageUrl:
+          data.secure_url,
+      }));
+
+      toast.success(
+        "Foto berhasil diupload"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      toast.error(
+        "Upload foto gagal"
+      );
+
+    } finally {
+
+      setUploadingImage(false);
+    }
+  };
 
   // =====================================
   // REALTIME TRANSACTIONS
@@ -371,6 +480,19 @@ export default function FinancePage() {
         return;
       }
 
+      if (
+      form.type ===
+        "Pemasukan" &&
+      !form.imageUrl
+    ) {
+
+      toast.error(
+        "Foto bukti pemasukan wajib diupload"
+      );
+
+      return;
+    }
+
       const amount =
         Number(form.amount);
 
@@ -414,6 +536,9 @@ export default function FinancePage() {
             note:
               form.note.trim(),
 
+            imageUrl:
+             form.imageUrl || "",
+
             createdBy:
               user.rpName ||
               "Unknown",
@@ -442,6 +567,7 @@ export default function FinancePage() {
           title: "",
           amount: "",
           note: "",
+          imageUrl: "",
         });
 
       } catch (error) {
@@ -819,7 +945,12 @@ export default function FinancePage() {
     {
       item: "DOUBLE ACTION",
       merah: "450.000",
-      putih: "350.000",
+      putih: "370.000", //20 ribu
+    },
+    {
+      item: "WM",
+      merah: "150.000",
+      putih: "130.000",
     },
   ].map((row, index) => (
 
@@ -857,11 +988,11 @@ export default function FinancePage() {
   <div className="bg-gradient-to-br from-red-900/40 to-purple-900/40 border border-red-500/30 rounded-3xl p-5">
 
     <h3 className="text-xl font-bold text-red-300">
-      1 SET FULL CASH UANG MERAH
+      1 SET FULL CASH UNGMER (PYTHON/MK2/WM/CLIP/VEST)
     </h3>
 
     <p className="text-4xl font-black mt-3">
-      Rp 1.715.000
+      Rp 1.590.000
     </p>
 
   </div>
@@ -869,11 +1000,11 @@ export default function FinancePage() {
   <div className="bg-gradient-to-br from-yellow-700/30 to-purple-900/40 border border-yellow-400/30 rounded-3xl p-5">
 
     <h3 className="text-xl font-bold text-yellow-200">
-      1 SET FULL CASH UANG PUTIH
+      1 SET FULL CASH UNGPUT (PYTHON/MK2/WM/CLIP/VEST)
     </h3>
 
     <p className="text-4xl font-black mt-3">
-      Rp 1.565.000
+      Rp 1.300.000
     </p>
 
   </div>
@@ -994,67 +1125,67 @@ export default function FinancePage() {
     {
       paket: "ALUMINIUM POWDER",
       perPaket: "100",
-      harga: "Rp10.000",
+      harga: "Rp12.000",
     },
     {
       paket: "IRON POWDER",
       perPaket: "100",
-      harga: "Rp10.000",
+      harga: "Rp12.000",
     },
     {
       paket: "METALSCRAP",
       perPaket: "100",
-      harga: "Rp10.000",
+      harga: "Rp14.000",
     },
     {
       paket: "ALUMINIUM",
       perPaket: "100",
-      harga: "Rp10.000",
+      harga: "Rp14.000",
     },
     {
       paket: "BERLIAN",
       perPaket: "1",
-      harga: "Rp2.000",
+      harga: "Rp3.000",
     },
     {
       paket: "KACA",
       perPaket: "100",
-      harga: "Rp15.000",
+      harga: "Rp25.000",
     },
     {
       paket: "BOTOL",
       perPaket: "100",
-      harga: "Rp15.000",
+      harga: "Rp25.000",
     },
     {
       paket: "PLASTIK",
       perPaket: "100",
-      harga: "Rp10.000",
+      harga: "Rp14.000",
     },
     {
       paket: "KARET",
       perPaket: "100",
-      harga: "Rp13.000",
+      harga: "Rp12.000",
     },
     {
       paket: "KARUNG",
       perPaket: "100",
-      harga: "Rp11.000",
+      harga: "Rp12.000",
     },
     {
       paket: "BAJA",
       perPaket: "100",
-      harga: "Rp10.000",
+      harga: "Rp14.000",
     },
     {
       paket: "KAYU KEMASAN",
       perPaket: "100",
-      harga: "Rp16.000",
+      harga: "Rp14.000",
     },
     {
       paket: "KOTORAN HEWAN",
       perPaket: "100",
-      harga: "Rp11.000",
+      harga: "Rp14.000",
     },
     {
       paket: "KULIT BABI",
@@ -1068,8 +1199,8 @@ export default function FinancePage() {
     },
     {
       paket: "KULIT SINGA",
-      perPaket: "4",
-      harga: "Rp16.000",
+      perPaket: "1",
+      harga: "Rp3.000",
     },
     {
       paket: "KULIT JADI",
@@ -1082,12 +1213,12 @@ export default function FinancePage() {
       harga: "Rp15.000",
     },
     {
-      paket: "BULU RUSA",
+      paket: "BULU BABI",
       perPaket: "100",
-      harga: "Rp22.000",
+      harga: "Rp15.000",
     },
     {
-      paket: "BULU SINGA",
+      paket: "BULU RUBAH",
       perPaket: "100",
       harga: "Rp30.000",
     },
@@ -1130,66 +1261,119 @@ export default function FinancePage() {
         )}
 
         {/* HEADER */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+<div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
 
-          <div>
+  <div>
 
-            <div className="flex items-center gap-3 flex-wrap">
+    <div className="flex items-center gap-3 flex-wrap">
 
-              <h1 className="text-3xl font-bold tracking-tight">
-                Finance System
-              </h1>
+      <h1 className="text-3xl font-bold tracking-tight">
+        Finance System
+      </h1>
 
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-                  role === "Oyabun"
-                    ? "bg-purple-500/20 text-purple-300 border-purple-500/30"
-                    : "bg-[#1A1330] text-gray-300 border-purple-900/40"
-                }`}
-              >
-                {role}
-              </span>
+      <span
+        className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+          role === "Oyabun"
+            ? "bg-purple-500/20 text-purple-300 border-purple-500/30"
+            : "bg-[#1A1330] text-gray-300 border-purple-900/40"
+        }`}
+      >
+        {role}
+      </span>
 
-            </div>
+    </div>
 
-            <p className="text-gray-400 mt-2 text-sm">
-              Sistem keuangan Jigokubara Family
-            </p>
+    <p className="text-gray-400 mt-2 text-sm">
+      Sistem keuangan Jigokubara Family
+    </p>
 
-          </div>
+  </div>
 
-          <div className="flex gap-3 flex-wrap">
+  <div className="flex gap-3 flex-wrap">
 
-            <button
-              onClick={() =>
-                setShowWeaponPriceList(true)
-              }
-              className="bg-gradient-to-r from-fuchsia-700 to-purple-700 hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-purple-900/30"
-            >
-              Pricelist Senjata
-            </button>
+    <button
+      onClick={() =>
+        setShowWeaponPriceList(true)
+      }
+      className="bg-gradient-to-r from-fuchsia-700 to-purple-700 hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-purple-900/30"
+    >
+      Pricelist Senjata
+    </button>
 
-            <button
-              onClick={() =>
-                setShowDisnakerPriceList(true)
-              }
-              className="bg-gradient-to-r from-indigo-700 to-blue-700 hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-blue-900/30"
-            >
-              Pricelist Disnaker
-            </button>
+    <button
+      onClick={() =>
+        setShowDisnakerPriceList(true)
+      }
+      className="bg-gradient-to-r from-indigo-700 to-blue-700 hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-blue-900/30"
+    >
+      Pricelist Disnaker
+    </button>
 
-            <button
-              onClick={
-                handlePayDebt
-              }
-              className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-yellow-900/30"
-            >
-              Bayar Hutang
-            </button>
+    <button
+      onClick={
+        handlePayDebt
+      }
+      className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-yellow-900/30"
+    >
+      Bayar Hutang
+    </button>
 
-          </div>
+  </div>
 
-        </div>
+</div>
+
+{/* STATISTIC CARDS */}
+<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+
+  {/* TOTAL PEMASUKAN */}
+  <div className="bg-[#141021] border border-green-500/20 rounded-3xl p-5">
+
+    <p className="text-sm text-gray-400">
+      Total Pemasukan
+    </p>
+
+    <h2 className="text-3xl font-black text-green-400 mt-2">
+      Rp{" "}
+      {totalIncome.toLocaleString(
+        "id-ID"
+      )}
+    </h2>
+
+  </div>
+
+  {/* TOTAL PENGELUARAN */}
+  <div className="bg-[#141021] border border-red-500/20 rounded-3xl p-5">
+
+    <p className="text-sm text-gray-400">
+      Total Pengeluaran
+    </p>
+
+    <h2 className="text-3xl font-black text-red-400 mt-2">
+      Rp{" "}
+      {totalExpense.toLocaleString(
+        "id-ID"
+      )}
+    </h2>
+
+  </div>
+
+  {/* TOTAL HUTANG */}
+  <div className="bg-[#141021] border border-yellow-500/20 rounded-3xl p-5">
+
+    <p className="text-sm text-gray-400">
+      Total Hutang
+    </p>
+
+    <h2 className="text-3xl font-black text-yellow-300 mt-2">
+      Rp{" "}
+      {totalDebt.toLocaleString(
+        "id-ID"
+      )}
+    </h2>
+
+  </div>
+
+</div>
 
                 {/* FORM */}
         <form
@@ -1311,6 +1495,52 @@ export default function FinancePage() {
             />
 
           </div>
+
+          {/* FOTO PEMASUKAN */}
+{form.type ===
+  "Pemasukan" && (
+
+  <div className="mt-4">
+
+    <label className="text-sm text-gray-300 block mb-2">
+
+      Upload Bukti Pemasukan
+
+    </label>
+
+    <input
+      type="file"
+      accept="image/*"
+      onChange={
+        handleImageUpload
+      }
+      className="w-full bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3"
+    />
+
+    {uploadingImage && (
+
+      <p className="text-sm text-purple-300 mt-2">
+        Uploading...
+      </p>
+
+    )}
+
+    {form.imageUrl && (
+
+      <img
+        src={
+          form.imageUrl
+        }
+        alt="preview"
+        className="mt-4 w-48 rounded-2xl border border-purple-500/30"
+      />
+
+    )}
+
+  </div>
+
+)}
+
 
           <textarea
             placeholder="Catatan transaksi..."
@@ -1439,6 +1669,15 @@ export default function FinancePage() {
                       {item.note ||
                         "Tidak ada catatan"}
                     </p>
+                    {item.imageUrl && (
+
+  <img
+    src={item.imageUrl}
+    alt="bukti"
+    className="mt-4 w-56 rounded-2xl border border-purple-500/30 object-cover"
+  />
+
+)}
 
                     <div className="flex flex-wrap gap-2 mt-4">
 
