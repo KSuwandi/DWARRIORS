@@ -218,7 +218,6 @@ export default function Sidebar() {
       name: "Members",
       icon: Users,
       path: "/members",
-      roles: ["Oyabun"],
     });
   }
 
