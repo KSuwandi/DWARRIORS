@@ -838,60 +838,77 @@ const [hasMore, setHasMore] =
   // DELETE TRANSACTION
   // =====================================
   const deleteTransaction =
-  async (
-    item
-  ) => {
+async (
+  item
+) => {
 
-     const confirmDelete =
+  if (!user) return;
+
+  if (
+    role !== "Oyabun"
+  ) {
+
+    toast.error(
+      "Hanya Oyabun yang bisa menghapus history"
+    );
+
+    return;
+  }
+
+  // REMINDER DELETE
+  const confirmDelete =
     window.confirm(
-      "Yakin ingin menghapus transaksi ini?"
+`⚠️ KONFIRMASI HAPUS TRANSAKSI
+
+Judul:
+${item.title}
+
+Jumlah:
+Rp ${Number(item.amount).toLocaleString("id-ID")}
+
+Pembuat:
+${item.createdBy}
+
+Status:
+${item.status}
+
+Data yang dihapus tidak bisa dikembalikan lagi.
+
+Klik OK untuk melanjutkan penghapusan.`
     );
 
   if (!confirmDelete) return;
 
-      try {
+  try {
 
-        if (!user) return;
+    await deleteDoc(
+      doc(
+        db,
+        "users",
+        item.createdByUid,
+        "finance",
+        item.id
+      )
+    );
 
-        if (
-          role !== "Oyabun"
-        ) {
+    await loadTransactions();
 
-          toast.error(
-            "Hanya Oyabun yang bisa menghapus history"
-          );
+    toast.success(
+      "History berhasil dihapus"
+    );
 
-          return;
-        }
+  } catch (error) {
 
-        await deleteDoc(
-  doc(
-    db,
-    "users",
-    item.createdByUid,
-    "finance",
-    item.id
-  )
-);
+    console.error(
+      error
+    );
 
-await loadTransactions();
+    toast.error(
+      "Gagal menghapus history"
+    );
+  }
+};
 
-toast.success(
-  "History berhasil dihapus"
-);
-
-
-      } catch (error) {
-
-        console.error(
-          error
-        );
-
-        toast.error(
-          "Gagal menghapus history"
-        );
-      }
-    };
 if (firstLoading) {
 
   return (
