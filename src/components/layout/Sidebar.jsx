@@ -24,6 +24,7 @@ import {
 } from "react";
 
 import {
+  collection,
   collectionGroup,
   onSnapshot,
   query,
@@ -58,6 +59,11 @@ export default function Sidebar() {
     financeNotif,
     setFinanceNotif,
   ] = useState(0);
+
+  const [
+  roleNotif,
+  setRoleNotif,
+] = useState(0);
 
   // =====================================
   // CRAFTING REQUEST NOTIFICATION
@@ -126,6 +132,41 @@ export default function Sidebar() {
       unsubscribe();
 
   }, []);
+
+  // =====================================
+// ROLE APPROVAL NOTIFICATION
+// =====================================
+useEffect(() => {
+
+  const roleQuery =
+    query(
+      collection(
+        db,
+        "role_requests"
+      ),
+      where(
+        "status",
+        "==",
+        "pending"
+      )
+    );
+
+  const unsubscribe =
+    onSnapshot(
+      roleQuery,
+      (snapshot) => {
+
+        setRoleNotif(
+          snapshot.size
+        );
+
+      }
+    );
+
+  return () =>
+    unsubscribe();
+
+}, []);
 
   // =====================================
   // MENU
@@ -210,6 +251,8 @@ export default function Sidebar() {
   icon: ShieldCheck,
   path: "/role-approval",
   roles: ["Oyabun"],
+  notification:
+    roleNotif,
 },
   ];
 
