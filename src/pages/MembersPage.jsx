@@ -48,7 +48,7 @@ const deleteMember = async (member) => {
       `Ketik nama member dengan tepat untuk melanjutkan:`
     );
 
-    if (confirmation === null) {
+    if (confirmation === null) {  
       return;
     }
 
@@ -595,21 +595,16 @@ useEffect(() => {
     {selectedMember.role}
   </span>
 
-  {selectedMember.role !==
-    "Oyabun" && (
-
-    <button
-      onClick={() =>
-        deleteMember(
-          selectedMember
-        )
-      }
-      className="px-4 py-1 text-xs bg-red-600 hover:bg-red-700 rounded-xl font-semibold transition-all"
-    >
-      Delete Member
-    </button>
-
-  )}
+ {role === "Oyabun" && (
+  <button
+    onClick={() =>
+      deleteMember(selectedMember)
+    }
+    className="px-4 py-1 text-xs bg-red-600 hover:bg-red-700 rounded-xl font-semibold transition-all"
+  >
+    Delete Member
+  </button>
+)}
 
 </div>
 
