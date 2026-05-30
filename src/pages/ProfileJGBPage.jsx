@@ -34,7 +34,7 @@ export default function ProfileJGBPage() {
         {
           name: "Izaya Rosevale",
           title: "Supreme Leader",
-          photo: "/images/izaya-fix.png",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164416/Izaya-fix_c2fvli.png",
           description:
             "One of the supreme leaders of the Jigokubara Gumi. Commands absolute authority and oversees all family affairs.",
         },
@@ -46,7 +46,7 @@ export default function ProfileJGBPage() {
         {
           name: "Daniel R Hawks",
           title: "Co - Supreme Leader",
-          photo: "/images/Daniel-Photoroom.png",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164409/Daniel-Photoroom_jcupp8.png",
           description:
             "Second of the supreme leaders of the Jigokubara Gumi. Commands absolute authority and oversees all family affairs.",
         },
@@ -58,56 +58,56 @@ export default function ProfileJGBPage() {
         {
           name: "Anu Julian Moore",
           title: "Leader of the Hashira",
-          photo: "/images/julian-fix.png",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164405/julian-fix_rnuyoc.png",
           description:
             "Leader of the Hashira, a key figure in the Jigokubara Gumi.",
         },
         {
           name: "Gogon A Moore",
           title: "Hashira of Finance",
-          photo: "/images/gogon-Photoroom.png",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164411/gogon-Photoroom_zekavs.png",
           description:
             "Leader of the Hashira, a key figure in the Jigokubara Gumi.",
         },
         {
           name: "Abay B Bowscale",
           title: "Hashira of Inventory",
-          photo: "/images/abay-Photoroom.png",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164418/abay-Photoroom_nks6zt.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
         {
           name: "Doo Sukaroam",
           title: "Hashira of Business",
-          photo: "/images/Doo-Fix.png",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164414/Doo-fix_nb0j8g.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
         {
           name: "Gig George",
           title: "Hashira of Inventory",
-          photo: "/images/gig-Photoroom.png",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164410/gig-Photoroom_sgtvzr.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
         {
           name: "Enzo Deluca",
           title: "Hashira of Finance",
-          photo: "/images/Enzo-Photoroom.png",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164416/Enzo-Photoroom_hpldai.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
         {
           name: "Eki Saltia",
           title: "Hashira of Business",
-          photo: "/images/eki-Photoroom.png",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164409/eki-Photoroom_sog6mx.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
         {
           name: "Fabian Elandya",
           title: "Hashira of Finance",
-          photo: "/images/Fabian-Photoroom.png",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164410/Fabian-Photoroom_bbtfbp.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
