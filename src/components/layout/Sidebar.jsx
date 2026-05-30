@@ -205,6 +205,12 @@ export default function Sidebar() {
       path: "/inventory-approval",
       roles: ["Oyabun"],
     },
+    {
+  name: "Role Approval",
+  icon: ShieldCheck,
+  path: "/role-approval",
+  roles: ["Oyabun"],
+},
   ];
 
  // =====================

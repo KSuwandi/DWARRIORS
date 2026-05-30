@@ -32,7 +32,21 @@ export default function App() {
   const {
     user,
     role,
+    loading,
   } = useAuth();
+
+  // =====================================
+  // WAIT FIREBASE AUTH
+  // =====================================
+  ///console.log("APP JSX LOADED");
+///console.log("ROLE =", role);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white text-xl">
+        Loading...
+      </div>
+    );
+  }
 
   // =====================================
   // PENDING USER
@@ -44,6 +58,21 @@ export default function App() {
   return (
 
     <Routes>
+
+      <Route
+  path="/test-role"
+  element={
+    <div
+      style={{
+        color: "white",
+        fontSize: "50px",
+        padding: "100px",
+      }}
+    >
+      TEST ROLE PAGE
+    </div>
+  }
+/>
 
       {/* HOME */}
       <Route
@@ -81,19 +110,9 @@ export default function App() {
 
       {/* ROLE APPROVAL */}
       <Route
-        path="/role-approval"
-        element={
-          user ? (
-            role === "Oyabun" ? (
-              <RoleApprovalPage />
-            ) : (
-              <Navigate to="/dashboard" />
-            )
-          ) : (
-            <Navigate to="/login" />
-          )
-        }
-      />
+  path="/role-approval"
+  element={<RoleApprovalPage />}
+/>
 
       {/* DASHBOARD */}
       <Route
@@ -318,6 +337,20 @@ export default function App() {
           )
         }
       />
+      <Route
+  path="*"
+  element={
+    <div
+      style={{
+        color: "white",
+        fontSize: "50px",
+        padding: "50px",
+      }}
+    >
+      PAGE NOT FOUND
+    </div>
+  }
+/>
 
     </Routes>
   );

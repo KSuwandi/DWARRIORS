@@ -8,62 +8,103 @@ import toast from "react-hot-toast";
 import {
   collection,
   doc,
-  onSnapshot,
+  getDocs,
+  orderBy,
+  query,
   updateDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
 
-import { db } from "../services/firebase/config";
+import {
+  db,
+} from "../services/firebase/config";
 
-import { useAuth } from "../contexts/AuthContext";
+import {
+  useAuth,
+} from "../contexts/AuthContext";
 
 export default function RoleApprovalPage() {
 
-  const { role } =
+  const { role, user } =
     useAuth();
 
   const [requests, setRequests] =
     useState([]);
 
-  // =========================
+  const [loading, setLoading] =
+    useState(true);
+
+  // =====================================
   // LOAD REQUEST
-  // =========================
+  // =====================================
+  const loadRequests =
+    async () => {
+
+      try {
+
+        const q = query(
+          collection(
+            db,
+            "role_requests"
+          ),
+          orderBy(
+            "createdAt",
+            "desc"
+          )
+        );
+
+        const snapshot =
+          await getDocs(q);
+
+        const data =
+          snapshot.docs.map(
+            (docSnap) => ({
+              id: docSnap.id,
+              ...docSnap.data(),
+            })
+          );
+
+        setRequests(data);
+
+      } catch (error) {
+
+        console.error(error);
+
+        toast.error(
+          "Failed load requests"
+        );
+
+      } finally {
+
+        setLoading(false);
+
+      }
+    };
+
   useEffect(() => {
 
-    const unsubscribe =
-      onSnapshot(
-        collection(
-          db,
-          "role_requests"
-        ),
-        (snapshot) => {
-
-          setRequests(
-            snapshot.docs.map(
-              (doc) => ({
-                id: doc.id,
-                ...doc.data(),
-              })
-            )
-          );
-        }
-      );
-
-    return () =>
-      unsubscribe();
+    loadRequests();
 
   }, []);
 
-  // =========================
+  // =====================================
   // APPROVE
-  // =========================
-  const approveRole =
+  // =====================================
+  const approveRequest =
     async (request) => {
 
       try {
 
-        // UPDATE ROLE USER
+        const confirmApprove =
+          window.confirm(
+            `Approve role ${request.requestedRole} untuk ${request.name}?`
+          );
+
+        if (!confirmApprove)
+          return;
+
         await updateDoc(
           doc(
             db,
@@ -76,7 +117,6 @@ export default function RoleApprovalPage() {
           }
         );
 
-        // UPDATE REQUEST
         await updateDoc(
           doc(
             db,
@@ -86,6 +126,12 @@ export default function RoleApprovalPage() {
           {
             status:
               "approved",
+
+            approvedBy:
+              user?.rpName || "Unknown",
+
+            approvedAt:
+              serverTimestamp(),
           }
         );
 
@@ -93,11 +139,11 @@ export default function RoleApprovalPage() {
           "Role approved"
         );
 
+        loadRequests();
+
       } catch (error) {
 
-        console.error(
-          error
-        );
+        console.error(error);
 
         toast.error(
           "Failed approve role"
@@ -105,13 +151,21 @@ export default function RoleApprovalPage() {
       }
     };
 
-  // =========================
+  // =====================================
   // REJECT
-  // =========================
-  const rejectRole =
+  // =====================================
+  const rejectRequest =
     async (request) => {
 
       try {
+
+        const confirmReject =
+          window.confirm(
+            `Reject role request ${request.name}?`
+          );
+
+        if (!confirmReject)
+          return;
 
         await updateDoc(
           doc(
@@ -122,6 +176,12 @@ export default function RoleApprovalPage() {
           {
             status:
               "rejected",
+
+            rejectedBy:
+              user?.rpName || "Unknown",
+
+            rejectedAt:
+              serverTimestamp(),
           }
         );
 
@@ -129,11 +189,11 @@ export default function RoleApprovalPage() {
           "Request rejected"
         );
 
+        loadRequests();
+
       } catch (error) {
 
-        console.error(
-          error
-        );
+        console.error(error);
 
         toast.error(
           "Failed reject request"
@@ -141,16 +201,17 @@ export default function RoleApprovalPage() {
       }
     };
 
-  // =========================
-  // ACCESS
-  // =========================
-  if (role !== "Oyabun") {
+  if (
+    role !== "Oyabun"
+  ) {
 
     return (
       <AppLayout>
-        <div className="text-white">
+
+        <div className="text-white text-center py-20 text-xl">
           Access Denied
         </div>
+
       </AppLayout>
     );
   }
@@ -161,97 +222,109 @@ export default function RoleApprovalPage() {
 
       <div className="text-white">
 
-        <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-6">
+          Role Approval
+        </h1>
 
-          <h1 className="text-4xl font-bold">
-            Role Approval
-          </h1>
+        {loading ? (
 
-          <p className="text-gray-400 mt-2">
-            Approve member role requests
-          </p>
+          <div>
+            Loading...
+          </div>
 
-        </div>
+        ) : requests.length === 0 ? (
 
-        <div className="space-y-5">
+          <div className="bg-[#141021] rounded-3xl p-10 text-center">
+            No Request
+          </div>
 
-          {requests.map((request) => (
+        ) : (
 
-            <div
-              key={request.id}
-              className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-6"
-            >
+          <div className="space-y-4">
 
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+            {requests.map(
+              (item) => (
 
-                <div>
+                <div
+                  key={item.id}
+                  className="bg-[#141021] border border-purple-900/30 rounded-3xl p-5"
+                >
 
-                  <h2 className="text-2xl font-bold">
-                    {request.name}
-                  </h2>
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
-                  <p className="text-gray-400 mt-1">
-                    {request.email}
-                  </p>
+                    <div>
 
-                  <p className="mt-3">
-                    Requested Role:
-                    <span className="ml-2 text-red-400 font-bold">
-                      {request.requestedRole}
-                    </span>
-                  </p>
+                      <h2 className="text-xl font-bold">
+                        {item.name}
+                      </h2>
 
-                  <p className="text-sm text-gray-500 mt-2">
-                    Status:
-                    {" "}
-                    {request.status}
-                  </p>
+                      <p className="text-gray-400">
+                        {item.email}
+                      </p>
 
-                </div>
+                      <div className="mt-3 flex gap-2 flex-wrap">
 
-                {request.status ===
-                  "pending" && (
+                        <span className="bg-purple-900/30 px-3 py-1 rounded-xl text-sm">
+                          Request:{" "}
+                          {item.requestedRole}
+                        </span>
 
-                  <div className="flex gap-3">
+                        <span
+                          className={`px-3 py-1 rounded-xl text-sm ${
+                            item.status === "approved"
+                              ? "bg-green-500/20 text-green-300"
+                              : item.status === "rejected"
+                              ? "bg-red-500/20 text-red-300"
+                              : "bg-yellow-500/20 text-yellow-300"
+                          }`}
+                        >
+                          {item.status}
+                        </span>
 
-                    <button
-                      onClick={() =>
-                        approveRole(
-                          request
-                        )
-                      }
-                      className="bg-green-600 hover:bg-green-700 px-5 py-3 rounded-2xl font-semibold"
-                    >
-                      Approve
-                    </button>
+                      </div>
 
-                    <button
-                      onClick={() =>
-                        rejectRole(
-                          request
-                        )
-                      }
-                      className="bg-red-700 hover:bg-red-800 px-5 py-3 rounded-2xl font-semibold"
-                    >
-                      Reject
-                    </button>
+                    </div>
+
+                    {item.status ===
+                      "pending" && (
+
+                      <div className="flex gap-2">
+
+                        <button
+                          onClick={() =>
+                            approveRequest(
+                              item
+                            )
+                          }
+                          className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-xl"
+                        >
+                          Approve
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            rejectRequest(
+                              item
+                            )
+                          }
+                          className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-xl"
+                        >
+                          Reject
+                        </button>
+
+                      </div>
+
+                    )}
 
                   </div>
-                )}
 
-              </div>
+                </div>
+              )
+            )}
 
-            </div>
-          ))}
+          </div>
 
-          {requests.length === 0 && (
-
-            <div className="bg-[#111111] border border-gray-800 rounded-3xl p-10 text-center text-gray-400">
-              No role requests
-            </div>
-          )}
-
-        </div>
+        )}
 
       </div>
 

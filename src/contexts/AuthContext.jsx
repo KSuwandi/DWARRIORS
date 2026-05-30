@@ -240,9 +240,7 @@ export function AuthProvider({
                           userData.role,
                       });
 
-                      setRole(
-                        userData.role
-                      );
+                      setRole(userData.role);
                     }
                   }
                 );
