@@ -9,6 +9,7 @@ import {
   onSnapshot,
   doc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
@@ -79,6 +80,77 @@ const deleteMember = async (member) => {
 
     alert(
       "Gagal menghapus member"
+    );
+  }
+};
+
+const changeRole = async (
+  member,
+  newRole
+) => {
+
+  try {
+
+    const memberName =
+      member.rpName ||
+      member.displayName ||
+      member.name ||
+      member.email?.split("@")[0] ||
+      "Unknown";
+
+    if (
+      member.role === newRole
+    ) {
+      alert(
+        `${memberName} sudah memiliki role ${newRole}`
+      );
+      return;
+    }
+
+    const confirmation = prompt(
+      `PERINGATAN!\n\n` +
+      `Kamu akan mengubah role:\n` +
+      `${memberName}\n\n` +
+      `Dari: ${member.role}\n` +
+      `Menjadi: ${newRole}\n\n` +
+      `Ketik "${newRole}" untuk melanjutkan:`
+    );
+
+    if (confirmation === null) {
+      return;
+    }
+
+    if (
+      confirmation.trim() !==
+      newRole
+    ) {
+      alert(
+        `Konfirmasi gagal!\n\nKetik persis: ${newRole}`
+      );
+      return;
+    }
+
+    await updateDoc(
+      doc(
+        db,
+        "users",
+        member.id
+      ),
+      {
+        role: newRole,
+      }
+    );
+
+    alert(
+      `${memberName} berhasil diubah menjadi ${newRole}`
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Gagal mengubah role"
     );
   }
 };
@@ -589,22 +661,50 @@ useEffect(() => {
                         "No Phone"}
                     </p>
 
-                    <div className="flex gap-3 mt-3">
+                    <div className="flex gap-3 mt-3 flex-wrap">
 
   <span className="px-4 py-1 text-xs bg-[#7A0019] rounded-xl font-semibold">
     {selectedMember.role}
   </span>
 
- {role === "Oyabun" && (
-  <button
-    onClick={() =>
-      deleteMember(selectedMember)
-    }
-    className="px-4 py-1 text-xs bg-red-600 hover:bg-red-700 rounded-xl font-semibold transition-all"
-  >
-    Delete Member
-  </button>
-)}
+  {role === "Oyabun" && (
+    <>
+      <button
+        onClick={() =>
+          changeRole(
+            selectedMember,
+            "Oyabun"
+          )
+        }
+        className="px-4 py-1 text-xs bg-green-600 hover:bg-green-700 rounded-xl font-semibold transition-all"
+      >
+        Set Oyabun
+      </button>
+
+      <button
+        onClick={() =>
+          changeRole(
+            selectedMember,
+            "Shatei"
+          )
+        }
+        className="px-4 py-1 text-xs bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold transition-all"
+      >
+        Set Shatei
+      </button>
+
+      <button
+        onClick={() =>
+          deleteMember(
+            selectedMember
+          )
+        }
+        className="px-4 py-1 text-xs bg-red-600 hover:bg-red-700 rounded-xl font-semibold transition-all"
+      >
+        Delete Member
+      </button>
+    </>
+  )}
 
 </div>
 
