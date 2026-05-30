@@ -201,6 +201,27 @@ export default function RoleApprovalPage() {
       }
     };
 
+    // =====================================
+// MASK EMAIL
+// =====================================
+const maskEmail = (email) => {
+
+  if (!email || !email.includes("@"))
+    return "-";
+
+  const [username, domain] =
+    email.split("@");
+
+  if (username.length <= 3) {
+
+    return `${username[0]}*******@${domain}`;
+
+  }
+
+  return `${username[0]}*******${username.slice(-2)}@${domain}`;
+};
+
+
   if (
     role !== "Oyabun"
   ) {
@@ -259,8 +280,8 @@ export default function RoleApprovalPage() {
                       </h2>
 
                       <p className="text-gray-400">
-                        {item.email}
-                      </p>
+  {maskEmail(item.email)}
+</p>
 
                       <div className="mt-3 flex gap-2 flex-wrap">
 
