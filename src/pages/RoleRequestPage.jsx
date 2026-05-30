@@ -37,41 +37,55 @@ export default function RoleRequestPage() {
     setLoading,
   ] = useState(false);
 
+  const [
+  rpName,
+  setRpName,
+] = useState(
+  user?.rpName || ""
+);
+
   // =====================================
   // SUBMIT REQUEST
   // =====================================
   const submitRequest =
-    async () => {
+  async () => {
 
-      try {
+    try {
 
-        setLoading(true);
+      if (!rpName.trim()) {
 
-        await addDoc(
+        toast.error(
+          "RP Name wajib diisi"
+        );
+
+        return;
+      }
+
+      setLoading(true);
+
+      await addDoc(
           collection(
             db,
             "role_requests"
           ),
           {
+  userId:
+    user.uid,
 
-            userId:
-              user.uid,
+  rpName:
+    rpName.trim(),
 
-            name:
-              user.rpName ||
-              user.displayName,
+    email:
+      user.email,
 
-            email:
-              user.email,
+  requestedRole,
 
-            requestedRole,
+  status:
+    "pending",
 
-            status:
-              "pending",
-
-            createdAt:
-              serverTimestamp(),
-          }
+  createdAt:
+    serverTimestamp(),
+}
         );
 
         toast.success(
@@ -150,6 +164,26 @@ export default function RoleRequestPage() {
 
             {/* FORM */}
             <div className="mt-12">
+
+            <label className="text-sm text-purple-300 tracking-[0.15em] uppercase">
+  RP Name
+</label>
+
+<input
+  type="text"
+  value={rpName}
+  onChange={(e) =>
+    setRpName(
+      e.target.value
+    )
+  }
+  placeholder="Masukkan nama karakter GTA RP"
+  className="w-full mt-4 bg-[#120d1b] border border-purple-700/30 rounded-3xl px-6 py-5 outline-none text-white focus:border-purple-500 transition-all"
+/>
+
+<div className="mt-3 mb-8 text-xs text-gray-400">
+  Nama ini akan terlihat oleh Oyabun dan digunakan sebagai identitas karakter RP.
+</div>
 
               <label className="text-sm text-purple-300 tracking-[0.15em] uppercase">
                 Select Position

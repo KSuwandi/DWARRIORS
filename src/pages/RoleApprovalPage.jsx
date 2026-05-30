@@ -99,9 +99,8 @@ export default function RoleApprovalPage() {
 
         const confirmApprove =
           window.confirm(
-            `Approve role ${request.requestedRole} untuk ${request.name}?`
-          );
-
+  `Approve role ${request.requestedRole} untuk ${request.rpName}?`
+);
         if (!confirmApprove)
           return;
 
@@ -276,8 +275,8 @@ const maskEmail = (email) => {
                     <div>
 
                       <h2 className="text-xl font-bold">
-                        {item.name}
-                      </h2>
+  {item.rpName || "No RP Name"}
+</h2>
 
                       <p className="text-gray-400">
   {maskEmail(item.email)}
