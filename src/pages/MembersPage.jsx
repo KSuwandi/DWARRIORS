@@ -7,6 +7,8 @@ import {
 import {
   collection,
   onSnapshot,
+  doc,
+  deleteDoc,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
@@ -25,6 +27,61 @@ export default function MemberPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 5;
+
+  // =========================
+// DELETE MEMBER
+// =========================
+const deleteMember = async (member) => {
+  try {
+
+    const memberName =
+      member.rpName ||
+      member.displayName ||
+      member.name ||
+      member.email?.split("@")[0] ||
+      "Unknown";
+
+    const confirmation = prompt(
+      `PERINGATAN!\n\n` +
+      `Kamu akan menghapus member:\n` +
+      `${memberName}\n\n` +
+      `Ketik nama member dengan tepat untuk melanjutkan:`
+    );
+
+    if (confirmation === null) {
+      return;
+    }
+
+    if (confirmation.trim() !== memberName) {
+      alert(
+        `Nama tidak cocok!\n\nKetik persis: ${memberName}`
+      );
+      return;
+    }
+
+    await deleteDoc(
+      doc(db, "users", member.id)
+    );
+
+    if (
+      selectedMember?.id === member.id
+    ) {
+      setSelectedMember(null);
+    }
+
+    alert(
+      `Member ${memberName} berhasil dihapus`
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Gagal menghapus member"
+    );
+  }
+};
 
   // =========================
   // PHOTO SAFE
@@ -532,11 +589,29 @@ useEffect(() => {
                         "No Phone"}
                     </p>
 
-                    <span className="inline-block mt-3 px-4 py-1 text-xs bg-[#7A0019] rounded-xl font-semibold">
-                      {
-                        selectedMember.role
-                      }
-                    </span>
+                    <div className="flex gap-3 mt-3">
+
+  <span className="px-4 py-1 text-xs bg-[#7A0019] rounded-xl font-semibold">
+    {selectedMember.role}
+  </span>
+
+  {selectedMember.role !==
+    "Oyabun" && (
+
+    <button
+      onClick={() =>
+        deleteMember(
+          selectedMember
+        )
+      }
+      className="px-4 py-1 text-xs bg-red-600 hover:bg-red-700 rounded-xl font-semibold transition-all"
+    >
+      Delete Member
+    </button>
+
+  )}
+
+</div>
 
                   </div>
 
