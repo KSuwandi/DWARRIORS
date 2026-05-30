@@ -34,7 +34,7 @@ export default function ProfileJGBPage() {
         {
           name: "Izaya Rosevale",
           title: "Supreme Leader",
-          photo: "/images/izaya.png",
+          photo: "/images/izaya-fix.png",
           description:
             "One of the supreme leaders of the Jigokubara Gumi. Commands absolute authority and oversees all family affairs.",
         },
@@ -45,8 +45,8 @@ export default function ProfileJGBPage() {
       members: [
         {
           name: "Daniel R Hawks",
-          title: "Supreme Leader",
-          photo: "/images/izaya.png",
+          title: "Co - Supreme Leader",
+          photo: "/images/Daniel-Photoroom.png",
           description:
             "Second of the supreme leaders of the Jigokubara Gumi. Commands absolute authority and oversees all family affairs.",
         },
@@ -58,49 +58,56 @@ export default function ProfileJGBPage() {
         {
           name: "Anu Julian Moore",
           title: "Leader of the Hashira",
-          photo: "/images/gogon.png",
+          photo: "/images/julian-fix.png",
+          description:
+            "Leader of the Hashira, a key figure in the Jigokubara Gumi.",
+        },
+        {
+          name: "Gogon A Moore",
+          title: "Hashira of Finance",
+          photo: "/images/gogon-Photoroom.png",
           description:
             "Leader of the Hashira, a key figure in the Jigokubara Gumi.",
         },
         {
           name: "Abay B Bowscale",
-          title: "Hashira of Treasury",
-          photo: "/images/abay.png",
+          title: "Hashira of Inventory",
+          photo: "/images/abay-Photoroom.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
         {
           name: "Doo Sukaroam",
           title: "Hashira of Business",
-          photo: "/images/doo.png",
+          photo: "/images/Doo-Fix.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
         {
           name: "Gig George",
-          title: "Hashira of Treasury",
-          photo: "/images/gig.png",
+          title: "Hashira of Inventory",
+          photo: "/images/gig-Photoroom.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
         {
           name: "Enzo Deluca",
           title: "Hashira of Finance",
-          photo: "/images/enzo.png",
+          photo: "/images/Enzo-Photoroom.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
         {
           name: "Eki Saltia",
           title: "Hashira of Business",
-          photo: "/images/eki.png",
+          photo: "/images/eki-Photoroom.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
         {
           name: "Fabian Elandya",
           title: "Hashira of Finance",
-          photo: "/images/fabian.png",
+          photo: "/images/Fabian-Photoroom.png",
           description:
             "Elite executive of the Jigokubara Gumi.",
         },
@@ -182,7 +189,7 @@ export default function ProfileJGBPage() {
           <div>
 
             <h2 className="text-purple-400 font-black tracking-[0.3em] uppercase mb-4">
-              Shatei
+              Aniki
             </h2>
 
             <div className="space-y-2">
