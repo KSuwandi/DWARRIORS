@@ -22,6 +22,7 @@ import RequestsPage from "./pages/RequestsPage";
 import FinanceApprovalPage from "./pages/FinanceApprovalPage";
 import RoleRequestPage from "./pages/RoleRequestPage";
 import RoleApprovalPage from "./pages/RoleApprovalPage";
+import ProfileJGBPage from "./pages/ProfileJGBPage";
 
 import {
   useAuth,
@@ -353,19 +354,9 @@ export default function App() {
           )
         }
       />
-      <Route
-  path="*"
-  element={
-    <div
-      style={{
-        color: "white",
-        fontSize: "50px",
-        padding: "50px",
-      }}
-    >
-      PAGE NOT FOUND
-    </div>
-  }
+<Route
+  path="/profile-jgb"
+  element={<ProfileJGBPage />}
 />
 
     </Routes>

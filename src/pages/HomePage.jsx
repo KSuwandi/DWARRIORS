@@ -70,9 +70,15 @@ export default function HomePage() {
 
                 </Link>
 
-                <button className="border border-purple-700/40 hover:border-purple-500 bg-white/5 hover:bg-white/10 transition-all duration-300 px-10 py-5 rounded-2xl text-xl font-semibold backdrop-blur-md">
-                  Enjoy the Family
-                </button>
+                <Link to="/profile-jgb">
+
+  <button className="border border-purple-700/40 hover:border-purple-500 bg-white/5 hover:bg-white/10 transition-all duration-300 px-10 py-5 rounded-2xl text-xl font-semibold backdrop-blur-md">
+
+    Enjoy the Family
+
+  </button>
+
+</Link>
 
               </div>
 
@@ -99,7 +105,7 @@ export default function HomePage() {
 
                 <div className="bg-white/5 border border-purple-700/20 backdrop-blur-xl rounded-3xl p-5">
                   <h2 className="text-3xl font-black text-red-400">
-                    RP
+                    Server
                   </h2>
                   <p className="text-gray-400 text-sm mt-2">
                     Kota Kita Roleplay
@@ -167,7 +173,7 @@ export default function HomePage() {
               <div className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111]">
 
                 <img
-                  src="https://media.discordapp.net/attachments/1127587903137140809/1509578276446666923/FiveM_GTAProcess_2026-02-10_15-04-16.png?ex=6a19afd3&is=6a185e53&hm=ad1f15aed3348bf7051983d9c48bed21124d9bb7eb753acd54dd92de31897333&=&format=webp&quality=lossless&width=1521&height=856"
+                  src="https://i.ibb.co.com/JRW6WTsH/jgb.png"
                   alt=""
                   className="w-full h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
                 />
@@ -192,7 +198,7 @@ export default function HomePage() {
               <div className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111]">
 
                 <img
-                  src="https://media.discordapp.net/attachments/1127587903137140809/1509578276186751248/FiveM_GTAProcess_2026-02-10_15-05-02.png?ex=6a19afd3&is=6a185e53&hm=860a5b9ef063e3c53c73c0b3d8b6a66ec9a704f4c87dafff2c7434caeea29149&=&format=webp&quality=lossless&width=1521&height=856"
+                  src="https://i.ibb.co.com/p6GzdCtP/Five-M-GTAProcess-2026-02-10-15-05-02.png"
                   alt=""
                   className="w-full h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
                 />
@@ -217,7 +223,7 @@ export default function HomePage() {
               <div className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111]">
 
                 <img
-                  src="https://media.discordapp.net/attachments/1127587903137140809/1509578275645554908/FiveM_GTAProcess_2026-02-07_15-40-45.png?ex=6a19afd3&is=6a185e53&hm=6bb561a91934401a8d7c2891f42e6136ef2c0678264ab523d4095c1ee785a632&=&format=webp&quality=lossless&width=1521&height=856"
+                  src="https://i.ibb.co.com/vWYnGbH/Five-M-GTAProcess-2026-02-07-15-40-45.png"
                   alt=""
                   className="w-full h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
                 />
@@ -242,7 +248,7 @@ export default function HomePage() {
               <div className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111]">
 
                 <img
-                  src="https://media.discordapp.net/attachments/1127587903137140809/1509578275297558659/FiveM_GTAProcess_2026-02-10_15-03-28.png?ex=6a19afd3&is=6a185e53&hm=f19869d622bab92c3cabc4677d3462d155e88cf2bae2b1b27dbb71b9ecabcfcc&=&format=webp&quality=lossless&width=1521&height=856"
+                  src="https://i.ibb.co.com/zWSYTMLS/Five-M-GTAProcess-2026-02-10-15-03-28.png"
                   alt=""
                   className="w-full h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
                 />

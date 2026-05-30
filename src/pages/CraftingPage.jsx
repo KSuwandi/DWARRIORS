@@ -321,11 +321,8 @@ export default function CraftingPage() {
     successQty + failedQty;
 
   const totalOutput =
-    Math.max(
-      0,
-      (successQty - failedQty) *
-        outputPerCraft
-    );
+  successQty *
+  outputPerCraft;
 
   // ============================================
   // FIND INVENTORY ITEM
@@ -731,7 +728,7 @@ const processCraftingTransaction =
 
     status:
       failedQty > 0
-        ? "Partial Failed"
+        ? "Success With Failures"
         : "Crafted",
   });
 
