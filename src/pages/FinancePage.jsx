@@ -928,27 +928,6 @@ Klik Cancel untuk membatalkan.`
   }
 };
 
-if (firstLoading) {
-
-  return (
-
-    <AppLayout>
-
-      <div className="flex flex-col items-center justify-center py-24">
-
-  <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
-
-  <p className="text-gray-300 mt-4">
-    Loading transaksi...
-  </p>
-
-</div>
-
-    </AppLayout>
-
-  );
-}
-
   return (
 
     <AppLayout>

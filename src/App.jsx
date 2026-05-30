@@ -41,12 +41,28 @@ export default function App() {
   ///console.log("APP JSX LOADED");
 ///console.log("ROLE =", role);
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white text-xl">
-        Loading...
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#0B0714]">
+
+      <div className="relative">
+
+        <div className="w-20 h-20 rounded-full border-4 border-purple-900" />
+
+        <div className="absolute inset-0 w-20 h-20 rounded-full border-4 border-purple-500 border-t-transparent animate-spin" />
+
       </div>
-    );
-  }
+
+      <h2 className="mt-6 text-xl font-bold text-white">
+        Jigokubara Family
+      </h2>
+
+      <p className="text-gray-400 text-sm mt-2">
+        Memuat data...
+      </p>
+
+    </div>
+  );
+}
 
   // =====================================
   // PENDING USER
