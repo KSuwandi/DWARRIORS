@@ -9,13 +9,13 @@ import toast from "react-hot-toast";
 import {
   collection,
   collectionGroup,
-  addDoc,
   onSnapshot,
   orderBy,
   query,
   runTransaction,
   serverTimestamp,
   doc,
+  addDoc,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
@@ -126,51 +126,39 @@ export default function FinanceApprovalPage() {
 const approveTransaction =
   async (ref) => {
 
+    let financeData = null;
+
     try {
 
       await runTransaction(
         db,
-        async (
-          transaction
-        ) => {
+        async (transaction) => {
 
-          // =========================
-          // GET DOCUMENT
-          // =========================
           const financeDoc =
             await transaction.get(
               ref
             );
 
-          // DOCUMENT TIDAK ADA
           if (
             !financeDoc.exists()
           ) {
-
             throw new Error(
               "Transaction not found"
             );
           }
 
-          const financeData =
+          financeData =
             financeDoc.data();
 
-          // =========================
-          // VALIDASI STATUS
-          // =========================
           if (
             financeData.status !==
             "Pending"
           ) {
-
             throw new Error(
               "Transaction already processed"
             );
           }
 
-          // =========================
-          // APPROVE TRANSACTION
-          // =========================
           transaction.update(
             ref,
             {
@@ -178,7 +166,7 @@ const approveTransaction =
                 "Approved",
 
               approvedBy:
-                user.displayName,
+                user.rpName,
 
               approvedByUid:
                 user.uid,
@@ -188,9 +176,6 @@ const approveTransaction =
             }
           );
 
-          // =========================
-          // CREATE FINANCE LOG
-          // =========================
           const financeLogRef =
             collection(
               db,
@@ -198,40 +183,86 @@ const approveTransaction =
             );
 
           transaction.set(
-            doc(
-              financeLogRef
-            ),
-            {
-              action:
-                "Approved",
+  doc(financeLogRef),
+  {
+    action: "Approved",
 
-              transactionTitle:
-                financeData.title,
+    transactionTitle:
+      financeData.title,
 
-              transactionType:
-                financeData.type,
+    transactionType:
+      financeData.type,
 
-              amount:
-                financeData.amount,
+    paymentType:
+      financeData.paymentType,
 
-              createdBy:
-                financeData.createdBy,
+    moneyType:
+      financeData.moneyType,
 
-              approvedBy:
-                user.displayName,
+    amount:
+      financeData.amount,
 
-              approvedByUid:
-                user.uid,
+    createdBy:
+      financeData.createdBy,
 
-              status:
-                "Approved",
+    approvedBy:
+      user.rpName,
 
-              createdAt:
-                serverTimestamp(),
-            }
-          );
+    approvedByUid:
+      user.uid,
+
+    status:
+      "Approved",
+
+    createdAt:
+      serverTimestamp(),
+  }
+);
         }
       );
+
+      await addDoc(
+  collection(
+    db,
+    "activity_logs"
+  ),
+  {
+    type: "finance_approved",
+
+    action:
+      "Finance Approved",
+
+    rpName:
+      user.rpName,
+
+    role:
+      role,
+
+    target:
+      financeData.title,
+
+    amount:
+      financeData.amount,
+
+    transactionType:
+      financeData.type,
+
+    paymentType:
+      financeData.paymentType,
+
+    moneyType:
+      financeData.moneyType,
+
+      imageUrl:
+    financeData.imageUrl || "",
+
+    description:
+      `${user.rpName} menyetujui transaksi ${financeData.title}`,
+
+    createdAt:
+      serverTimestamp(),
+  }
+);
 
       toast.success(
         "Transaksi berhasil di approve"
@@ -256,17 +287,14 @@ const approveTransaction =
 const rejectTransaction =
   async (ref) => {
 
+    let financeData = null;
+
     try {
 
       await runTransaction(
         db,
-        async (
-          transaction
-        ) => {
+        async (transaction) => {
 
-          // =========================
-          // GET DOCUMENT
-          // =========================
           const financeDoc =
             await transaction.get(
               ref
@@ -275,31 +303,23 @@ const rejectTransaction =
           if (
             !financeDoc.exists()
           ) {
-
             throw new Error(
               "Transaction not found"
             );
           }
 
-          const financeData =
+          financeData =
             financeDoc.data();
 
-          // =========================
-          // VALIDASI
-          // =========================
           if (
             financeData.status !==
             "Pending"
           ) {
-
             throw new Error(
               "Transaction already processed"
             );
           }
 
-          // =========================
-          // REJECT
-          // =========================
           transaction.update(
             ref,
             {
@@ -307,7 +327,7 @@ const rejectTransaction =
                 "Rejected",
 
               rejectedBy:
-                user.displayName,
+                user.rpName,
 
               rejectedByUid:
                 user.uid,
@@ -317,9 +337,6 @@ const rejectTransaction =
             }
           );
 
-          // =========================
-          // FINANCE LOG
-          // =========================
           const financeLogRef =
             collection(
               db,
@@ -327,40 +344,87 @@ const rejectTransaction =
             );
 
           transaction.set(
-            doc(
-              financeLogRef
-            ),
-            {
-              action:
-                "Rejected",
+  doc(financeLogRef),
+  {
+    action: "Rejected",
 
-              transactionTitle:
-                financeData.title,
+    transactionTitle:
+      financeData.title,
 
-              transactionType:
-                financeData.type,
+    transactionType:
+      financeData.type,
 
-              amount:
-                financeData.amount,
+    paymentType:
+      financeData.paymentType,
 
-              createdBy:
-                financeData.createdBy,
+    moneyType:
+      financeData.moneyType,
 
-              rejectedBy:
-                user.displayName,
+    amount:
+      financeData.amount,
 
-              rejectedByUid:
-                user.uid,
+    createdBy:
+      financeData.createdBy,
 
-              status:
-                "Rejected",
+    rejectedBy:
+      user.rpName,
 
-              createdAt:
-                serverTimestamp(),
-            }
-          );
+    rejectedByUid:
+      user.uid,
+
+    status:
+      "Rejected",
+
+    createdAt:
+      serverTimestamp(),
+  }
+);
         }
       );
+
+    await addDoc(
+  collection(
+    db,
+    "activity_logs"
+  ),
+  {
+    type:
+      "finance_rejected",
+
+    action:
+      "Finance Rejected",
+
+    rpName:
+      user.rpName,
+
+    role:
+      role,
+
+    target:
+      financeData.title,
+
+    amount:
+      financeData.amount,
+
+    transactionType:
+      financeData.type,
+
+    paymentType:
+      financeData.paymentType,
+
+    moneyType:
+      financeData.moneyType,
+
+      imageUrl:
+      financeData.imageUrl || "",
+
+    description:
+      `${user.rpName} menolak transaksi ${financeData.title}`,
+
+    createdAt:
+      serverTimestamp(),
+  }
+);
 
       toast.success(
         "Transaksi berhasil ditolak"
@@ -532,6 +596,24 @@ const rejectTransaction =
                       {item.note ||
                         "Tidak ada catatan"}
                     </p>
+
+                    {item.imageUrl && (
+
+  <img
+    src={item.imageUrl}
+    alt="Bukti"
+    loading="lazy"
+    className="
+      mt-4
+      w-72
+      rounded-2xl
+      border
+      border-purple-500/30
+      object-cover
+    "
+  />
+
+)}
                     
                     {/* DEBT INFO */}
 {item.isDebtPayment && (

@@ -26,6 +26,7 @@ import {
   Clock3,
   ChevronLeft,
   ChevronRight,
+  Wallet
 } from "lucide-react";
 
 import AppLayout from "../layouts/AppLayout";
@@ -250,6 +251,7 @@ export default function ActivityLogsPage() {
   ) => {
 
     switch (type) {
+      
 
       case "inventory_add":
         return "from-emerald-500/20 to-green-500/10 border-emerald-500/30 text-emerald-300";
@@ -271,6 +273,12 @@ export default function ActivityLogsPage() {
 
       case "crafting_failed":
         return "from-orange-500/20 to-yellow-500/10 border-orange-500/30 text-orange-300";
+
+        case "finance_approved":
+      return "from-green-500/20 to-emerald-500/10 border-green-500/30 text-green-300";
+
+    case "finance_rejected":
+      return "from-red-500/20 to-rose-500/10 border-red-500/30 text-red-300";
 
       default:
         return "from-gray-500/20 to-gray-500/10 border-gray-500/30 text-gray-300";
@@ -307,6 +315,12 @@ export default function ActivityLogsPage() {
       case "crafting_failed":
         return "Craft Partial Failed";
 
+        case "finance_approved":
+      return "Finance Approved";
+
+      case "finance_rejected":
+        return "Finance Rejected";
+
       default:
         return "Activity";
     }
@@ -334,6 +348,12 @@ export default function ActivityLogsPage() {
       case "crafting_failed":
         return (
           <Hammer size={18} />
+        );
+
+        case "finance_approved":
+      case "finance_rejected":
+        return (
+          <Wallet size={18} />
         );
 
       default:
@@ -430,6 +450,13 @@ export default function ActivityLogsPage() {
                 "crafting"
               )
           ).length,
+          finance:
+            filteredLogs.filter(
+              (l) =>
+                l.type?.includes(
+                  "finance"
+        )
+    ).length,
       };
 
     }, [filteredLogs]);
@@ -546,7 +573,7 @@ export default function ActivityLogsPage() {
         </div>
 
         {/* STATS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-10">
 
           <div className="bg-gradient-to-br from-[#161122] to-[#0d0b14] border border-purple-500/20 rounded-3xl p-6 shadow-xl">
 
@@ -584,6 +611,35 @@ export default function ActivityLogsPage() {
 
           </div>
 
+          <div className="bg-gradient-to-br from-emerald-900/20 to-green-900/10 border border-emerald-500/30 rounded-3xl p-6 shadow-xl shadow-emerald-900/20">
+
+  <div className="flex items-center justify-between">
+
+    <div>
+
+      <p className="text-emerald-300 text-sm">
+        Finance Activities
+      </p>
+
+      <h2 className="text-5xl font-black mt-4 text-emerald-400">
+        {stats.finance}
+      </h2>
+
+    </div>
+
+    <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
+
+      <Wallet
+        size={28}
+        className="text-emerald-400"
+      />
+
+    </div>
+
+  </div>
+
+</div>
+
         </div>
 
         {/* LOGS */}
@@ -614,32 +670,37 @@ export default function ActivityLogsPage() {
                     "Item";
 
                   const description =
-                    log.type ===
-                    "crafting_request"
 
-                      ? `Crafting ${craftItem} requested by ${userName}`
+  log.type ===
+  "crafting_request"
 
-                      : log.type ===
-                        "crafting_approved"
+    ? `Crafting ${craftItem} requested by ${userName}`
 
-                      ? `${userName} approved crafting ${craftItem} requested by ${
-                          log.requestedBy ||
-                          log.requestedByName ||
-                          log.targetUser ||
-                          "Unknown"
-                        }`
+    : log.type ===
+      "crafting_approved"
 
-                      : log.type ===
-                        "crafting_rejected"
+    ? `${userName} approved crafting ${craftItem}`
 
-                      ? `${userName} rejected crafting ${craftItem} requested by ${
-                          log.requestedBy ||
-                          log.requestedByName ||
-                          log.targetUser ||
-                          "Unknown"
-                        }`
+    : log.type ===
+      "crafting_rejected"
 
-                      : log.description;
+    ? `${userName} rejected crafting ${craftItem}`
+
+    : log.type ===
+      "finance_approved"
+
+    ? `${userName} approved finance transaction ${
+    log.target || "-"
+  }`
+
+    : log.type ===
+      "finance_rejected"
+
+   ? `${userName} rejected finance transaction ${
+    log.target || "-"
+  }`
+
+    : log.description;
 
                   return (
 
@@ -697,7 +758,7 @@ export default function ActivityLogsPage() {
                           </div>
 
                           {/* INFO GRID */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 mt-6">
 
                             <div className="bg-black/25 border border-white/5 rounded-2xl p-4">
 
@@ -740,17 +801,50 @@ export default function ActivityLogsPage() {
                             </div>
 
                             <div className="bg-black/25 border border-white/5 rounded-2xl p-4">
+  <p className="text-white/50 text-xs uppercase tracking-widest">
+    Amount
+  </p>
 
-                              <p className="text-white/50 text-xs uppercase tracking-widest">
-                                Quantity
-                              </p>
+  <h3 className="font-bold text-lg mt-2">
+    Rp {Number(
+      log.amount || 0
+    ).toLocaleString("id-ID")}
+  </h3>
+</div>
 
-                              <h3 className="font-bold text-lg mt-2">
-                                {log.quantity ||
-                                  "-"}
-                              </h3>
+                            {log.type?.includes("finance") && (
+  <>
+    <div className="bg-black/25 border border-white/5 rounded-2xl p-4">
+      <p className="text-white/50 text-xs uppercase tracking-widest">
+        Type
+      </p>
 
-                            </div>
+      <h3 className="font-bold text-lg mt-2">
+        {log.transactionType || "-"}
+      </h3>
+    </div>
+
+    <div className="bg-black/25 border border-white/5 rounded-2xl p-4">
+      <p className="text-white/50 text-xs uppercase tracking-widest">
+        Payment
+      </p>
+
+      <h3 className="font-bold text-lg mt-2">
+        {log.paymentType || "-"}
+      </h3>
+    </div>
+
+    <div className="bg-black/25 border border-white/5 rounded-2xl p-4">
+      <p className="text-white/50 text-xs uppercase tracking-widest">
+        Money
+      </p>
+
+      <h3 className="font-bold text-lg mt-2">
+        {log.moneyType || "-"}
+      </h3>
+    </div>
+  </>
+)}
 
                           </div>
 
@@ -768,6 +862,27 @@ export default function ActivityLogsPage() {
                             </div>
 
                           )}
+
+                          {log.imageUrl && (
+
+  <div className="mt-4">
+
+    <img
+      src={log.imageUrl}
+      alt="Bukti Finance"
+      loading="lazy"
+      className="
+        w-72
+        rounded-2xl
+        border
+        border-white/10
+        object-cover
+      "
+    />
+
+  </div>
+
+)}
 
                         </div>
 
