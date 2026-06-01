@@ -253,6 +253,11 @@ export default function InventoryPage() {
 
       e.preventDefault();
 
+      if (role === "Shatei") {
+    toast.error("Shatei tidak memiliki akses menambah item");
+    return;
+  }
+
       if (
         !form.name ||
         !form.stock
@@ -766,112 +771,74 @@ export default function InventoryPage() {
           </div>
 
           {/* FORM */}
-          <form
-            onSubmit={
-              handleAddItem
-            }
-            className="bg-white/5 backdrop-blur-2xl border border-purple-900/40 rounded-[32px] p-6 mb-10 grid grid-cols-1 md:grid-cols-4 gap-4 shadow-2xl shadow-purple-950/20"
+{role !== "Shatei" && (
+  <form
+    onSubmit={handleAddItem}
+    className="bg-white/5 backdrop-blur-2xl border border-purple-900/40 rounded-[32px] p-6 mb-10 grid grid-cols-1 md:grid-cols-4 gap-4 shadow-2xl shadow-purple-950/20"
+  >
+
+    <input
+      type="text"
+      placeholder="Item Name"
+      value={form.name}
+      onChange={(e) =>
+        setForm({
+          ...form,
+          name: e.target.value,
+        })
+      }
+      className="bg-black/40 border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
+    />
+
+    <select
+      value={form.category}
+      onChange={(e) =>
+        setForm({
+          ...form,
+          category: e.target.value,
+        })
+      }
+      className="bg-black/40 border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
+    >
+      {INVENTORY_CATEGORIES
+        .filter((c) => c !== "All")
+        .map((category) => (
+          <option
+            key={category}
+            value={category}
           >
+            {category}
+          </option>
+        ))}
+    </select>
 
-            <input
-              type="text"
-              placeholder="Item Name"
-              value={form.name}
-              onChange={(
-                e
-              ) =>
-                setForm({
-                  ...form,
-                  name:
-                    e
-                      .target
-                      .value,
-                })
-              }
-              className="bg-black/40 border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
-            />
+    <input
+      type="number"
+      placeholder="Stock"
+      value={form.stock}
+      onChange={(e) =>
+        setForm({
+          ...form,
+          stock: e.target.value,
+        })
+      }
+      className="bg-black/40 border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
+    />
 
-            <select
-              value={
-                form.category
-              }
-              onChange={(
-                e
-              ) =>
-                setForm({
-                  ...form,
-                  category:
-                    e
-                      .target
-                      .value,
-                })
-              }
-              className="bg-black/40 border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
-            >
+    <button
+      type="submit"
+      disabled={loading}
+      className="bg-gradient-to-r from-purple-700 to-fuchsia-700 hover:scale-[1.02] active:scale-100 transition-all rounded-2xl px-4 py-4 font-bold shadow-lg shadow-purple-900/40"
+    >
+      {loading
+        ? "Loading..."
+        : role === "Oyabun"
+        ? "Add Item"
+        : "Request Item"}
+    </button>
 
-              {INVENTORY_CATEGORIES
-                .filter(
-                  (
-                    c
-                  ) =>
-                    c !==
-                    "All"
-                )
-                .map(
-                  (
-                    category
-                  ) => (
-                    <option
-                      key={
-                        category
-                      }
-                      value={
-                        category
-                      }
-                    >
-                      {
-                        category
-                      }
-                    </option>
-                  )
-                )}
-
-            </select>
-
-            <input
-              type="number"
-              placeholder="Stock"
-              value={form.stock}
-              onChange={(
-                e
-              ) =>
-                setForm({
-                  ...form,
-                  stock:
-                    e
-                      .target
-                      .value,
-                })
-              }
-              className="bg-black/40 border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
-            />
-
-            <button
-              type="submit"
-              disabled={
-                loading
-              }
-              className="bg-gradient-to-r from-purple-700 to-fuchsia-700 hover:scale-[1.02] active:scale-100 transition-all rounded-2xl px-4 py-4 font-bold shadow-lg shadow-purple-900/40"
-            >
-              {loading
-                ? "Loading..."
-                : role ===
-                  "Oyabun"
-                ? "Add Item"
-                : "Request Item"}
-            </button>
-
-          </form>
+  </form>
+)}
 
           {/* ITEMS */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
