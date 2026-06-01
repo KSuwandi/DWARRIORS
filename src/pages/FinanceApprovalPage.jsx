@@ -222,27 +222,28 @@ const approveTransaction =
       );
 
       await addDoc(
-  collection(
-    db,
-    "activity_logs"
-  ),
+  collection(db, "activity_logs"),
   {
     type: "finance_approved",
+    action: "Finance Approved",
 
-    action:
-      "Finance Approved",
+    rpName: user.rpName,
 
-    rpName:
-      user.rpName,
+    requesterName:
+      financeData.createdBy ||
+      financeData.userName ||
+      financeData.rpName ||
+      "Unknown",
 
-    role:
-      role,
+    requesterUid:
+      financeData.userId ||
+      financeData.uid,
 
-    target:
-      financeData.title,
+    role: role,
 
-    amount:
-      financeData.amount,
+    target: financeData.title,
+
+    amount: financeData.amount,
 
     transactionType:
       financeData.type,
@@ -253,8 +254,8 @@ const approveTransaction =
     moneyType:
       financeData.moneyType,
 
-      imageUrl:
-    financeData.imageUrl || "",
+    imageUrl:
+      financeData.imageUrl || "",
 
     description:
       `${user.rpName} menyetujui transaksi ${financeData.title}`,
@@ -396,6 +397,12 @@ const rejectTransaction =
 
     rpName:
       user.rpName,
+
+    requesterName:
+      financeData.createdBy ||
+      financeData.userName ||
+      financeData.rpName ||
+      "Unknown",
 
     role:
       role,

@@ -38,8 +38,14 @@ export default function ActivityLogsPage() {
   const [logs, setLogs] =
     useState([]);
 
+  const [
+  craftingHistory,
+  setCraftingHistory,
+] = useState([]);
+
   const [users, setUsers] =
     useState([]);
+
 
   // =========================
   // SEARCH
@@ -91,6 +97,44 @@ export default function ActivityLogsPage() {
     return () => unsub();
 
   }, []);
+
+  // =========================
+// LOAD CRAFTING HISTORY
+// =========================
+useEffect(() => {
+
+  const q = query(
+    collection(
+      db,
+      "crafting_history"
+    ),
+    orderBy(
+      "createdAt",
+      "desc"
+    )
+  );
+
+  const unsub =
+    onSnapshot(
+      q,
+      (snap) => {
+
+        const data =
+          snap.docs.map(
+            (doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })
+          );
+
+        setCraftingHistory(data);
+
+      }
+    );
+
+  return () => unsub();
+
+}, []);
 
   // =========================
   // LOAD USERS
@@ -180,41 +224,39 @@ export default function ActivityLogsPage() {
   // =========================
   // USER RESOLVER
   // =========================
-  const getUserName = (
-    log
-  ) => {
+  const getUserName = (log) => {
 
-    if (log.rpName)
-      return log.rpName;
+  // langsung dari activity log
+  if (log.rpName)
+    return log.rpName;
 
-    if (log.userName)
-      return log.userName;
+  if (log.userName)
+    return log.userName;
 
-    if (log.user)
-      return log.user;
+  if (log.user)
+    return log.user;
 
-    const found =
-      users.find(
-        (u) =>
-          u.id ===
-          log.userId
-      );
+  // cari dari collection users
+  const found = users.find(
+    (u) =>
+      u.uid === log.userId ||
+      u.id === log.userId
+  );
 
-    if (found?.rpName)
-      return found.rpName;
+  if (found?.rpName)
+    return found.rpName;
 
-    if (found?.name)
-      return found.name;
+  if (found?.name)
+    return found.name;
 
-    if (found?.email) {
+  if (found?.displayName)
+    return found.displayName;
 
-      return found.email.split(
-        "@"
-      )[0];
-    }
+  if (found?.email)
+    return found.email.split("@")[0];
 
-    return "Unknown User";
-  };
+  return "Unknown User";
+};
 
   // =========================
   // FORMAT DATE
@@ -272,7 +314,10 @@ export default function ActivityLogsPage() {
         return "from-red-500/20 to-pink-500/10 border-red-500/30 text-red-300";
 
       case "crafting_failed":
-        return "from-orange-500/20 to-yellow-500/10 border-orange-500/30 text-orange-300";
+  return "from-orange-500/20 to-yellow-500/10 border-orange-500/30 text-orange-300";
+
+case "crafting_completed":
+  return "from-green-500/20 to-emerald-500/10 border-green-500/30 text-green-300";
 
         case "finance_approved":
       return "from-green-500/20 to-emerald-500/10 border-green-500/30 text-green-300";
@@ -315,6 +360,9 @@ export default function ActivityLogsPage() {
       case "crafting_failed":
         return "Craft Partial Failed";
 
+      case "crafting_completed":
+  return "Craft Completed";
+
         case "finance_approved":
       return "Finance Approved";
 
@@ -343,13 +391,13 @@ export default function ActivityLogsPage() {
         );
 
       case "crafting_request":
-      case "crafting_approved":
-      case "crafting_rejected":
-      case "crafting_failed":
-        return (
-          <Hammer size={18} />
-        );
-
+case "crafting_approved":
+case "crafting_rejected":
+case "crafting_failed":
+case "crafting_completed":
+  return (
+    <Hammer size={18} />
+  );
         case "finance_approved":
       case "finance_rejected":
         return (
@@ -366,63 +414,115 @@ export default function ActivityLogsPage() {
   // =========================
   // FILTER SEARCH
   // =========================
-  const filteredLogs =
-    useMemo(() => {
+  const filteredLogs = useMemo(() => {
 
-      if (!search.trim()) {
-        return logs;
-      }
+  const mergedLogs = [
 
-      return logs.filter(
-        (log) => {
+    ...logs,
 
-          const userName =
-            getUserName(
-              log
-            );
+    ...craftingHistory.map((item) => ({
 
-          const searchValue =
-            search.toLowerCase();
+      id: `craft-${item.id}`,
 
-          return (
-            log.action
-              ?.toLowerCase()
-              .includes(
-                searchValue
-              ) ||
+      type:
+        item.status === "Success With Failures"
+          ? "crafting_failed"
+          : "crafting_completed",
 
-            log.type
-              ?.toLowerCase()
-              .includes(
-                searchValue
-              ) ||
+      action:
+        item.status === "Success With Failures"
+          ? "Crafting Partial Failed"
+          : "Crafting Completed",
 
-            log.target
-              ?.toLowerCase()
-              .includes(
-                searchValue
-              ) ||
+      target:
+        item.recipeName || "-",
 
-            log.description
-              ?.toLowerCase()
-              .includes(
-                searchValue
-              ) ||
+      recipeName:
+        item.recipeName || "-",
 
-            userName
-              ?.toLowerCase()
-              .includes(
-                searchValue
-              )
-          );
-        }
-      );
+      role:
+        item.role || "-",
 
-    }, [
-      logs,
-      search,
-      users,
-    ]);
+      rpName:
+        item.craftedBy || "Unknown",
+
+      createdAt:
+        item.createdAt,
+
+      successQty:
+        item.successQty || 0,
+
+      failedQty:
+        item.failedQty || 0,
+
+      totalProcess:
+        item.totalProcess || 0,
+
+      description:
+        item.status === "Success With Failures"
+          ? `${item.successQty || 0} berhasil, ${item.failedQty || 0} gagal`
+          : `${item.successQty || 0} item berhasil dibuat`,
+    })),
+  ];
+
+  mergedLogs.sort(
+    (a, b) =>
+      (b.createdAt?.seconds || 0) -
+      (a.createdAt?.seconds || 0)
+  );
+
+  if (!search.trim()) {
+    return mergedLogs;
+  }
+
+  const searchValue =
+    search.toLowerCase();
+
+  return mergedLogs.filter((log) => {
+
+    const userName =
+      getUserName(log);
+
+    return (
+
+      log.action
+        ?.toLowerCase()
+        .includes(searchValue)
+
+      ||
+
+      log.type
+        ?.toLowerCase()
+        .includes(searchValue)
+
+      ||
+
+      log.target
+        ?.toLowerCase()
+        .includes(searchValue)
+
+      ||
+
+      log.description
+        ?.toLowerCase()
+        .includes(searchValue)
+
+      ||
+
+      userName
+        ?.toLowerCase()
+        .includes(searchValue)
+
+    );
+
+  });
+
+}, [
+  logs,
+  craftingHistory,
+  search,
+  users,
+]);
 
   // =========================
   // STATS
@@ -683,8 +783,14 @@ export default function ActivityLogsPage() {
 
     : log.type ===
       "crafting_rejected"
+      
 
     ? `${userName} rejected crafting ${craftItem}`
+    : log.type ===
+  "crafting_completed"
+
+? `${userName} successfully crafted ${log.successQty || 0}x ${craftItem}`
+
 
     : log.type === "finance_approved"
 
@@ -793,7 +899,7 @@ export default function ActivityLogsPage() {
 
                             </div>
 
-                            {log.requesterName && (
+                            {log.type?.includes("finance") && (
   <div className="bg-black/25 border border-white/5 rounded-2xl p-4">
 
     <p className="text-white/50 text-xs uppercase tracking-widest">
@@ -801,7 +907,9 @@ export default function ActivityLogsPage() {
     </p>
 
     <h3 className="font-bold text-lg mt-2 text-yellow-300">
-      {log.requesterName}
+      {log.requesterName ||
+        log.createdBy ||
+        "-"}
     </h3>
 
   </div>

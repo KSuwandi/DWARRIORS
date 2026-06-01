@@ -171,14 +171,18 @@ export default function CraftingRequestsPage() {
           action,
 
           user:
-            user?.rpName ||
-            user?.displayName ||
-            "Unknown",
+  user?.rpName ||
+  user?.name ||
+  user?.displayName ||
+  user?.email?.split("@")[0] ||
+  "Unknown",
 
-          userName:
-            user?.rpName ||
-            user?.displayName ||
-            "Unknown",
+userName:
+  user?.rpName ||
+  user?.name ||
+  user?.displayName ||
+  user?.email?.split("@")[0] ||
+  "Unknown",
 
           userId:
             user?.uid ||
@@ -205,6 +209,7 @@ export default function CraftingRequestsPage() {
             serverTimestamp(),
         }
       );
+      
     };
 
   // =========================================

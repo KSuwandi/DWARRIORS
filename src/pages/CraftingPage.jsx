@@ -605,9 +605,11 @@ const processCraftingTransaction =
           status,
 
           craftedBy:
-            user?.rpName ||
-            user?.name ||
-            "Unknown",
+  user?.rpName ||
+  user?.name ||
+  user?.displayName ||
+  user?.email?.split("@")[0] ||
+  "Unknown",
 
           craftedByUid:
             user?.uid,
@@ -654,9 +656,11 @@ const processCraftingTransaction =
             user?.uid,
 
           userName:
-            user?.rpName ||
-            user?.name ||
-            "Unknown",
+  user?.rpName ||
+  user?.name ||
+  user?.displayName ||
+  user?.email?.split("@")[0] ||
+  "Unknown",
 
           createdAt:
             serverTimestamp(),
@@ -702,10 +706,7 @@ const processCraftingTransaction =
           return;
         }
 
-        if (
-  role ===
-  "Oyabun"
-) {
+        if (role === "Oyabun") {
 
   await processCraftingTransaction({
     recipe,
@@ -714,22 +715,33 @@ const processCraftingTransaction =
   });
 
   await addCraftingHistory({
-    recipeName:
-      recipe.name,
-
-    successQty:
-      successQty,
-
-    failedQty:
-      failedQty,
-
-    outputQty:
-      totalOutput,
-
+    recipeName: recipe.name,
+    successQty,
+    failedQty,
+    outputQty: totalOutput,
     status:
       failedQty > 0
         ? "Success With Failures"
         : "Crafted",
+  });
+
+  await addActivityLog({
+    type:
+      failedQty > 0
+        ? "crafting_failed"
+        : "crafting_completed",
+
+    action:
+      failedQty > 0
+        ? "Craft Partial Failed"
+        : "Craft Completed",
+
+    target: recipe.name,
+
+    quantity: totalOutput,
+
+    description:
+      `${user?.rpName || user?.name} crafted ${recipe.name} with ${successQty} success and ${failedQty} failed`,
   });
 
   toast.success(
@@ -737,7 +749,6 @@ const processCraftingTransaction =
   );
 
   setSuccessQuantity(1);
-
   setFailedQuantity(0);
 
   return;
