@@ -597,6 +597,9 @@ const [hasMore, setHasMore] =
             moneyType:
               form.moneyType,
 
+            role: 
+              role || "",
+
             title:
               form.title.trim(),
 
@@ -722,6 +725,9 @@ const [hasMore, setHasMore] =
           {
             type:
               "Pembayaran Hutang",
+
+            role: 
+              role || "",
 
             paymentType:
               "Cash",

@@ -15,7 +15,6 @@ import {
   runTransaction,
   serverTimestamp,
   doc,
-  addDoc,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
@@ -150,6 +149,13 @@ const approveTransaction =
           financeData =
             financeDoc.data();
 
+            financeData = financeDoc.data();
+
+console.log(
+  "FINANCE DATA:",
+  financeData
+);
+
           if (
             financeData.status !==
             "Pending"
@@ -182,10 +188,21 @@ const approveTransaction =
               "finance_logs"
             );
 
-          transaction.set(
+         transaction.set(
   doc(financeLogRef),
   {
+    type: "finance",
+
     action: "Approved",
+
+    requesterName:
+      financeData.createdBy,
+
+    rpName:
+      user.rpName,
+
+    role:
+      financeData.role || "",
 
     transactionTitle:
       financeData.title,
@@ -202,14 +219,8 @@ const approveTransaction =
     amount:
       financeData.amount,
 
-    createdBy:
-      financeData.createdBy,
-
-    approvedBy:
-      user.rpName,
-
-    approvedByUid:
-      user.uid,
+    imageUrl:
+      financeData.imageUrl || "",
 
     status:
       "Approved",
@@ -221,49 +232,6 @@ const approveTransaction =
         }
       );
 
-      await addDoc(
-  collection(db, "activity_logs"),
-  {
-    type: "finance_approved",
-    action: "Finance Approved",
-
-    rpName: user.rpName,
-
-    requesterName:
-      financeData.createdBy ||
-      financeData.userName ||
-      financeData.rpName ||
-      "Unknown",
-
-    requesterUid:
-      financeData.userId ||
-      financeData.uid,
-
-    role: role,
-
-    target: financeData.title,
-
-    amount: financeData.amount,
-
-    transactionType:
-      financeData.type,
-
-    paymentType:
-      financeData.paymentType,
-
-    moneyType:
-      financeData.moneyType,
-
-    imageUrl:
-      financeData.imageUrl || "",
-
-    description:
-      `${user.rpName} menyetujui transaksi ${financeData.title}`,
-
-    createdAt:
-      serverTimestamp(),
-  }
-);
 
       toast.success(
         "Transaksi berhasil di approve"
@@ -312,6 +280,13 @@ const rejectTransaction =
           financeData =
             financeDoc.data();
 
+            financeData = financeDoc.data();
+
+console.log(
+  "FINANCE DATA:",
+  financeData
+);
+
           if (
             financeData.status !==
             "Pending"
@@ -347,34 +322,40 @@ const rejectTransaction =
           transaction.set(
   doc(financeLogRef),
   {
-    action: "Rejected",
+    type: "finance",
 
-    transactionTitle:
-      financeData.title,
+  action: "Rejected",
 
-    transactionType:
-      financeData.type,
+  requesterName:
+    financeData.createdBy,
 
-    paymentType:
-      financeData.paymentType,
+  rpName:
+    user.rpName,
 
-    moneyType:
-      financeData.moneyType,
+  role:
+    financeData.role || "",
 
-    amount:
-      financeData.amount,
+  transactionTitle:
+    financeData.title,
 
-    createdBy:
-      financeData.createdBy,
+  transactionType:
+    financeData.type,
 
-    rejectedBy:
-      user.rpName,
+  paymentType:
+    financeData.paymentType,
 
-    rejectedByUid:
-      user.uid,
+  moneyType:
+    financeData.moneyType,
 
-    status:
-      "Rejected",
+  amount:
+    financeData.amount,
+
+  imageUrl:
+    financeData.imageUrl || "",
+
+  status:
+    "Rejected",
+
 
     createdAt:
       serverTimestamp(),
@@ -382,56 +363,6 @@ const rejectTransaction =
 );
         }
       );
-
-    await addDoc(
-  collection(
-    db,
-    "activity_logs"
-  ),
-  {
-    type:
-      "finance_rejected",
-
-    action:
-      "Finance Rejected",
-
-    rpName:
-      user.rpName,
-
-    requesterName:
-      financeData.createdBy ||
-      financeData.userName ||
-      financeData.rpName ||
-      "Unknown",
-
-    role:
-      role,
-
-    target:
-      financeData.title,
-
-    amount:
-      financeData.amount,
-
-    transactionType:
-      financeData.type,
-
-    paymentType:
-      financeData.paymentType,
-
-    moneyType:
-      financeData.moneyType,
-
-      imageUrl:
-      financeData.imageUrl || "",
-
-    description:
-      `${user.rpName} menolak transaksi ${financeData.title}`,
-
-    createdAt:
-      serverTimestamp(),
-  }
-);
 
       toast.success(
         "Transaksi berhasil ditolak"

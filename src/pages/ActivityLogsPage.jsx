@@ -46,6 +46,8 @@ export default function ActivityLogsPage() {
   const [users, setUsers] =
     useState([]);
 
+  const [financeLogs, setFinanceLogs] =
+  useState([]);
 
   // =========================
   // SEARCH
@@ -128,6 +130,44 @@ useEffect(() => {
           );
 
         setCraftingHistory(data);
+
+      }
+    );
+
+  return () => unsub();
+
+}, []);
+
+// =========================
+// LOAD FINANCE LOGS
+// =========================
+useEffect(() => {
+
+  const q = query(
+    collection(
+      db,
+      "finance_logs"
+    ),
+    orderBy(
+      "createdAt",
+      "desc"
+    )
+  );
+
+  const unsub =
+    onSnapshot(
+      q,
+      (snap) => {
+
+        const data =
+          snap.docs.map(
+            (doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })
+          );
+
+        setFinanceLogs(data);
 
       }
     );
@@ -463,6 +503,53 @@ case "crafting_completed":
           ? `${item.successQty || 0} berhasil, ${item.failedQty || 0} gagal`
           : `${item.successQty || 0} item berhasil dibuat`,
     })),
+    // finance_logs
+  ...financeLogs.map((item) => ({
+    id: `finance-${item.id}`,
+
+    type:
+      item.action === "Approved"
+        ? "finance_approved"
+        : "finance_rejected",
+
+    action:
+      item.action === "Approved"
+        ? "Finance Approved"
+        : "Finance Rejected",
+
+    rpName:
+      item.rpName,
+
+    requesterName:
+      item.requesterName,
+
+    target:
+      item.transactionTitle,
+
+    transactionTitle:
+      item.transactionTitle,
+
+    transactionType:
+      item.transactionType,
+
+    role:
+      item.role || "-",
+
+    paymentType:
+      item.paymentType,
+
+    moneyType:
+      item.moneyType,
+
+    amount:
+      item.amount,
+
+    imageUrl:
+      item.imageUrl || "",
+
+    createdAt:
+      item.createdAt,
+  })),
   ];
 
   mergedLogs.sort(
@@ -520,6 +607,7 @@ case "crafting_completed":
 }, [
   logs,
   craftingHistory,
+  financeLogs,
   search,
   users,
 ]);
