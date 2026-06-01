@@ -686,18 +686,24 @@ export default function ActivityLogsPage() {
 
     ? `${userName} rejected crafting ${craftItem}`
 
-    : log.type ===
-      "finance_approved"
+    : log.type === "finance_approved"
 
-    ? `${userName} approved finance transaction ${
+? `${userName} approved finance transaction ${
     log.target || "-"
+  } from ${
+    log.requesterName ||
+    log.createdBy ||
+    "Unknown"
   }`
 
-    : log.type ===
-      "finance_rejected"
+: log.type === "finance_rejected"
 
-   ? `${userName} rejected finance transaction ${
+? `${userName} rejected finance transaction ${
     log.target || "-"
+  } from ${
+    log.requesterName ||
+    log.createdBy ||
+    "Unknown"
   }`
 
     : log.description;
@@ -786,6 +792,20 @@ export default function ActivityLogsPage() {
                               </h3>
 
                             </div>
+
+                            {log.requesterName && (
+  <div className="bg-black/25 border border-white/5 rounded-2xl p-4">
+
+    <p className="text-white/50 text-xs uppercase tracking-widest">
+      Requester
+    </p>
+
+    <h3 className="font-bold text-lg mt-2 text-yellow-300">
+      {log.requesterName}
+    </h3>
+
+  </div>
+)}
 
                             <div className="bg-black/25 border border-white/5 rounded-2xl p-4">
 
