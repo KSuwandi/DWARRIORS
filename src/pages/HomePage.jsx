@@ -70,7 +70,7 @@ export default function HomePage() {
 
                 </Link>
 
-                <Link to="/profile-jgb">
+                <Link to="/wardrobe">
 
   <button className="border border-purple-700/40 hover:border-purple-500 bg-white/5 hover:bg-white/10 transition-all duration-300 px-10 py-5 rounded-2xl text-xl font-semibold backdrop-blur-md">
 

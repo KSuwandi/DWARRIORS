@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../services/firebase/config";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileJGBPage() {
   const [users, setUsers] = useState([]);
@@ -136,7 +137,19 @@ export default function ProfileJGBPage() {
       <div className="relative z-10 flex h-screen">
 
         {/* SIDEBAR */}
-        <div className="w-[320px] border-r border-purple-800/20 bg-black/40 backdrop-blur-xl p-6 overflow-y-auto">
+        <div
+  className="
+    jgb-scrollbar
+    w-[320px]
+    border-r
+    border-purple-500/20
+    bg-black/50
+    backdrop-blur-xl
+    p-6
+    overflow-y-auto
+    shadow-[0_0_50px_rgba(168,85,247,0.15)]
+  "
+>
 
           <img
             src="https://i.ibb.co.com/tTKwhGt1/Asset-18.png"
@@ -144,9 +157,24 @@ export default function ProfileJGBPage() {
             className="w-32 mx-auto mb-6"
           />
 
-          <h1 className="text-center text-2xl font-black tracking-widest mb-10">
-            JIGOKUBARA
-          </h1>
+          <h1
+  className="
+    text-center
+    text-2xl
+    font-black
+    tracking-widest
+    mb-10
+    bg-gradient-to-r
+    from-white
+    via-fuchsia-300
+    to-purple-500
+    bg-clip-text
+    text-transparent
+    drop-shadow-[0_0_20px_rgba(168,85,247,0.8)]
+  "
+>
+  JIGOKUBARA GUMI
+</h1>
 
           {hierarchy.map((group) => (
             <div

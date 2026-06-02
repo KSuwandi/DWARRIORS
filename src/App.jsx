@@ -23,6 +23,7 @@ import FinanceApprovalPage from "./pages/FinanceApprovalPage";
 import RoleRequestPage from "./pages/RoleRequestPage";
 import RoleApprovalPage from "./pages/RoleApprovalPage";
 import ProfileJGBPage from "./pages/ProfileJGBPage";
+import WardrobePage from "./pages/WardrobePage";
 
 import {
   useAuth,
@@ -357,6 +358,10 @@ export default function App() {
 <Route
   path="/profile-jgb"
   element={<ProfileJGBPage />}
+/>
+<Route
+  path="/wardrobe"
+  element={<WardrobePage />}
 />
 
     </Routes>
