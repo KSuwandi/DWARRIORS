@@ -1520,11 +1520,11 @@ Klik Cancel untuk membatalkan.`
             >
 
               <option>
-                Deposit
+                Pemasukan
               </option>
 
               <option>
-                Withdraw
+                Pengeluaran
               </option>
 
             </select>
