@@ -33,6 +33,11 @@ export default function WardrobePage() {
 ] = useState(null);
 
 const [
+  selectedImage,
+  setSelectedImage,
+] = useState(null);
+
+const [
   showcaseIndex,
   setShowcaseIndex,
 ] = useState(0);
@@ -65,6 +70,12 @@ const audioRef =
     category: "Executive",
     image: "https://i.imgur.com/BIrDV3x.png",
 
+    images: [
+    "https://i.imgur.com/BIrDV3x.png",
+    "https://i.imgur.com/ltqYQ22.png",
+    "https://i.imgur.com/3S5Sskg.png",
+  ],
+
      code: "JGK-EX-001",
 
   acquisition:
@@ -86,7 +97,11 @@ const audioRef =
     access: "Hashira & Aniki",
     category: "Executive",
     image: "https://i.imgur.com/Z7ojl31.png",
-
+    images: [
+    "https://i.imgur.com/Z7ojl31.png",
+    "https://i.imgur.com/r9tmtOw.png",
+    "https://i.imgur.com/EfZcjXw.png",
+  ],
     code: "JGK-EX-002",
 
 acquisition:
@@ -108,7 +123,10 @@ description:
     access: "All Members",
     category: "Uniform",
     image: "https://i.imgur.com/5JPm3AL.png",
-
+images: [
+    "https://i.imgur.com/5JPm3AL.png",
+    "https://i.imgur.com/7so7FMi.png",
+  ],
     code: "JGK-UN-001",
 
 acquisition:
@@ -126,11 +144,14 @@ description:
 
   {
     id: 4,
-    title: "Jigokubara White Dress Shirt",
+    title: "Jigokubara White-A Dress Shirt",
     access: "All Members",
     category: "Uniform",
     image: "https://i.imgur.com/AE0df0f.png",
-
+images: [
+    "https://i.imgur.com/AE0df0f.png",
+    "https://i.imgur.com/9ihCHLh.png",
+  ],
     code: "JGK-UN-001",
 
 acquisition:
@@ -143,15 +164,43 @@ version:
   "Season 1",
 
 description:
-  "Standard white dress shirt used by active family members.",
+  "Standard White-A dress shirt used by active family members.",
+  },
+  {
+    id: 5,
+    title: "Jigokubara White-B Dress Shirt",
+    access: "All Members",
+    category: "Uniform",
+    image: "https://i.imgur.com/JkBVH9g.png",
+images: [
+    "https://i.imgur.com/JkBVH9g.png",
+    "https://i.imgur.com/YRZeynZ.png",
+  ],
+    code: "JGK-UN-001",
+
+acquisition:
+  "Family Supply",
+
+rarity:
+  "Common",
+
+version:
+  "Season 1",
+
+description:
+  "Standard White-B dress shirt used by active family members.",
   },
 
   {
-    id: 5,
+    id: 6,
     title: "Jigokubara Purple-Black Dress Shirt",
     access: "All Members",
     category: "Uniform",
     image: "https://i.imgur.com/nvrluYg.png",
+    images: [
+      "https://i.imgur.com/nvrluYg.png",
+      "https://i.imgur.com/YFsHlxa.png",
+    ],
     code: "JGK-UN-001",
     acquisition: "Family Supply",
     rarity: "Common",
@@ -160,11 +209,16 @@ description:
   },
 
   {
-    id: 6,
+    id: 7,
     title: "Jigokubara White Tracksuit",
     access: "All Members",
     category: "Casual",
     image: "https://i.imgur.com/rV2a8xH.png",
+    images: [
+      "https://i.imgur.com/rV2a8xH.png",
+      "https://i.imgur.com/Qbk2Eqv.png",
+      "https://i.imgur.com/yQ4gdxi.png",
+    ],
     code: "JGK-CS-001",
     acquisition: "Family Supply",
     rarity: "Common",
@@ -173,11 +227,16 @@ description:
   },
 
   {
-    id: 7,
+    id: 8,
     title: "Jigokubara Black Tracksuit",
     access: "All Members",
     category: "Casual",
     image: "https://i.imgur.com/A55yJMp.png",
+    images: [
+      "https://i.imgur.com/A55yJMp.png",
+      "https://i.imgur.com/xiP3YQo.png",
+      "https://i.imgur.com/9EibzvR.png",
+    ],
     code: "JGK-CS-001",
     acquisition: "Family Supply",
     rarity: "Common",
@@ -186,24 +245,34 @@ description:
   },
 
   {
-    id: 8,
-    title: "Jigokubara Purple Tracksuit",
+    id: 9,
+    title: "Jigokubara Purple-White Tracksuit",
     access: "All Members",
     category: "Casual",
     image: "https://i.imgur.com/seMC8v2.png",
+    images: [
+      "https://i.imgur.com/seMC8v2.png",
+      "https://i.imgur.com/bFqubMl.png",
+      "https://i.imgur.com/EvfUsPO.png",
+    ],
     code: "JGK-CS-001",
     acquisition: "Family Supply",
     rarity: "Common",
     version: "Season 1",
-    description: "Standard purple tracksuit used by active family members.",
+    description: "Standard purple-white tracksuit used by active family members.",
   },
 
   {
-    id: 9,
+    id: 10,
     title: "Jigokubara Purple-Black Tracksuit",
     access: "All Members",
     category: "Casual",
     image: "https://i.imgur.com/Y7vdC1y.png",
+    images: [
+      "https://i.imgur.com/Y7vdC1y.png",
+      "https://i.imgur.com/vtiF97j.png",
+      "https://i.imgur.com/m6GvXli.png",
+    ],
     code: "JGK-CS-001",
     acquisition: "Family Supply",
     rarity: "Common",
@@ -211,7 +280,7 @@ description:
     description: "Standard purple-black tracksuit used by active family members.",
   },
   {
-    id: 10,
+    id: 11,
     title: "Jigokubara Armor",
     access: "All Members",
     category: "Combat",
@@ -1031,9 +1100,14 @@ to-purple-700
 
                 <div
   key={item.id}
-  onClick={() =>
-    setSelectedOutfit(item)
-  }
+  onClick={() => {
+  setSelectedOutfit(item);
+
+  setSelectedImage(
+    item.images?.[0] ||
+    item.image
+  );
+}}
   className="
 group
 relative
@@ -1367,9 +1441,10 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
       justify-center
       p-6
     "
-    onClick={() =>
-      setSelectedOutfit(null)
-    }
+    onClick={() => {
+  setSelectedOutfit(null);
+  setSelectedImage(null);
+}}
   >
 
     <div
@@ -1398,17 +1473,61 @@ to-[#000000]
         <div className="relative">
 
           <img
-            src={selectedOutfit.image}
-            alt={selectedOutfit.title}
-            className="
-              w-full
-              h-full
-              object-cover
-              min-h-[700px]
-            "
-          />
+  src={
+    selectedImage ||
+    selectedOutfit.image
+  }
+  alt={selectedOutfit.title}
+  className="
+    w-full
+    h-full
+    object-cover
+    min-h-[700px]
+  "
+/>
 
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+          <div
+  className="
+    absolute
+    bottom-5
+    left-1/2
+    -translate-x-1/2
+    flex
+    gap-3
+    z-20
+  "
+>
+  {(selectedOutfit.images ||
+    [selectedOutfit.image])
+      .slice(0, 3)
+      .map((img, index) => (
+
+    <img
+      key={index}
+      src={img}
+      alt=""
+      onClick={() =>
+        setSelectedImage(img)
+      }
+      className={`
+        w-20
+        h-20
+        rounded-xl
+        object-cover
+        cursor-pointer
+        border-2
+        transition-all
+        ${
+          selectedImage === img
+            ? "border-fuchsia-500 scale-110"
+            : "border-white/20"
+        }
+      `}
+    />
+
+  ))}
+</div>
 
         </div>
 
@@ -1555,9 +1674,10 @@ to-[#000000]
           </div>
 
           <button
-            onClick={() =>
-              setSelectedOutfit(null)
-            }
+  onClick={() => {
+    setSelectedOutfit(null);
+    setSelectedImage(null);
+  }}
             className="
               mt-10
               bg-red-700
