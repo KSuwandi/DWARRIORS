@@ -426,7 +426,7 @@ useEffect(() => {
   autoPlay
 >
   <source
-    src="/audio/JigokubaraGumi.mp3"
+    src="https://res.cloudinary.com/dpyhp3o66/video/upload/v1780386974/Jigokubara_Gumi_1_nitksm.mp3"
     type="audio/mpeg"
   />
 </audio>
