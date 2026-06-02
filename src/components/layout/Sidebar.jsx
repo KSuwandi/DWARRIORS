@@ -199,13 +199,13 @@ useEffect(() => {
         craftingNotif,
     },
     {
-      name: "Finance",
+      name: "Deposit / Withdraw",
       icon: Wallet,
       path: "/finance",
     },
 
     {
-      name: "Finance Approval",
+      name: "Depo / WD Approval",
       icon: BadgeDollarSign,
       path: "/finance-approval",
       roles: ["Oyabun"],

@@ -1387,7 +1387,7 @@ Klik Cancel untuk membatalkan.`
     <div className="flex items-center gap-3 flex-wrap">
 
       <h1 className="text-3xl font-bold tracking-tight">
-        Finance System
+        Deposit - Withdraw System
       </h1>
 
       <span
@@ -1403,7 +1403,7 @@ Klik Cancel untuk membatalkan.`
     </div>
 
     <p className="text-gray-400 mt-2 text-sm">
-      Sistem keuangan Jigokubara Family
+      Sistem Deposit dan Withdraw Jigokubara Family
     </p>
 
   </div>
@@ -1598,7 +1598,7 @@ Klik Cancel untuk membatalkan.`
 
             <input
               type="number"
-              placeholder="Jumlah"
+              placeholder="Harga"
               value={
                 form.amount
               }
