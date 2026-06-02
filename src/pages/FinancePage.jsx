@@ -70,7 +70,7 @@ const [hasMore, setHasMore] =
 
   const [form, setForm] =
   useState({
-    type: "Pemasukan",
+    type: "Deposit",
     paymentType: "Cash",
     moneyType: "Uang Putih",
     title: "",
@@ -362,7 +362,7 @@ const [hasMore, setHasMore] =
         .filter(
           (item) =>
             item.type ===
-              "Pemasukan" &&
+              "Deposit" &&
             item.status ===
               "Approved"
         )
@@ -387,7 +387,7 @@ const [hasMore, setHasMore] =
         .filter(
           (item) =>
             item.type ===
-              "Pengeluaran" &&
+              "Withdraw" &&
             item.status ===
               "Approved"
         )
@@ -405,59 +405,28 @@ const [hasMore, setHasMore] =
   // =====================================
   // TOTAL HUTANG
   // =====================================
-  const totalDebt =
-    useMemo(() => {
+  const totalDebt = useMemo(() => {
 
-      const totalHutang =
-        transactions
-          .filter(
-            (item) =>
-              item.paymentType ===
-                "Hutang" &&
-              item.type ===
-                "Pengeluaran" &&
-              item.status ===
-                "Approved"
-          )
-          .reduce(
-            (
-              acc,
-              item
-            ) =>
-              acc +
-              Number(
-                item.amount || 0
-              ),
-            0
-          );
+  const totalHutang = transactions
+    .filter((item) =>
+      item.paymentType === "Hutang" &&
+      item.type === "Withdraw"
+    )
+    .reduce((acc, item) =>
+      acc + Number(item.amount || 0),
+    0);
 
-      const pembayaranHutang =
-        transactions
-          .filter(
-            (item) =>
-              item.type ===
-                "Pembayaran Hutang" &&
-              item.status ===
-                "Approved"
-          )
-          .reduce(
-            (
-              acc,
-              item
-            ) =>
-              acc +
-              Number(
-                item.amount || 0
-              ),
-            0
-          );
+  const pembayaranHutang = transactions
+    .filter((item) =>
+      item.type === "Pembayaran Hutang"
+    )
+    .reduce((acc, item) =>
+      acc + Number(item.amount || 0),
+    0);
 
-      return (
-        totalHutang -
-        pembayaranHutang
-      );
+  return totalHutang - pembayaranHutang;
 
-    }, [transactions]);
+}, [transactions]);
 
   // =====================================
   // TOTAL SALDO
@@ -551,12 +520,12 @@ const [hasMore, setHasMore] =
 
       if (
       form.type ===
-        "Pemasukan" &&
+        "Deposit" &&
       !form.imageUrl
     ) {
 
       toast.error(
-        "Foto bukti pemasukan wajib diupload"
+        "Foto bukti deposit wajib diupload"
       );
 
       return;
@@ -631,7 +600,7 @@ const [hasMore, setHasMore] =
         );
 
         setForm({
-          type: "Pemasukan",
+          type: "Deposit",
           paymentType:
             "Cash",
           moneyType:
@@ -1448,7 +1417,7 @@ Klik Cancel untuk membatalkan.`
   <div className="bg-[#141021] border border-green-500/20 rounded-3xl p-5">
 
     <p className="text-sm text-gray-400">
-      Total Pemasukan
+      Total Deposit
     </p>
 
     <h2 className="text-3xl font-black text-green-400 mt-2">
@@ -1464,7 +1433,7 @@ Klik Cancel untuk membatalkan.`
   <div className="bg-[#141021] border border-red-500/20 rounded-3xl p-5">
 
     <p className="text-sm text-gray-400">
-      Total Pengeluaran
+      Total Withdraw
     </p>
 
     <h2 className="text-3xl font-black text-red-400 mt-2">
@@ -1520,11 +1489,11 @@ Klik Cancel untuk membatalkan.`
             >
 
               <option>
-                Pemasukan
+                Deposit
               </option>
 
               <option>
-                Pengeluaran
+                Withdraw
               </option>
 
             </select>
@@ -1615,15 +1584,15 @@ Klik Cancel untuk membatalkan.`
 
           </div>
 
-          {/* FOTO PEMASUKAN */}
+          {/* FOTO DEPOSIT */}
 {form.type ===
-  "Pemasukan" && (
+  "Deposit" && (
 
   <div className="mt-4">
 
     <label className="text-sm text-gray-300 block mb-2">
 
-      Upload Bukti Pemasukan
+      Upload Bukti Deposit
 
     </label>
 
@@ -1696,8 +1665,8 @@ Klik Cancel untuk membatalkan.`
 
           {[
             "Semua",
-            "Pemasukan",
-            "Pengeluaran",
+            "Deposit",
+            "Withdraw",
             "Cash",
             "Hutang",
             "Uang Putih",
@@ -1753,7 +1722,7 @@ Klik Cancel untuk membatalkan.`
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           item.type ===
-                          "Pemasukan"
+                          "Deposit"
                             ? "bg-green-500/20 text-green-300"
                             : item.type ===
                               "Pembayaran Hutang"
@@ -1827,7 +1796,7 @@ Klik Cancel untuk membatalkan.`
                     <h3
                       className={`text-3xl font-bold ${
                         item.type ===
-                        "Pemasukan"
+                        "Deposit"
                           ? "text-green-400"
                           : item.type ===
                             "Pembayaran Hutang"
@@ -1836,7 +1805,7 @@ Klik Cancel untuk membatalkan.`
                       }`}
                     >
                       {item.type ===
-                      "Pemasukan"
+                      "Deposit"
                         ? "+"
                         : "-"}
                       Rp{" "}
