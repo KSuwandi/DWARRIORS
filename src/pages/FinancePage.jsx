@@ -972,7 +972,7 @@ Klik Cancel untuk membatalkan.`
 
               </div>
 
-              <div className="p-6 overflow-auto max-h-[80vh]">
+              <div className="p-6 overflow-auto max-min-h-[80vh]">
 
                 <div className="overflow-x-auto">
 

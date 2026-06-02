@@ -696,9 +696,9 @@ export default function InventoryPage() {
         {/* BACKGROUND */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#120018] via-[#1b0126] to-black opacity-95" />
 
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-700/20 blur-[180px] rounded-full" />
+        <div className="absolute top-0 left-0 w-full max-w-[500px] h-[500px] bg-purple-700/20 blur-[180px] rounded-full" />
 
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-fuchsia-700/20 blur-[160px] rounded-full" />
+        <div className="absolute bottom-0 right-0 w-full max-w-[400px] h-[400px] bg-fuchsia-700/20 blur-[160px] rounded-full" />
 
         <div className="relative z-10">
 
@@ -765,7 +765,7 @@ export default function InventoryPage() {
                     .value
                 )
               }
-              className="w-full md:w-[420px] bg-white/5 backdrop-blur-xl border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
+              className="md:w-full max-w-[420px] bg-white/5 backdrop-blur-xl border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
             />
 
           </div>

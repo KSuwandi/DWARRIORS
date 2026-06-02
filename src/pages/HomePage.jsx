@@ -8,8 +8,8 @@ export default function HomePage() {
       <div className="absolute inset-0 bg-gradient-to-b from-[#120012] via-black to-[#09000f]" />
 
       <div className="absolute top-0 left-0 w-full h-full opacity-20">
-        <div className="absolute w-[500px] h-[500px] bg-purple-700 blur-[180px] rounded-full top-[-150px] left-[-100px]" />
-        <div className="absolute w-[400px] h-[400px] bg-fuchsia-700 blur-[160px] rounded-full bottom-[-120px] right-[-80px]" />
+        <div className="absolute w-full max-w-[500px] h-[500px] bg-purple-700 blur-[180px] rounded-full top-[-150px] left-[-100px]" />
+        <div className="absolute w-full max-w-[400px] h-[400px] bg-fuchsia-700 blur-[160px] rounded-full bottom-[-120px] right-[-80px]" />
       </div>
 
       {/* MAIN */}
@@ -120,7 +120,7 @@ export default function HomePage() {
             <div className="relative flex justify-center">
 
               {/* GLOW */}
-              <div className="absolute w-[500px] h-[500px] bg-purple-700/30 blur-[120px] rounded-full" />
+              <div className="absolute w-full max-w-[500px] h-[500px] bg-purple-700/30 blur-[120px] rounded-full" />
 
               {/* LOGO CARD */}
               <div className="relative group">

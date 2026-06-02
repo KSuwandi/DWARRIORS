@@ -130,8 +130,8 @@ export default function FamilyHierarchy() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#120012] via-black to-[#09000f]" />
   
         <div className="absolute top-0 left-0 w-full h-full opacity-20">
-          <div className="absolute w-[500px] h-[500px] bg-purple-700 blur-[180px] rounded-full top-[-150px] left-[-100px]" />
-          <div className="absolute w-[400px] h-[400px] bg-fuchsia-700 blur-[160px] rounded-full bottom-[-120px] right-[-80px]" />
+          <div className="absolute w-full max-w-[500px] h-[500px] bg-purple-700 blur-[180px] rounded-full top-[-150px] left-[-100px]" />
+          <div className="absolute w-full max-w-[400px] h-[400px] bg-fuchsia-700 blur-[160px] rounded-full bottom-[-120px] right-[-80px]" />
         </div>
   
         <div className="relative z-10 flex h-screen">
@@ -140,7 +140,7 @@ export default function FamilyHierarchy() {
           <div
     className="
       jgb-scrollbar
-      w-[320px]
+      w-full max-w-[320px]
       border-r
       border-purple-500/20
       bg-black/50
@@ -281,7 +281,7 @@ export default function FamilyHierarchy() {
                   right-[-250px]
                   top-1/2
                   -translate-y-1/2
-                  w-[1100px]
+                  w-full max-w-[1100px]
                   opacity-[0.03]
                 "
               />
@@ -297,7 +297,7 @@ export default function FamilyHierarchy() {
                   {/* FOTO */}
                   <div className="relative flex justify-center items-center">
   
-                    <div className="absolute w-[800px] h-[800px] bg-purple-700/30 blur-[220px] rounded-full" />
+                    <div className="absolute w-full max-w-[800px] h-[800px] bg-purple-700/30 blur-[220px] rounded-full" />
   
                     <img
                       src={activeMember.photo}

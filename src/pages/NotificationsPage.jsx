@@ -254,9 +254,9 @@ export default function NotificationsPage() {
         {/* BACKGROUND */}
         <div className="absolute inset-0 bg-black" />
 
-        <div className="absolute top-[-150px] left-[-100px] w-[450px] h-[450px] bg-fuchsia-700/20 blur-[140px] rounded-full" />
+        <div className="absolute top-[-150px] left-[-100px] [450px] h-[450px] bg-fuchsia-700/20 blur-[140px] rounded-full" />
 
-        <div className="absolute bottom-[-150px] right-[-100px] w-[450px] h-[450px] bg-purple-700/20 blur-[140px] rounded-full" />
+        <div className="absolute bottom-[-150px] right-[-100px] w-full max-w-[450px] h-[450px] bg-purple-700/20 blur-[140px] rounded-full" />
 
         {/* CONTENT */}
         <div className="relative z-10">

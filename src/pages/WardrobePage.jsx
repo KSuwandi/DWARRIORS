@@ -508,9 +508,9 @@ useEffect(() => {
 via-[#130909]
 to-[#000000]" />
 
-        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-red-900/20 blur-[200px] rounded-full" />
+        <div className="absolute top-0 left-0 w-full max-w-[600px] min-h-[600px] bg-red-900/20 blur-[200px] rounded-full" />
 
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-yellow-600/10 blur-[180px] rounded-full" />
+        <div className="absolute bottom-0 right-0 w-full max-w-[500px] min-h-[500px] bg-yellow-600/10 blur-[180px] rounded-full" />
 
         <div className="relative z-10 p-6">
 
@@ -544,8 +544,8 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
   absolute
   top-0
   right-0
-  w-[400px]
-  h-[400px]
+  w-full max-w-[400px]
+  min-h-[400px]
   bg-fuchsia-700/25
   blur-[150px]
   rounded-full
@@ -634,7 +634,7 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
       <div
         className="
         w-24
-        h-[2px]
+        min-h-[2px]
         bg-gradient-to-r
         from-fuchsia-500
 to-purple-700
@@ -907,7 +907,7 @@ to-purple-700
         alt={currentShowcase.title}
         className="
           w-full
-          h-[600px]
+          min-h-[600px]
           object-cover
         "
       />
@@ -1153,7 +1153,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
   "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f"
 }
                       alt={item.title}
-                      className="w-full h-[450px] object-cover group-hover:scale-125 transition-all duration-700"
+                      className="w-full min-h-[450px] object-cover group-hover:scale-125 transition-all duration-700"
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />

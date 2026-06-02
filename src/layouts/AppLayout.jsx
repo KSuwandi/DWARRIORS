@@ -23,7 +23,7 @@ export default function AppLayout({
         className={`overflow-y-auto relative z-10 ${
           hideSidebar
             ? "w-full p-0"
-            : "flex-1 p-8"
+            : "flex-1 p-4 md:p-8"
         }`}
       >
         {children}

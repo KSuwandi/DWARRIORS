@@ -679,7 +679,7 @@ case "crafting_completed":
       <div className="text-white w-full relative">
 
         {/* BACKGROUND EFFECT */}
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-purple-700/10 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute top-0 right-0 w-full max-w-[400px] min-h-[400px] bg-purple-700/10 blur-3xl rounded-full pointer-events-none" />
 
         {/* HEADER */}
         <div className="mb-10 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">

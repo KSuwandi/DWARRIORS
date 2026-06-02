@@ -198,7 +198,6 @@ useEffect(() => {
       notification:
         craftingNotif,
     },
-
     {
       name: "Finance",
       icon: Wallet,
@@ -283,14 +282,14 @@ menu.push({
 
   return (
 
-    <aside className="w-[320px] min-h-screen bg-gradient-to-b from-[#17051f] via-[#120318] to-black border-r border-[#9333EA]/30 p-6 hidden md:flex flex-col relative overflow-hidden">
+    <aside className="w-full max-w-[320px] min-h-screen bg-gradient-to-b from-[#17051f] via-[#120318] to-black border-r border-[#9333EA]/30 p-6 hidden md:flex flex-col relative overflow-hidden">
 
       {/* BACKGROUND GLOW */}
       <div className="absolute inset-0 pointer-events-none">
 
-        <div className="absolute top-[-120px] left-[-80px] w-[260px] h-[260px] bg-fuchsia-500/20 blur-3xl rounded-full" />
+        <div className="absolute top-[-120px] left-[-80px] w-full max-w-[260px] min-h-[260px] bg-fuchsia-500/20 blur-3xl rounded-full" />
 
-        <div className="absolute bottom-[-120px] right-[-80px] w-[260px] h-[260px] bg-purple-500/20 blur-3xl rounded-full" />
+        <div className="absolute bottom-[-120px] right-[-80px] w-full max-w-[260px] min-h-[260px] bg-purple-500/20 blur-3xl rounded-full" />
 
         <div className="absolute inset-0 opacity-[0.05] bg-[radial-gradient(circle_at_top,#ffffff_0%,transparent_55%)]" />
 
@@ -316,7 +315,7 @@ menu.push({
 
           <div className="mt-3 flex items-center gap-3">
 
-            <div className="h-[1px] flex-1 bg-gradient-to-r from-purple-500 to-transparent" />
+            <div className="min-h-[1px] flex-1 bg-gradient-to-r from-purple-500 to-transparent" />
 
             <span className="text-[10px] text-purple-300 tracking-[0.4em]">
 

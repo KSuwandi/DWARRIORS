@@ -117,9 +117,9 @@ export default function RoleRequestPage() {
         {/* BACKGROUND */}
         <div className="absolute inset-0 bg-black" />
 
-        <div className="absolute top-[-150px] left-[-100px] w-[400px] h-[400px] bg-purple-700/30 blur-[140px] rounded-full" />
+        <div className="absolute top-[-150px] left-[-100px] w-full max-w-[400px] min-h-[400px] bg-purple-700/30 blur-[140px] rounded-full" />
 
-        <div className="absolute bottom-[-150px] right-[-100px] w-[400px] h-[400px] bg-fuchsia-700/20 blur-[140px] rounded-full" />
+        <div className="absolute bottom-[-150px] right-[-100px] w-full max-w-[400px] min-h-[400px] bg-fuchsia-700/20 blur-[140px] rounded-full" />
 
         {/* CARD */}
         <div className="relative z-10 w-full max-w-2xl">
@@ -153,7 +153,7 @@ export default function RoleRequestPage() {
 
               </h1>
 
-              <div className="w-32 h-[3px] bg-gradient-to-r from-purple-500 to-red-500 rounded-full mx-auto mt-8" />
+              <div className="w-32 min-h-[3px] bg-gradient-to-r from-purple-500 to-red-500 rounded-full mx-auto mt-8" />
 
               <p className="text-gray-400 mt-8 text-lg leading-relaxed">
                 Your account is currently awaiting approval
