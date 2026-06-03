@@ -375,13 +375,13 @@ animationDelay: `${Math.random() * 2}s`,
       text-transparent
     "
     >
-      極道に生き
+      美しいものは破壊
       <br />
-      極道に死す
+      的でもある
     </h2>
 
     <p className="mt-8 text-gray-300 text-xl italic">
-      "Live as Yakuza, Die as Yakuza"
+      "Yang indah juga bisa menjadi kehancuran"
     </p>
 
     <div
