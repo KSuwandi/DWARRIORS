@@ -567,42 +567,66 @@ case "crafting_completed":
 
   return mergedLogs.filter((log) => {
 
-    const userName =
-      getUserName(log);
+  const userName =
+    getUserName(log);
 
-    return (
+  return (
 
-      log.action
-        ?.toLowerCase()
-        .includes(searchValue)
+    log.action
+      ?.toLowerCase()
+      .includes(searchValue)
 
-      ||
+    ||
 
-      log.type
-        ?.toLowerCase()
-        .includes(searchValue)
+    log.type
+      ?.toLowerCase()
+      .includes(searchValue)
 
-      ||
+    ||
 
-      log.target
-        ?.toLowerCase()
-        .includes(searchValue)
+    log.target
+      ?.toLowerCase()
+      .includes(searchValue)
 
-      ||
+    ||
 
-      log.description
-        ?.toLowerCase()
-        .includes(searchValue)
+    log.description
+      ?.toLowerCase()
+      .includes(searchValue)
 
-      ||
+    ||
 
-      userName
-        ?.toLowerCase()
-        .includes(searchValue)
+    userName
+      ?.toLowerCase()
+      .includes(searchValue)
 
-    );
+    ||
 
-  });
+    log.requesterName
+      ?.toLowerCase()
+      .includes(searchValue)
+
+    ||
+
+    log.createdBy
+      ?.toLowerCase()
+      .includes(searchValue)
+
+    ||
+
+    log.transactionTitle
+      ?.toLowerCase()
+      .includes(searchValue)
+
+    ||
+
+    log.rpName
+      ?.toLowerCase()
+      .includes(searchValue)
+
+  );
+
+});
 
 }, [
   logs,
