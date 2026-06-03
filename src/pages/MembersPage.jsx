@@ -10,6 +10,8 @@ import {
   doc,
   deleteDoc,
   updateDoc,
+  addDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
@@ -22,6 +24,8 @@ export default function MemberPage() {
 
   const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [search, setSearch] = useState("");
+
   const [financeData, setFinanceData] = useState([]);
   const [craftingData, setCraftingData] = useState([]);
   const [activeTab, setActiveTab] = useState("finance");
@@ -87,8 +91,7 @@ const deleteMember = async (member) => {
 const changeRole = async (
   member,
   newRole
-) => {
-
+) => { 
   try {
 
     const memberName =
@@ -154,6 +157,110 @@ const changeRole = async (
     );
   }
 }; 
+const paySalary = async () => {
+
+  try {
+
+    if (!selectedMember)
+      return;
+
+    if (salaryDebt <= 0) {
+
+      alert(
+        "Tidak ada hutang gaji"
+      );
+
+      return;
+    }
+
+    const input = prompt(
+      `Hutang Gaji Saat Ini:\nRp ${salaryDebt.toLocaleString("id-ID")}\n\nMasukkan nominal pembayaran:`
+    );
+
+    if (
+      input === null
+    ) {
+      return;
+    }
+
+    const nominal =
+      Number(input);
+
+    if (
+      isNaN(nominal) ||
+      nominal <= 0
+    ) {
+
+      alert(
+        "Nominal tidak valid"
+      );
+
+      return;
+    }
+
+    if (
+      nominal >
+      salaryDebt
+    ) {
+
+      alert(
+        "Nominal melebihi hutang gaji"
+      );
+
+      return;
+    }
+
+    await addDoc(
+      collection(
+        db,
+        "users",
+        selectedMember.id,
+        "finance"
+      ),
+      {
+
+        title:
+          "Pembayaran Gaji",
+
+        type:
+          "Pembayaran Gaji",
+
+        amount:
+          nominal,
+
+        paymentType:
+          "Cash",
+
+        status:
+          "Approved",
+
+        note:
+          "Pembayaran gaji oleh Oyabun",
+
+        createdAt:
+          serverTimestamp(),
+      }
+    );
+
+    alert(
+      "Pembayaran gaji berhasil"
+    );
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+    alert(
+      "Gagal membayar gaji"
+    );
+
+  }
+
+};
+
+
 
   // =========================
   // PHOTO SAFE
@@ -237,16 +344,35 @@ useEffect(() => {
       (snap) => {
 
         setMembers(
-          snap.docs.map(
-            (d) => ({
-              id: d.id,
-              uid:
-                d.data()
-                  .uid,
-              ...d.data(),
-            })
-          )
-        );
+  snap.docs
+    .map((d) => ({
+      id: d.id,
+      uid: d.data().uid,
+      ...d.data(),
+    }))
+    .sort((a, b) => {
+
+      const nameA =
+        (
+          a.rpName ||
+          a.displayName ||
+          a.name ||
+          a.email?.split("@")[0] ||
+          "Unknown"
+        ).toLowerCase();
+
+      const nameB =
+        (
+          b.rpName ||
+          b.displayName ||
+          b.name ||
+          b.email?.split("@")[0] ||
+          "Unknown"
+        ).toLowerCase();
+
+      return nameA.localeCompare(nameB);
+    })
+);
       }
     );
 
@@ -498,6 +624,56 @@ useEffect(() => {
 
     }, [financeData]);
 
+    // =========================
+// HUTANG GAJI MEMBER
+// =========================
+const salaryDebt = useMemo(() => {
+
+  const totalSalaryDebt = financeData
+  .filter(
+    (item) =>
+      ["Pemasukan", "Deposit"].includes(item.type) &&
+      item.paymentType === "Hutang" &&
+      item.status === "Approved"
+  )
+    .reduce(
+      (acc, item) =>
+        acc + Number(item.amount || 0),
+      0
+    );
+
+  const totalSalaryPaid = financeData
+    .filter(
+      (item) =>
+        item.type === "Pembayaran Gaji" &&
+        item.status === "Approved"
+    )
+    .reduce(
+      (acc, item) =>
+        acc + Number(item.amount || 0),
+      0
+    );
+
+  return totalSalaryDebt - totalSalaryPaid;
+
+}, [financeData]);
+
+
+    const filteredMembers = members.filter((member) => {
+
+  const memberName =
+    (
+      member.rpName ||
+      member.displayName ||
+      member.name ||
+      member.email?.split("@")[0] ||
+      ""
+    ).toLowerCase();
+
+  return memberName.includes(
+    search.toLowerCase()
+  );
+});
   // =========================
   // ACTIVE DATA
   // =========================
@@ -545,16 +721,39 @@ useEffect(() => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
           {/* MEMBER LIST */}
-          <div className="bg-[#111] border border-[#7A0019]/30 rounded-3xl p-5 h-fit sticky top-5">
+<div className="bg-purple-950/40 backdrop-blur-xl border border-purple-500/20 rounded-3xl p-5 h-fit sticky top-5 shadow-[0_0_35px_rgba(168,85,247,0.25)]">  
+<h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-purple-300 to-fuchsia-400 bg-clip-text text-transparent">
+  Members
+</h2>
+<input
+  type="text"
+  placeholder="Search member..."
+  value={search}
+  onChange={(e) =>
+    setSearch(e.target.value)
+  }
+  className="
+    w-full
+    mb-4
+    px-4
+    py-3
+    rounded-2xl
+    bg-purple-900/20
+    border
+    border-purple-500/20
+    text-white
+    placeholder-gray-400
+    outline-none
+    focus:border-purple-400
+    focus:ring-2
+    focus:ring-purple-500/30
+  "
+/>
 
-            <h2 className="text-xl font-bold mb-4">
-              Members
-            </h2>
+  <div className="member-scroll space-y-2 h-[700px] overflow-y-auto pr-1">
 
-            <div className="space-y-2 max-h-[700px] overflow-y-auto pr-1">
-
-              {members.map(
-                (m) => (
+    {filteredMembers.map(
+      (m) => (
 
                   <button
                     key={m.id}
@@ -571,8 +770,8 @@ useEffect(() => {
                     className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition-all duration-300 ${
                       selectedMember?.id ===
                       m.id
-                        ? "bg-[#7A0019] border-[#7A0019] shadow-lg shadow-red-900/40"
-                        : "bg-black border-gray-700 hover:border-[#7A0019]/50 hover:bg-[#161616]"
+                        ? "bg-gradient-to-r from-purple-700 to-fuchsia-700 border-purple-400 shadow-[0_0_25px_rgba(168,85,247,0.6)]"
+                        : "bg-purple-950/20 border-purple-500/20 hover:border-purple-400 hover:bg-purple-900/30"
                     }`}
                   >
 
@@ -606,6 +805,11 @@ useEffect(() => {
 
                 )
               )}
+              {filteredMembers.length === 0 && (
+  <div className="text-center text-gray-400 py-10">
+    Member tidak ditemukan
+  </div>
+)}
 
             </div>
 
@@ -627,14 +831,13 @@ useEffect(() => {
               <>
 
                 {/* MEMBER CARD */}
-                <div className="bg-gradient-to-br from-[#111] to-[#181818] border border-[#7A0019]/30 p-6 rounded-3xl flex items-center gap-5 shadow-xl">
-
+<div className="bg-gradient-to-br from-purple-950/60 to-fuchsia-950/40 border border-purple-500/30 p-6 rounded-3xl flex items-center gap-5 shadow-xl shadow-purple-900/20 backdrop-blur-xl">
                   <img
   src={getPhoto(
     selectedMember
   )}
   referrerPolicy="no-referrer"
-  className="w-24 h-24 rounded-3xl object-cover border-2 border-[#7A0019]"
+ className="w-24 h-24 rounded-3xl object-cover border-2 border-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.5)]"
 />
 
                   <div>
@@ -663,7 +866,7 @@ useEffect(() => {
 
                     <div className="flex gap-3 mt-3 flex-wrap">
 
-  <span className="px-4 py-1 text-xs bg-[#7A0019] rounded-xl font-semibold">
+  <span className="px-4 py-1 text-xs bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-xl font-semibold">
     {selectedMember.role}
   </span>
 
@@ -729,8 +932,8 @@ useEffect(() => {
                     className={`px-6 py-3 rounded-2xl border font-semibold transition-all ${
                       activeTab ===
                       "finance"
-                        ? "bg-[#7A0019] border-[#7A0019]"
-                        : "bg-black border-gray-700 hover:border-[#7A0019]"
+                        ? "bg-gradient-to-r from-purple-700 to-fuchsia-700 border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+                        : "bg-purple-950/20 border-purple-500/20 hover:border-purple-400"
                     }`}
                   >
                     Finance
@@ -750,7 +953,7 @@ useEffect(() => {
                     className={`px-6 py-3 rounded-2xl border font-semibold transition-all ${
                       activeTab ===
                       "crafting"
-                        ? "bg-[#7A0019] border-[#7A0019]"
+                        ? "bg-gradient-to-r from-purple-700 to-fuchsia-700 border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
                         : "bg-black border-gray-700 hover:border-[#7A0019]"
                     }`}
                   >
@@ -763,9 +966,9 @@ useEffect(() => {
                 {activeTab ===
                   "finance" && (
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
-                    <div className="bg-[#111] p-5 rounded-3xl border border-green-500/20 shadow-lg">
+                    <div className="bg-purple-950/30 backdrop-blur-xl p-5 rounded-3xl border border-purple-500/20 shadow-[0_0_25px_rgba(168,85,247,0.15)]">
 
                       <p className="text-gray-400 text-sm">
                         Total Income
@@ -780,7 +983,7 @@ useEffect(() => {
 
                     </div>
 
-                    <div className="bg-[#111] p-5 rounded-3xl border border-red-500/20 shadow-lg">
+                    <div className="bg-purple-950/30 backdrop-blur-xl p-5 rounded-3xl border border-purple-500/20 shadow-[0_0_25px_rgba(168,85,247,0.15)]">
 
                       <p className="text-gray-400 text-sm">
                         Total Expense
@@ -795,7 +998,7 @@ useEffect(() => {
 
                     </div>
 
-                    <div className="bg-[#111] p-5 rounded-3xl border border-yellow-500/20 shadow-lg">
+                    <div className="bg-purple-950/30 backdrop-blur-xl p-5 rounded-3xl border border-purple-500/20 shadow-[0_0_25px_rgba(168,85,247,0.15)]">
 
                       <p className="text-gray-400 text-sm">
                         Total Hutang
@@ -812,6 +1015,43 @@ useEffect(() => {
                       </p>
 
                     </div>
+                    <div className="bg-purple-950/30 backdrop-blur-xl p-5 rounded-3xl border border-orange-500/20">
+
+  <p className="text-gray-400 text-sm">
+    Hutang Gaji
+  </p>
+
+  <p className="text-orange-400 text-2xl font-bold mt-2">
+    Rp{" "}
+    {Math.max(
+      salaryDebt,
+      0
+    ).toLocaleString(
+      "id-ID"
+    )}
+  </p>
+
+  {role === "Oyabun" &&
+    salaryDebt > 0 && (
+      <button
+        onClick={paySalary}
+        className="
+          mt-4
+          w-full
+          px-4
+          py-2
+          rounded-xl
+          bg-green-600
+          hover:bg-green-700
+          font-semibold
+          transition-all
+        "
+      >
+        Bayar Gaji
+      </button>
+  )}
+
+</div>
 
                   </div>
 
@@ -825,7 +1065,7 @@ useEffect(() => {
 
                       <div
                         key={item.id}
-                        className={`p-5 rounded-3xl border transition-all duration-300 hover:scale-[1.01] ${
+                        className={`p-5 rounded-3xl border border-purple-500/20 bg-purple-950/20 backdrop-blur-xl transition-all duration-300 hover:scale-[1.01] hover:border-purple-400 hover:shadow-[0_0_30px_rgba(168,85,247,0.25)] ${
                           activeTab ===
                           "finance"
 
@@ -910,7 +1150,7 @@ useEffect(() => {
 
                               <div className="flex flex-wrap gap-3 mt-4">
 
-                                <div className="bg-black/40 px-4 py-2 rounded-xl text-sm">
+                                <div className="bg-purple-900/20 border border-purple-500/20 px-4 py-2 rounded-xl text-sm">
                                   💰 Amount:
                                   {" "}
                                   Rp{" "}
@@ -923,7 +1163,7 @@ useEffect(() => {
                                 </div>
 
                                 {item.paymentType && (
-                                  <div className="bg-black/40 px-4 py-2 rounded-xl text-sm">
+                                  <div className="bg-purple-900/20 border border-purple-500/20 px-4 py-2 rounded-xl text-sm">
                                     💳 Payment:
                                     {" "}
                                     {
@@ -935,7 +1175,7 @@ useEffect(() => {
                               </div>
 
                               {item.note && (
-                                <div className="mt-4 bg-black/30 border border-gray-800 rounded-2xl p-4">
+                                <div className="mt-4 bg-purple-900/20 border border-purple-500/20 rounded-2xl p-4">
 
                                   <p className="text-gray-400 text-sm">
                                     Note
@@ -1004,21 +1244,21 @@ useEffect(() => {
 
                               <div className="flex flex-wrap gap-3 mt-4">
 
-                                <div className="bg-black/40 px-4 py-2 rounded-xl text-sm">
+                                <div className="bg-purple-900/20 border border-purple-500/20 px-4 py-2 rounded-xl text-sm">
                                   ✅ Success:
                                   {" "}
                                   {item.successQty ||
                                     0}
                                 </div>
 
-                                <div className="bg-black/40 px-4 py-2 rounded-xl text-sm">
+                                <div className="bg-purple-900/20 border border-purple-500/20 px-4 py-2 rounded-xl text-sm">
                                   ❌ Failed:
                                   {" "}
                                   {item.failedQty ||
                                     0}
                                 </div>
 
-                                <div className="bg-black/40 px-4 py-2 rounded-xl text-sm">
+                                <div className="bg-purple-900/20 border border-purple-500/20 px-4 py-2 rounded-xl text-sm">
                                   📦 Output:
                                   {" "}
                                   {item.outputQty ||
@@ -1109,8 +1349,8 @@ useEffect(() => {
                           className={`px-5 py-3 rounded-2xl border ${
                             currentPage ===
                             i + 1
-                              ? "bg-[#7A0019] border-[#7A0019]"
-                              : "bg-black border-gray-700 hover:border-[#7A0019]"
+                              ? "bg-gradient-to-r from-purple-700 to-fuchsia-700 border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+                              : "bg-purple-950/20 border-purple-500/20 hover:border-purple-400"
                           }`}
                         >
                           {i + 1}
