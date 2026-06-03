@@ -25,6 +25,117 @@ import imageCompression from "browser-image-compression";
 import { useAuth } from "../contexts/AuthContext";
 import { db } from "../services/firebase/config";
 
+
+const PRICE_LIST = [
+
+  // =========================
+  // SENJATA
+  // =========================
+
+  {
+    category: "Senjata",
+    title: "PELURU 9MM",
+    merah: 150000,
+    putih: 150000,
+  },
+
+  {
+    category: "Senjata",
+    title: "PELURU .44 (MAGNUM)",
+    merah: 70000,
+    putih: 70000,
+  },
+
+  {
+    category: "Senjata",
+    title: "PELURU Double Action",
+    merah: 75000,
+    putih: 75000,
+  },
+
+  {
+    category: "Senjata",
+    title: "VEST",
+    merah: 80000,
+    putih: 70000,
+  },
+
+  {
+    category: "Senjata",
+    title: "COMBAT PISTOL",
+    merah: 200000,
+    putih: 180000,
+  },
+
+  {
+    category: "Senjata",
+    title: "SMG MK2",
+    merah: 500000,
+    putih: 450000,
+  },
+
+  {
+    category: "Senjata",
+    title: "MINI SMG",
+    merah: 450000,
+    putih: 415000,
+  },
+
+  {
+    category: "Senjata",
+    title: "PYTHON",
+    merah: 400000,
+    putih: 360000,
+  },
+
+  {
+    category: "Senjata",
+    title: "AK 47",
+    merah: 650000,
+    putih: 585000,
+  },
+
+  {
+    category: "Senjata",
+    title: "HEAVY SNIPER",
+    merah: 1250000,
+    putih: 1125000,
+  },
+
+  {
+    category: "Senjata",
+    title: "DOUBLE ACTION",
+    merah: 450000,
+    putih: 370000,
+  },
+
+  {
+    category: "Senjata",
+    title: "WM",
+    merah: 150000,
+    putih: 130000,
+  },
+
+    // =========================
+  // PAKET
+  // =========================
+
+  {
+    category: "Paket",
+    title: "1 SET FULL CASH",
+    merah: 1590000,
+    putih: 1300000,
+  },
+
+  {
+    category: "Paket",
+    title: "1 SET PYTHON",
+    merah: 790000,
+    putih: 710000,
+  },
+
+];
+
 export default function FinancePage() {
 
   const { user, role } =
@@ -78,6 +189,9 @@ const [hasMore, setHasMore] =
     note: "",
     imageUrl: "",
   });
+
+  const [selectedPriceItem, setSelectedPriceItem] =
+  useState("");
 
   // =====================================
   // CREATE ACTIVITY LOG
@@ -410,7 +524,8 @@ const [hasMore, setHasMore] =
   const totalHutang = transactions
     .filter((item) =>
       item.paymentType === "Hutang" &&
-      item.type === "Withdraw"
+      item.type === "Withdraw" &&
+      item.status === "Approved"
     )
     .reduce((acc, item) =>
       acc + Number(item.amount || 0),
@@ -418,11 +533,17 @@ const [hasMore, setHasMore] =
 
   const pembayaranHutang = transactions
     .filter((item) =>
-      item.type === "Pembayaran Hutang"
+      item.type === "Pembayaran Hutang" &&
+      item.status === "Approved"
     )
     .reduce((acc, item) =>
       acc + Number(item.amount || 0),
     0);
+
+    return Math.max(
+    totalHutang - pembayaranHutang,
+    0
+  );
 
   return totalHutang - pembayaranHutang;
 
@@ -910,229 +1031,233 @@ Klik Cancel untuk membatalkan.`
       <div className="text-white">
 
         {/* PRICE LIST SENJATA */}
-        {showWeaponPriceList && (
+{showWeaponPriceList && (
 
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+  <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
 
-            <div className="w-full max-w-5xl bg-[#14091F] border border-purple-700/40 rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/50">
+    <div className="w-full max-w-5xl max-h-[90vh] bg-[#14091F] border border-purple-700/40 rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/50 flex flex-col">
 
-              <div className="bg-gradient-to-r from-purple-900 to-violet-700 px-6 py-5 flex items-center justify-between">
+      {/* HEADER */}
+      <div className="bg-gradient-to-r from-purple-900 to-violet-700 px-6 py-5 flex items-center justify-between flex-shrink-0">
 
-                <div>
+        <div>
 
-                  <h2 className="text-3xl font-bold">
-                    PRICE LIST SENJATA
-                  </h2>
+          <h2 className="text-3xl font-bold">
+            PRICE LIST SENJATA
+          </h2>
 
-                  <p className="text-purple-200 text-sm mt-1">
-                    Jigokubara Family
-                  </p>
+          <p className="text-purple-200 text-sm mt-1">
+            Jigokubara Family
+          </p>
 
-                </div>
+        </div>
 
-                <button
-                  onClick={() =>
-                    setShowWeaponPriceList(false)
-                  }
-                  className="bg-white/10 hover:bg-white/20 w-10 h-10 rounded-xl text-xl"
+        <button
+          onClick={() => setShowWeaponPriceList(false)}
+          className="bg-white/10 hover:bg-white/20 w-10 h-10 rounded-xl text-xl transition-all"
+        >
+          ✕
+        </button>
+
+      </div>
+
+      {/* CONTENT */}
+      <div className="p-6 overflow-y-auto">
+
+        <div className="overflow-x-auto">
+
+          <table className="w-full border-collapse">
+
+            <thead>
+
+              <tr className="bg-gradient-to-r from-purple-800 to-violet-700 text-white">
+
+                <th className="p-4 text-left border border-purple-500">
+                  BARANG
+                </th>
+
+                <th className="p-4 text-left border border-purple-500">
+                  UANG MERAH
+                </th>
+
+                <th className="p-4 text-left border border-purple-500">
+                  UANG PUTIH
+                </th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              {[
+                {
+                  item: "PELURU 9MM",
+                  merah: "150.000/clip [ISI 150x]",
+                  putih: "150.000/clip [ISI 150x]",
+                },
+                {
+                  item: "PELURU .44 (MAGNUM)",
+                  merah: "70.000/clip [ISI 50x]",
+                  putih: "70.000/clip [ISI 50x]",
+                },
+                {
+                  item: "PELURU Double Action",
+                  merah: "75.000/clip [ISI 50x]",
+                  putih: "75.000/clip [ISI 50x]",
+                },
+                {
+                  item: "PELURU 7.62 (AK-47)",
+                  merah: "-",
+                  putih: "-",
+                },
+                {
+                  item: "PELURU .50 BMG (SNIPER)",
+                  merah: "-",
+                  putih: "-",
+                },
+                {
+                  item: "VEST PULAU",
+                  merah: "80.000/pcs (MAX 4)",
+                  putih: "70.000/pcs (MAX 4)",
+                },
+                {
+                  item: "COMBAT PISTOL",
+                  merah: "200.000",
+                  putih: "180.000",
+                },
+                {
+                  item: "SMG MK2",
+                  merah: "500.000",
+                  putih: "450.000",
+                },
+                {
+                  item: "MINI SMG",
+                  merah: "450.000",
+                  putih: "415.000",
+                },
+                {
+                  item: "PYTHON",
+                  merah: "400.000",
+                  putih: "360.000",
+                },
+                {
+                  item: "AK 47",
+                  merah: "650.000",
+                  putih: "585.000",
+                },
+                {
+                  item: "HEAVY SNIPER",
+                  merah: "1.250.000",
+                  putih: "1.125.000",
+                },
+                {
+                  item: "DOUBLE ACTION",
+                  merah: "450.000",
+                  putih: "370.000",
+                },
+                {
+                  item: "WM",
+                  merah: "150.000",
+                  putih: "130.000",
+                },
+              ].map((row, index) => (
+
+                <tr
+                  key={index}
+                  className="bg-[#1A1028] hover:bg-[#241437] transition-all"
                 >
-                  ✕
-                </button>
 
-              </div>
+                  <td className="p-4 border border-purple-900/40 font-semibold">
+                    {row.item}
+                  </td>
 
-              <div className="p-6 overflow-auto max-min-h-[80vh]">
+                  <td className="p-4 border border-purple-900/40 text-red-300">
+                    {row.merah}
+                  </td>
 
-                <div className="overflow-x-auto">
+                  <td className="p-4 border border-purple-900/40 text-yellow-200">
+                    {row.putih}
+                  </td>
 
-                  <table className="w-full border-collapse">
+                </tr>
 
-                    <thead>
+              ))}
 
-                      <tr className="bg-gradient-to-r from-purple-800 to-violet-700 text-white">
+            </tbody>
 
-                        <th className="p-4 text-left border border-purple-500">
-                          BARANG
-                        </th>
+          </table>
 
-                        <th className="p-4 text-left border border-purple-500">
-                          UANG MERAH
-                        </th>
+        </div>
 
-                        <th className="p-4 text-left border border-purple-500">
-                          UANG PUTIH
-                        </th>
+        {/* PACKAGE */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
 
-                      </tr>
+          <div className="bg-gradient-to-br from-red-900/40 to-purple-900/40 border border-red-500/30 rounded-3xl p-5">
 
-                    </thead>
+            <h3 className="text-xl font-bold text-red-300">
+              1 SET FULL CASH UNGMER
+            </h3>
 
-                    <tbody>
+            <p className="text-sm text-gray-300 mt-2">
+              PYTHON / MK2 / WM / CLIP / VEST
+            </p>
 
-  {[
-    {
-      item: "PELURU 9MM",
-      merah: "150.000/clip [ISI 150x]",
-      putih: "150.000/clip [ISI 150x]",
-    },
-    {
-      item: "PELURU .44 (MAGNUM)",
-      merah: "70.000/clip [ISI 50x]",
-      putih: "70.000/clip [ISI 50x]",
-    },
-    {
-      item: "PELURU Double Action",
-      merah: "75.000/clip [ISI 50x]",
-      putih: "75.000/clip [ISI 50x]",
-    },
-    {
-      item: "PELURU 7.62 (AK-47)",
-      merah: "-",
-      putih: "-",
-    },
-    {
-      item: "PELURU .50 BMG (SNIPER)",
-      merah: "-",
-      putih: "-",
-    },
-    {
-      item: "VEST PULAU",
-      merah: "80.000/pcs (MAX 4)",
-      putih: "70.000/pcs (MAX 4)",
-    },
-    {
-      item: "COMBAT PISTOL",
-      merah: "200.000",
-      putih: "180.000",
-    },
-    {
-      item: "SMG MK2",
-      merah: "500.000",
-      putih: "450.000",
-    },
-    {
-      item: "MINI SMG",
-      merah: "450.000",
-      putih: "415.000",
-    },
-    {
-      item: "PYTHON",
-      merah: "400.000",
-      putih: "360.000",
-    },
-    {
-      item: "AK 47",
-      merah: "650.000",
-      putih: "585.000",
-    },
-    {
-      item: "HEAVY SNIPER",
-      merah: "1.250.000",
-      putih: "1.125.000",
-    },
-    {
-      item: "DOUBLE ACTION",
-      merah: "450.000",
-      putih: "370.000", //20 ribu
-    },
-    {
-      item: "WM",
-      merah: "150.000",
-      putih: "130.000",
-    },
-  ].map((row, index) => (
+            <p className="text-4xl font-black mt-3">
+              Rp 1.590.000
+            </p>
 
-    <tr
-      key={index}
-      className="bg-[#1A1028] hover:bg-[#241437] transition-all"
-    >
+          </div>
 
-      <td className="p-4 border border-purple-900/40 font-semibold">
-        {row.item}
-      </td>
+          <div className="bg-gradient-to-br from-yellow-700/30 to-purple-900/40 border border-yellow-400/30 rounded-3xl p-5">
 
-      <td className="p-4 border border-purple-900/40 text-red-300">
-        {row.merah}
-      </td>
+            <h3 className="text-xl font-bold text-yellow-200">
+              1 SET FULL CASH UNGPUT
+            </h3>
 
-      <td className="p-4 border border-purple-900/40 text-yellow-200">
-        {row.putih}
-      </td>
+            <p className="text-sm text-gray-300 mt-2">
+              PYTHON / MK2 / WM / CLIP / VEST
+            </p>
 
-    </tr>
+            <p className="text-4xl font-black mt-3">
+              Rp 1.300.000
+            </p>
 
-  ))}
+          </div>
 
-</tbody>
+          <div className="bg-gradient-to-br from-red-900/40 to-purple-900/40 border border-red-500/30 rounded-3xl p-5">
 
+            <h3 className="text-xl font-bold text-red-300">
+              1 SET PYTHON UANG MERAH
+            </h3>
 
-                  </table>
+            <p className="text-4xl font-black mt-3">
+              Rp 790.000
+            </p>
 
-</div>
+          </div>
 
-{/* PACKAGE */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
+          <div className="bg-gradient-to-br from-yellow-700/30 to-purple-900/40 border border-yellow-400/30 rounded-3xl p-5">
 
-  <div className="bg-gradient-to-br from-red-900/40 to-purple-900/40 border border-red-500/30 rounded-3xl p-5">
+            <h3 className="text-xl font-bold text-yellow-200">
+              1 SET PYTHON UANG PUTIH
+            </h3>
 
-    <h3 className="text-xl font-bold text-red-300">
-      1 SET FULL CASH UNGMER (PYTHON/MK2/WM/CLIP/VEST)
-    </h3>
+            <p className="text-4xl font-black mt-3">
+              Rp 710.000
+            </p>
 
-    <p className="text-4xl font-black mt-3">
-      Rp 1.590.000
-    </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 
-  <div className="bg-gradient-to-br from-yellow-700/30 to-purple-900/40 border border-yellow-400/30 rounded-3xl p-5">
-
-    <h3 className="text-xl font-bold text-yellow-200">
-      1 SET FULL CASH UNGPUT (PYTHON/MK2/WM/CLIP/VEST)
-    </h3>
-
-    <p className="text-4xl font-black mt-3">
-      Rp 1.300.000
-    </p>
-
-  </div>
-
-  <div className="bg-gradient-to-br from-red-900/40 to-purple-900/40 border border-red-500/30 rounded-3xl p-5">
-
-    <h3 className="text-xl font-bold text-red-300">
-      1 SET PYTHON UANG MERAH
-    </h3>
-
-    <p className="text-4xl font-black mt-3">
-      Rp 790.000
-    </p>
-
-  </div>
-
-  <div className="bg-gradient-to-br from-yellow-700/30 to-purple-900/40 border border-yellow-400/30 rounded-3xl p-5">
-
-    <h3 className="text-xl font-bold text-yellow-200">
-      1 SET PYTHON UANG PUTIH
-    </h3>
-
-    <p className="text-4xl font-black mt-3">
-      Rp 710.000
-    </p>
-
-  </div>
-
-</div>
-
-</div>
-
-  
-
-              </div>
-
-            </div>
-
-
-        )}
+)}
 
         {/* PRICE LIST DISNAKER */}
         {showDisnakerPriceList && (
@@ -1471,7 +1596,7 @@ Klik Cancel untuk membatalkan.`
           className="bg-[#141021] border border-purple-900/30 rounded-3xl p-5 mb-6"
         >
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-3">
 
             <select
               value={
@@ -1524,29 +1649,120 @@ Klik Cancel untuk membatalkan.`
             </select>
 
             <select
-              value={
-                form.moneyType
-              }
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  moneyType:
-                    e.target
-                      .value,
-                })
-              }
-              className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
-            >
+  value={form.moneyType}
+  onChange={(e) => {
 
-              <option>
-                Uang Putih
-              </option>
+    const moneyType =
+      e.target.value;
 
-              <option>
-                Uang Merah
-              </option>
+    setForm(prev => {
 
-            </select>
+      let amount =
+        prev.amount;
+
+      if (selectedPriceItem) {
+
+        const selectedItem =
+          PRICE_LIST.find(
+            item =>
+              item.title ===
+              selectedPriceItem
+          );
+
+        if (selectedItem) {
+
+          amount =
+            moneyType === "Uang Merah"
+              ? selectedItem.merah
+              : selectedItem.putih;
+
+        }
+
+      }
+
+      return {
+        ...prev,
+        moneyType,
+        amount,
+      };
+
+    });
+
+  }}
+  className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
+>
+
+  <option>
+    Uang Putih
+  </option>
+
+  <option>
+    Uang Merah
+  </option>
+
+</select>
+
+              <select
+  value={selectedPriceItem}
+  onChange={(e) => {
+
+    const value = e.target.value;
+
+    setSelectedPriceItem(value);
+
+    const selectedItem =
+      PRICE_LIST.find(
+        item => item.title === value
+      );
+
+    if (!selectedItem) return;
+
+    const price =
+      form.moneyType === "Uang Merah"
+        ? selectedItem.merah
+        : selectedItem.putih;
+
+    setForm(prev => ({
+      ...prev,
+      title: selectedItem.title,
+      amount: price,
+    }));
+
+  }}
+  className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
+>
+
+  <option value="">
+    Pilih Dari Pricelist (Optional)
+  </option>
+
+  <optgroup label="Senjata">
+    {PRICE_LIST
+      .filter(item => item.category === "Senjata")
+      .map(item => (
+        <option
+          key={item.title}
+          value={item.title}
+        >
+          {item.title}
+        </option>
+      ))}
+  </optgroup>
+
+  <optgroup label="Paket">
+    {PRICE_LIST
+      .filter(item => item.category === "Paket")
+      .map(item => (
+        <option
+          key={item.title}
+          value={item.title}
+        >
+          {item.title}
+        </option>
+      ))}
+  </optgroup>
+
+</select>
 
             <input
               type="text"
