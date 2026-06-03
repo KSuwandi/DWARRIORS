@@ -169,3 +169,103 @@ body,
     #9333ea
   );
 }
+
+@keyframes loading {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+.animate-loading {
+  animation: loading 3s linear forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1.5s ease forwards;
+}
+
+@keyframes floating {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-floating {
+  animation: floating 5s ease-in-out infinite;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(0px);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-190vh);
+    opacity: 0;
+  }
+}
+
+.particle {
+  position: absolute;
+  bottom: -20px;
+  border-radius: 9999px;
+  animation: particleFloat linear infinite;
+  opacity: 1;
+  z-index: 999;
+  box-shadow: 0 0 15px #a855f7;
+}
+
+@keyframes quoteGlow {
+  0% {
+    text-shadow:
+      0 0 15px rgba(168,85,247,.3);
+  }
+
+  50% {
+    text-shadow:
+      0 0 35px rgba(168,85,247,.9),
+      0 0 70px rgba(217,70,239,.5);
+  }
+
+  100% {
+    text-shadow:
+      0 0 15px rgba(168,85,247,.3);
+  }
+}
+
+.quote-glow {
+  animation: quoteGlow 5s ease-in-out infinite;
+}
+
+input[type="range"] {
+  accent-color: #a855f7;
+}

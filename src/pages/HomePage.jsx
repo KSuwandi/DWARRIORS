@@ -1,19 +1,218 @@
 import { Link } from "react-router-dom";
+import { useEffect, useRef, useState, useMemo } from "react";
+
 
 export default function HomePage() {
+
+const [loading, setLoading] = useState(true);
+const [selectedImage, setSelectedImage] = useState(null);
+
+const [isPlaying, setIsPlaying] = useState(false);
+const [volume, setVolume] = useState(30);
+
+const particles = useMemo(
+  () =>
+    Array.from({ length: 60 }, () => ({
+      left: Math.random() * 100,
+      size: 2 + Math.random() * 5,
+      duration: 8 + Math.random() * 12,
+      delay: Math.random() * 10,
+    })),
+  []
+);
+   const audioRef = useRef(null);
+
+
+
+useEffect(() => {
+  const audio = audioRef.current;
+
+  if (!audio) return;
+
+  audio.volume = volume / 100;
+
+  audio.play()
+    .then(() => setIsPlaying(true))
+    .catch(() => {});
+}, []);
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setLoading(false);
+  }, 3000);
+
+  return () => clearTimeout(timer);
+}, []);
+
+const toggleMusic = () => {
+  const audio = audioRef.current;
+
+  if (!audio) return;
+
+  if (audio.paused) {
+    audio.play();
+    setIsPlaying(true);
+  } else {
+    audio.pause();
+    setIsPlaying(false);
+  }
+};
+
+const handleVolume = (e) => {
+  const value = Number(e.target.value);
+
+  setVolume(value);
+
+  if (audioRef.current) {
+    audioRef.current.volume = value / 100;
+  }
+};
+
+if (loading) {
+  return (
+    <div className="min-h-screen bg-black flex items-center justify-center overflow-hidden relative">
+
+      {/* Background Glow */}
+      <div className="absolute w-[500px] h-[500px] bg-purple-700/30 blur-[180px] rounded-full" />
+
+      <div className="relative z-10 text-center animate-fadeIn">
+
+        <h1 className="text-6xl md:text-8xl font-black tracking-[0.3em] text-white">
+          JIGOKUBARA
+        </h1>
+
+        <p className="mt-4 text-3xl text-purple-400">
+          極道
+        </p>
+
+        <div className="mt-10 w-72 h-2 bg-white/10 rounded-full overflow-hidden mx-auto">
+
+          <div
+  className="h-full w-0 bg-gradient-to-r from-purple-500 via-fuchsia-500 to-red-500 animate-loading"
+/>
+        </div>
+
+        <p className="mt-6 text-gray-400 tracking-[0.3em] uppercase">
+          Loading...
+        </p>
+
+      </div>
+
+    </div>
+  );
+}
+
+
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
 
       {/* BACKGROUND EFFECT */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#120012] via-black to-[#09000f]" />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+
+{particles.map((particle, i) => (
+  <span
+    key={i}
+    className="particle"
+    style={{
+      left: `${particle.left}%`,
+      width: `${particle.size}px`,
+      height: `${particle.size}px`,
+      animationDuration: `${3 + Math.random() * 4}s`,
+animationDelay: `${Math.random() * 2}s`,
+      background: "#a855f7",
+      boxShadow: "0 0 10px #a855f7",
+    }}
+  />
+))}
+
+</div>
 
       <div className="absolute top-0 left-0 w-full h-full opacity-20">
-        <div className="absolute w-full max-w-[500px] h-[500px] bg-purple-700 blur-[180px] rounded-full top-[-150px] left-[-100px]" />
-        <div className="absolute w-full max-w-[400px] h-[400px] bg-fuchsia-700 blur-[160px] rounded-full bottom-[-120px] right-[-80px]" />
+        <div className="absolute w-full max-w-[500px] min-h-[500px] bg-purple-700 blur-[180px] rounded-full top-[-150px] left-[-100px]" />
+        <div className="absolute w-full max-w-[400px] min-h-[400px] bg-fuchsia-700 blur-[160px] rounded-full bottom-[-120px] right-[-80px]" />
       </div>
 
       {/* MAIN */}
       <div className="relative z-10">
+        <div
+  className="
+  fixed
+  bottom-6
+  right-6
+  z-50
+  w-[280px]
+  bg-white/5
+  backdrop-blur-xl
+  border
+  border-purple-700/30
+  rounded-3xl
+  p-4
+  shadow-[0_0_30px_rgba(168,85,247,0.25)]
+"
+>
+
+  <div className="flex items-center gap-4">
+
+    <div
+      className={`
+      text-3xl
+      ${isPlaying ? "animate-spin" : ""}
+    `}
+      style={{
+        animationDuration: "6s",
+      }}
+    >
+      🎵
+    </div>
+
+    <div className="flex-1">
+
+      <p className="font-bold text-purple-300">
+        Jigokubara Theme
+      </p>
+
+      <p className="text-xs text-gray-400">
+        {isPlaying ? "Now Playing" : "Paused"}
+      </p>
+
+    </div>
+
+    <button
+      onClick={toggleMusic}
+      className="
+      px-4
+      py-2
+      rounded-xl
+      bg-purple-700
+      hover:bg-purple-600
+      transition-all
+    "
+    >
+      {isPlaying ? "❚❚" : "▶"}
+    </button>
+
+  </div>
+
+  <input
+    type="range"
+    min="0"
+    max="100"
+    value={volume}
+    onChange={handleVolume}
+    className="w-full mt-4"
+  />
+
+</div>
+        <audio
+  ref={audioRef}
+  loop
+>
+  <source
+    src="https://res.cloudinary.com/dpyhp3o66/video/upload/v1780497295/Jigokubara_Gumi_jzwu4f.mp3"
+    type="audio/mpeg"
+  />
+</audio>
 
         {/* HERO */}
         <section className="min-h-screen flex items-center justify-center px-6 py-20">
@@ -47,7 +246,7 @@ export default function HomePage() {
 
               </h1>
 
-              <div className="mt-8 w-40 h-[3px] bg-gradient-to-r from-purple-500 to-red-500 rounded-full" />
+              <div className="mt-8 w-40 min-h-[3px] bg-gradient-to-r from-purple-500 to-red-500 rounded-full" />
 
               <p className="text-gray-300 text-lg md:text-xl leading-relaxed mt-10 max-w-2xl">
                 Jigokubara-gumi, atau “Mawar Neraka”, adalah organisasi kriminal bergaya Yakuza yang lahir pada era 1980-an oleh Akihiro Ryu setelah kehancuran klannya di Osaka. Dengan filosofi “Yang indah juga bisa menjadi kehancuran”, keluarga ini membangun kekuasaan melalui loyalitas, kehormatan, dan kekuatan tanpa ampun. Kini Jigokubara dikenal sebagai keluarga bawah tanah yang disegani dan diwariskan turun-temurun oleh keturunan Akihiro.
@@ -120,7 +319,7 @@ export default function HomePage() {
             <div className="relative flex justify-center">
 
               {/* GLOW */}
-              <div className="absolute w-full max-w-[500px] h-[500px] bg-purple-700/30 blur-[120px] rounded-full" />
+              <div className="absolute w-full max-w-[500px] min-h-[500px] bg-purple-700/30 blur-[120px] rounded-full" />
 
               {/* LOGO CARD */}
               <div className="relative group">
@@ -131,10 +330,16 @@ export default function HomePage() {
 
                   {/* GANTI DENGAN LOGO KAMU */}
                   <img
-                    src="https://i.ibb.co.com/tTKwhGt1/Asset-18.png"
-                    alt="Jigokubara"
-                    className="w-full max-w-[500px] object-contain drop-shadow-[0_0_35px_rgba(168,85,247,0.45)]"
-                  />
+  src="https://i.ibb.co.com/tTKwhGt1/Asset-18.png"
+  alt="Jigokubara"
+  className="
+    w-full
+    max-w-[500px]
+    object-contain
+    animate-floating
+    drop-shadow-[0_0_35px_rgba(168,85,247,0.45)]
+  "
+/>
 
                 </div>
 
@@ -146,8 +351,58 @@ export default function HomePage() {
 
         </section>
 
-        {/* GALLERY */}
-        <section className="px-6 pb-32">
+{/* JAPANESE QUOTE */}
+
+<section className="py-40 px-6 relative">
+
+  <div className="max-w-5xl mx-auto text-center">
+
+    <p className="text-purple-400 tracking-[0.5em] uppercase text-sm mb-6">
+      Philosophy
+    </p>
+
+    <h2
+      className="
+      quote-glow
+      text-5xl md:text-7xl
+      font-black
+      leading-tight
+      bg-gradient-to-r
+      from-purple-300
+      via-fuchsia-400
+      to-red-400
+      bg-clip-text
+      text-transparent
+    "
+    >
+      極道に生き
+      <br />
+      極道に死す
+    </h2>
+
+    <p className="mt-8 text-gray-300 text-xl italic">
+      "Live as Yakuza, Die as Yakuza"
+    </p>
+
+    <div
+      className="
+      w-40
+      h-[2px]
+      mx-auto
+      mt-10
+      bg-gradient-to-r
+      from-purple-500
+      to-red-500
+    "
+    />
+
+  </div>
+
+</section>
+
+{/* GALLERY */}
+
+<section className="px-6 pb-32">
 
           <div className="max-w-7xl mx-auto">
 
@@ -162,7 +417,7 @@ export default function HomePage() {
                 Jigokubara Moments
               </h2>
 
-              <div className="w-32 h-[3px] bg-gradient-to-r from-purple-500 to-red-500 rounded-full mx-auto mt-8" />
+              <div className="w-32 min-h-[3px] bg-gradient-to-r from-purple-500 to-red-500 rounded-full mx-auto mt-8" />
 
             </div>
 
@@ -170,12 +425,19 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
               {/* IMAGE 1 */}
-              <div className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111]">
+              <div
+  onClick={() =>
+    setSelectedImage(
+      "https://i.ibb.co.com/JRW6WTsH/jgb.png"
+    )
+  }
+  className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111] cursor-pointer"
+>
 
                 <img
                   src="https://i.ibb.co.com/JRW6WTsH/jgb.png"
                   alt=""
-                  className="w-full h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
+                  className="w-full min-h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
@@ -195,12 +457,19 @@ export default function HomePage() {
               </div>
 
               {/* IMAGE 2 */}
-              <div className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111]">
+              <div
+  onClick={() =>
+    setSelectedImage(
+      "https://i.ibb.co.com/p6GzdCtP/Five-M-GTAProcess-2026-02-10-15-05-02.png"
+    )
+  }
+  className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111] cursor-pointer"
+>
 
                 <img
                   src="https://i.ibb.co.com/p6GzdCtP/Five-M-GTAProcess-2026-02-10-15-05-02.png"
                   alt=""
-                  className="w-full h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
+                  className="w-full min-h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
@@ -220,12 +489,19 @@ export default function HomePage() {
               </div>
 
               {/* IMAGE 3 */}
-              <div className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111]">
+              <div
+  onClick={() =>
+    setSelectedImage(
+      "https://i.ibb.co.com/vWYnGbH/Five-M-GTAProcess-2026-02-07-15-40-45.png"
+    )
+  }
+  className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111] cursor-pointer"
+>
 
                 <img
                   src="https://i.ibb.co.com/vWYnGbH/Five-M-GTAProcess-2026-02-07-15-40-45.png"
                   alt=""
-                  className="w-full h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
+                  className="w-full min-h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
@@ -245,12 +521,19 @@ export default function HomePage() {
               </div>
 
               {/* IMAGE 4 */}
-              <div className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111]">
+              <div
+  onClick={() =>
+    setSelectedImage(
+      "https://i.ibb.co.com/zWSYTMLS/Five-M-GTAProcess-2026-02-10-15-03-28.png"
+    )
+  }
+  className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111] cursor-pointer"
+>
 
                 <img
                   src="https://i.ibb.co.com/zWSYTMLS/Five-M-GTAProcess-2026-02-10-15-03-28.png"
                   alt=""
-                  className="w-full h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
+                  className="w-full min-h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
@@ -276,6 +559,36 @@ export default function HomePage() {
         </section>
 
       </div>
+
+
+      {selectedImage && (
+  <div
+    onClick={() => setSelectedImage(null)}
+    className="
+      fixed
+      inset-0
+      z-[9999]
+      bg-black/90
+      backdrop-blur-md
+      flex
+      items-center
+      justify-center
+      p-6
+      animate-fadeIn
+    "
+  >
+    <img
+      src={selectedImage}
+      alt=""
+      className="
+        max-w-[95vw]
+        max-h-[90vh]
+        rounded-3xl
+        shadow-[0_0_60px_rgba(168,85,247,0.5)]
+      "
+    />
+  </div>
+)}
 
     </div>
   );
