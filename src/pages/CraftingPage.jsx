@@ -76,7 +76,7 @@ const CRAFTING_RECIPES = [
     materials: [
       { item: "Berlian", qty: 1 },
       { item: "Paketan Jamur", qty: 3 },
-      { item: "Borax", qty: 5 },
+      { item: "Paketan Borax", qty: 5 },
       { item: "Kaca", qty: 10 },
       { item: "Besi", qty: 20 },
       { item: "Tembaga", qty: 25 },
@@ -153,7 +153,7 @@ const CRAFTING_RECIPES = [
     materials: [
       { item: "Berlian", qty: 1 },
       { item: "Paketan Jamur", qty: 2 },
-      { item: "Borax", qty: 3 },
+      { item: "Paketan Borax", qty: 3 },
       { item: "Plastik", qty: 10 },
       { item: "Tembaga", qty: 27 },
     ],
@@ -164,7 +164,7 @@ const CRAFTING_RECIPES = [
     outputAmount: 1,
     materials: [
       { item: "Berlian", qty: 1 },
-      { item: "Borax", qty: 3 },
+      { item: "Paketan Borax", qty: 3 },
       { item: "Paketan Jamur", qty: 3 },
       { item: "Botol", qty: 10 },
       { item: "Tembaga", qty: 27 },
