@@ -15,6 +15,7 @@ import {
   runTransaction,
   serverTimestamp,
   doc,
+  increment,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
@@ -155,6 +156,39 @@ console.log(
   "FINANCE DATA:",
   financeData
 );
+
+// =====================================
+// AUTO TAMBAH INVENTORY
+// =====================================
+
+if (
+  financeData.type === "Deposit" &&
+  financeData.inventoryItemId
+) {
+
+  const inventoryRef = doc(
+    db,
+    "inventory",
+    financeData.inventoryItemId
+  );
+
+  console.log(
+  "QTY",
+  financeData.quantity
+);
+
+  transaction.update(
+    inventoryRef,
+    {
+      stock: increment(
+        Number(
+          financeData.quantity || 1
+        )
+      ),
+    }
+  );
+
+}
 
           if (
             financeData.status !==

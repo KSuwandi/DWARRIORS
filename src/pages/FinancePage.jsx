@@ -18,6 +18,8 @@ import {
   limit,
   getDocs,
   startAfter,
+  where,
+  increment,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
@@ -146,6 +148,21 @@ export default function FinancePage() {
     setTransactions,
   ] = useState([]);
 
+  const [
+  inventoryItems,
+  setInventoryItems,
+] = useState([]);
+
+const [
+  showInventoryDropdown,
+  setShowInventoryDropdown,
+] = useState(false);
+
+const [
+  inventorySearch,
+  setInventorySearch,
+] = useState("");
+
   const [loading, setLoading] =
     useState(false);
 
@@ -179,16 +196,20 @@ const [hasMore, setHasMore] =
   const [loadingMore, setLoadingMore] =
   useState(false);
 
-  const [form, setForm] =
-  useState({
-    type: "Deposit",
-    paymentType: "Cash",
-    moneyType: "Uang Putih",
-    title: "",
-    amount: "",
-    note: "",
-    imageUrl: "",
-  });
+ const [form, setForm] =
+useState({
+  type: "Deposit",
+  paymentType: "Cash",
+  moneyType: "Uang Putih",
+
+  inventoryItemId: "",
+  quantity: 1,
+
+  title: "",
+  amount: "",
+  note: "",
+  imageUrl: "",
+});
 
   const [selectedPriceItem, setSelectedPriceItem] =
   useState("");
@@ -384,6 +405,42 @@ const [hasMore, setHasMore] =
 
 }, [user]);
 
+useEffect(() => {
+
+  const loadInventory =
+    async () => {
+
+      try {
+
+        const snapshot =
+          await getDocs(
+            collection(
+              db,
+              "inventory"
+            )
+          );
+
+        setInventoryItems(
+          snapshot.docs.map(
+            doc => ({
+              id: doc.id,
+              ...doc.data(),
+            })
+          )
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+      }
+
+    };
+
+  loadInventory();
+
+}, []);
+
   const loadMoreTransactions =
   async () => {
 
@@ -568,6 +625,15 @@ const [hasMore, setHasMore] =
   // =====================================
   // FILTER
   // =====================================
+    const filteredInventoryItems =
+  inventoryItems.filter((item) =>
+    item.name
+      ?.toLowerCase()
+      .includes(
+        inventorySearch.toLowerCase()
+      )
+  );
+
   const filteredTransactions =
     useMemo(() => {
 
@@ -678,6 +744,13 @@ const [hasMore, setHasMore] =
             "finance"
           ),
           {
+
+            inventoryItemId:
+              form.inventoryItemId,
+
+            quantity:
+              Number(form.quantity || 1),
+
             type:
               form.type,
 
@@ -720,17 +793,19 @@ const [hasMore, setHasMore] =
           `${form.type} berhasil dikirim untuk approval`
         );
 
-        setForm({
-          type: "Deposit",
-          paymentType:
-            "Cash",
-          moneyType:
-            "Uang Putih",
-          title: "",
-          amount: "",
-          note: "",
-          imageUrl: "",
-        });
+       setForm({
+  type: "Deposit",
+  paymentType: "Cash",
+  moneyType: "Uang Putih",
+
+  inventoryItemId: "",
+  quantity: 1,
+
+  title: "",
+  amount: "",
+  note: "",
+  imageUrl: "",
+});
 
       } catch (error) {
 
@@ -884,51 +959,76 @@ const [hasMore, setHasMore] =
   // =====================================
   const approvePayment = async (item) => {
 
-    try {
+  try {
 
-      if (role !== "Oyabun") {
+    if (role !== "Oyabun") {
 
-        toast.error(
-          "Hanya Oyabun yang bisa approve"
-        );
+      toast.error(
+        "Hanya Oyabun yang bisa approve"
+      );
 
-        return;
+      return;
+    }
+
+    const transactionRef = doc(
+      db,
+      "users",
+      item.createdByUid || user.uid,
+      "finance",
+      item.id
+    );
+
+    await updateDoc(
+      transactionRef,
+      {
+        status: "Approved",
+        approvedBy: user.rpName,
+        approvedAt: serverTimestamp(),
       }
+    );
 
-      const transactionRef = doc(
+    // =====================================
+    // AUTO TAMBAH INVENTORY
+    // =====================================
+
+    if (
+      item.type === "Deposit" &&
+      item.inventoryItemId
+    ) {
+
+      const inventoryRef = doc(
         db,
-        "users",
-        item.createdByUid || user.uid,
-        "finance",
-        item.id
+        "inventory",
+        item.inventoryItemId
       );
 
       await updateDoc(
-        transactionRef,
-        {
-          status: "Approved",
+  inventoryRef,
+  {
+    stock: increment(
+      Number(item.quantity || 1)
+    ),
+  }
+);
 
-          approvedBy:
-            user.rpName,
-
-          approvedAt:
-            serverTimestamp(),
-        }
-      );
-
-      toast.success(
-        "Transaksi berhasil di approve"
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      toast.error(
-        "Gagal approve transaksi"
-      );
     }
-  };
+
+    toast.success(
+      "Transaksi berhasil di approve"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    toast.error(
+      "Gagal approve transaksi"
+    );
+
+  }
+
+};
+
 
   // =====================================
 // DELETE TRANSACTION
@@ -1702,7 +1802,9 @@ Klik Cancel untuk membatalkan.`
 
 </select>
 
-              <select
+  {form.type === "Withdraw" && (
+
+<select
   value={selectedPriceItem}
   onChange={(e) => {
 
@@ -1733,7 +1835,7 @@ Klik Cancel untuk membatalkan.`
 >
 
   <option value="">
-    Pilih Dari Pricelist (Optional)
+    Pilih Dari Pricelist
   </option>
 
   <optgroup label="Senjata">
@@ -1763,6 +1865,155 @@ Klik Cancel untuk membatalkan.`
   </optgroup>
 
 </select>
+
+)}
+
+
+
+     {form.type === "Deposit" && (
+
+<div className="relative">
+
+  <button
+    type="button"
+    onClick={() =>
+      setShowInventoryDropdown(
+        !showInventoryDropdown
+      )
+    }
+    className="
+      w-full
+      bg-[#0F0B18]
+      border
+      border-purple-900/30
+      rounded-2xl
+      px-4
+      py-3
+      text-left
+      hover:border-purple-500
+      transition-all
+    "
+  >
+
+    {form.inventoryItemId
+      ? inventoryItems.find(
+          item =>
+            item.id ===
+            form.inventoryItemId
+        )?.name
+      : "Pilih Barang Inventory"}
+
+  </button>
+
+  {showInventoryDropdown && (
+
+    <div
+      className="
+        absolute
+        top-full
+        left-0
+        mt-2
+        w-full
+        bg-[#14091F]
+        border
+        border-purple-700/30
+        rounded-2xl
+        shadow-2xl
+        z-50
+      "
+    >
+
+      <div className="p-3 border-b border-purple-900/30">
+
+        <input
+          type="text"
+          placeholder="Cari Barang..."
+          value={inventorySearch}
+          onChange={(e) =>
+            setInventorySearch(
+              e.target.value
+            )
+          }
+          className="
+            w-full
+            bg-[#0F0B18]
+            border
+            border-purple-900/30
+            rounded-xl
+            px-3
+            py-2
+            outline-none
+            focus:border-purple-500
+          "
+        />
+
+      </div>
+
+      <div
+        className="
+          max-h-72
+          overflow-y-auto
+        "
+      >
+
+        {filteredInventoryItems.map(
+          (item) => (
+
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => {
+
+                setForm(prev => ({
+                  ...prev,
+                  inventoryItemId:
+                    item.id,
+                  title:
+                    item.name,
+                }));
+
+                setShowInventoryDropdown(
+                  false
+                );
+
+              }}
+              className="
+                w-full
+                text-left
+                px-4
+                py-3
+                hover:bg-purple-700/20
+                border-b
+                border-purple-900/20
+                transition-all
+              "
+            >
+
+              <div className="font-semibold">
+                {item.name}
+              </div>
+
+              <div className="text-xs text-gray-400">
+                Stock :
+                {" "}
+                {item.stock || 0}
+              </div>
+
+            </button>
+
+          )
+        )}
+
+      </div>
+
+    </div>
+
+  )}
+
+</div>
+
+)}
+
 
             <input
               type="text"
@@ -1797,6 +2048,23 @@ Klik Cancel untuk membatalkan.`
               }
               className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
             />
+            {form.type === "Deposit" && (
+
+  <input
+    type="number"
+    min="1"
+    placeholder="Quantity"
+    value={form.quantity}
+    onChange={(e) =>
+      setForm({
+        ...form,
+        quantity: e.target.value,
+      })
+    }
+    className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
+  />
+
+)}
 
           </div>
 
@@ -1988,6 +2256,14 @@ Klik Cancel untuk membatalkan.`
                           item.paymentType
                         }
                       </span>
+
+                      {item.quantity && (
+
+  <span className="bg-[#0F0B18] border border-purple-900/20 px-3 py-2 rounded-xl text-xs">
+    Qty {item.quantity}
+  </span>
+
+)}
 
                       <span className="bg-[#0F0B18] border border-purple-900/20 px-3 py-2 rounded-xl text-xs">
                         {
