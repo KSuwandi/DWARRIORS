@@ -71,7 +71,7 @@ export default function App() {
   // =====================================
   const isPending =
   user &&
-  role === "Pending";
+  role === "PENDING";
 
   return (
 

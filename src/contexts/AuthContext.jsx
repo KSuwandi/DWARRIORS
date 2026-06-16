@@ -96,7 +96,7 @@ export function AuthProvider({
           const newRole =
             isBoss
               ? "BOSS"
-              : "Pending";
+              : "PENDING";
 
           await setDoc(
             userRef,
