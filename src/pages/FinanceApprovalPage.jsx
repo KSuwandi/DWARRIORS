@@ -5,6 +5,10 @@ import {
 } from "react";
 
 import toast from "react-hot-toast";
+import {
+  hasPermission,
+} from "../utils/permissions";
+
 
 import {
   collection,
@@ -37,61 +41,132 @@ export default function FinanceApprovalPage() {
   const [filter, setFilter] =
     useState("Semua");
 
-  // =====================================
-  // GET ALL PENDING
-  // =====================================
-  useEffect(() => {
+      const [activeTab, setActiveTab] =
+  useState("finance");
 
-    if (
-      !user ||
-      role !== "Oyabun"
-    ) {
-      return;
-    }
+const [returnRequests, setReturnRequests] =
+  useState([]);
 
-    const q = query(
-      collectionGroup(
+
+useEffect(() => {
+
+  const canApproveFinance =
+    hasPermission(
+      role,
+      "APPROVE_FINANCE"
+    );
+
+  if (
+    !user ||
+    !canApproveFinance
+  ) {
+    return;
+  }
+
+  const q = query(
+    collectionGroup(
+      db,
+      "finance"
+    ),
+    orderBy(
+      "createdAt",
+      "desc"
+    )
+  );
+
+  const unsubscribe =
+    onSnapshot(
+      q,
+      (snapshot) => {
+
+        const data =
+          snapshot.docs.map(
+            (doc) => ({
+              id: doc.id,
+              ref: doc.ref,
+              ...doc.data(),
+            })
+          );
+
+        setTransactions(
+          data.filter(
+            (item) =>
+              item.status ===
+              "Pending"
+          )
+        );
+      }
+    );
+
+  return () =>
+    unsubscribe();
+
+}, [
+  user,
+  role,
+]);
+
+  // =====================================
+// RETURN REQUESTS
+// =====================================
+
+useEffect(() => {
+
+  const q =
+    query(
+      collection(
         db,
-        "finance"
-      ),
-      orderBy(
-        "createdAt",
-        "desc"
+        "borrowed_items"
       )
     );
 
-    const unsubscribe =
-      onSnapshot(
-        q,
-        (snapshot) => {
+  const unsubscribe =
+    onSnapshot(
+      q,
+      (snapshot) => {
 
-          const data =
-            snapshot.docs.map(
-              (doc) => ({
-                id: doc.id,
-                ref:
-                  doc.ref,
-                ...doc.data(),
-              })
-            );
-
-          setTransactions(
-            data.filter(
+        const data =
+          snapshot.docs
+            .map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+            .filter(
               (item) =>
                 item.status ===
-                "Pending"
-            )
-          );
-        }
-      );
+                "Returned"
+            );
 
-    return () =>
-      unsubscribe();
+            console.log(
+  "RETURN REQUESTS:",
+  data
+);
 
-  }, [
-    user,
-    role,
-  ]);
+        setReturnRequests(
+          data
+        );
+
+      }
+    );
+
+  return () =>
+    unsubscribe();
+
+}, []);
+
+// =====================================
+// TOTAL BARANG
+// =====================================
+
+const getTotalItems = (items = []) => {
+
+  return items.reduce(
+    (total, item) =>
+      total + Number(item.quantity || 0),
+    0
+  );
+
+};
 
   // =====================================
   // FILTERED DATA
@@ -147,8 +222,13 @@ const approveTransaction =
             );
           }
 
-          financeData =
-            financeDoc.data();
+         financeData =
+  financeDoc.data();
+
+console.log(
+  "RETURN DATA",
+  financeData
+);
 
             financeData = financeDoc.data();
 
@@ -156,6 +236,8 @@ console.log(
   "FINANCE DATA:",
   financeData
 );
+
+let debtStatus = "Masih Hutang";
 
 // =====================================
 // AUTO TAMBAH INVENTORY
@@ -190,6 +272,82 @@ if (
 
 }
 
+// AUTO KURANGI INVENTORY SAAT WITHDRAW
+
+if (
+  financeData.type === "Withdraw" &&
+  financeData.withdrawItems?.length
+) {
+
+  const inventoryDocs = [];
+
+  for (const withdrawItem of financeData.withdrawItems) {
+
+    const inventoryRef = doc(
+      db,
+      "inventory",
+      withdrawItem.itemId
+    );
+
+    const inventoryDoc =
+      await transaction.get(
+        inventoryRef
+      );
+
+    inventoryDocs.push({
+      ref: inventoryRef,
+      doc: inventoryDoc,
+      qty: withdrawItem.quantity,
+      name: withdrawItem.itemName,
+    });
+
+  }
+
+  for (const item of inventoryDocs) {
+
+    if (!item.doc.exists()) {
+
+      throw new Error(
+        `${item.name} tidak ditemukan`
+      );
+
+    }
+
+    const currentStock =
+      Number(
+        item.doc.data().stock || 0
+      );
+
+    if (
+      currentStock <
+      Number(item.qty)
+    ) {
+
+      throw new Error(
+        `Stock ${item.name} tidak mencukupi`
+      );
+
+    }
+
+  }
+
+  for (const item of inventoryDocs) {
+
+    transaction.update(
+      item.ref,
+      {
+        stock: increment(
+          -Number(item.qty)
+        ),
+      }
+    );
+
+  }
+
+}
+
+
+
           if (
             financeData.status !==
             "Pending"
@@ -199,22 +357,115 @@ if (
             );
           }
 
-          transaction.update(
-            ref,
-            {
-              status:
-                "Approved",
+const debtRefs = [];
 
-              approvedBy:
-                user.rpName,
+if (
+  financeData.type === "Return" &&
+  financeData.items?.length
+) {
 
-              approvedByUid:
-                user.uid,
+  for (const item of financeData.items) {
 
-              approvedAt:
-                serverTimestamp(),
-            }
-          );
+    if (item.transactionId) {
+
+      const debtRef = doc(
+        db,
+        "finance_logs",
+        item.transactionId
+      );
+
+      const debtDoc =
+        await transaction.get(
+          debtRef
+        );
+
+      debtRefs.push({
+        ref: debtRef,
+        doc: debtDoc,
+      });
+
+    }
+
+  }
+
+}
+
+// =====================================
+// RETURN BARANG
+// =====================================
+
+if (
+  financeData.type === "Return" &&
+  financeData.items?.length
+) {
+
+  debtStatus = "Lunas";
+
+  for (const item of financeData.items) {
+
+    const inventoryRef = doc(
+      db,
+      "inventory",
+      item.itemId
+    );
+
+    transaction.update(
+      inventoryRef,
+      {
+        stock: increment(
+          Number(item.quantity)
+        ),
+      }
+    );
+
+  }
+
+}
+
+       if (
+  financeData.type === "Return" &&
+  financeData.items?.length
+) {
+
+  for (const debt of debtRefs) {
+
+    transaction.update(
+      debt.ref,
+      {
+        debtStatus: "Lunas",
+        returnedAt:
+          serverTimestamp(),
+      }
+    );
+
+  }
+
+}
+
+ transaction.update(
+  ref,
+  {
+    status:
+      "Approved",
+
+    debtStatus:
+      financeData.type === "Return"
+        ? debtStatus
+        : "",
+
+    approvedBy:
+      user.rpName,
+
+    approvedByUid:
+      user.uid,
+
+    approvedByRole:
+      role,
+
+    approvedAt:
+      serverTimestamp(),
+  }
+);
 
           const financeLogRef =
             collection(
@@ -229,29 +480,51 @@ if (
 
     action: "Approved",
 
+    debtStatus:
+  financeData.type === "Return"
+    ? debtStatus
+    : financeData.debtStatus || "",
+
     requesterName:
-      financeData.createdBy,
+  financeData.createdBy ||
+  financeData.requesterName ||
+  "",
 
     rpName:
-      user.rpName,
+  user?.rpName || "",
+
+approverRole:
+  role || "",
 
     role:
       financeData.role || "",
 
-    transactionTitle:
-      financeData.title,
+   transactionTitle:
+  financeData.title ||
+  "Pelunasan Hutang",
 
-    transactionType:
-      financeData.type,
+transactionType:
+  financeData.type || "",
 
-    paymentType:
-      financeData.paymentType,
+transactionId:
+  financeData.transactionId || "",
 
-    moneyType:
-      financeData.moneyType,
+items:
+  financeData.items ||
+  financeData.withdrawItems ||
+  [],
 
-    amount:
-      financeData.amount,
+  note:
+  financeData.note || "",
+
+paymentType:
+  financeData.paymentType || "",
+
+moneyType:
+  financeData.moneyType || "",
+
+amount:
+  financeData.amount || 0,
 
     imageUrl:
       financeData.imageUrl || "",
@@ -330,22 +603,25 @@ console.log(
             );
           }
 
-          transaction.update(
-            ref,
-            {
-              status:
-                "Rejected",
+         transaction.update(
+  ref,
+  {
+    status:
+      "Rejected",
 
-              rejectedBy:
-                user.rpName,
+    rejectedBy:
+      user.rpName,
 
-              rejectedByUid:
-                user.uid,
+    rejectedByUid:
+      user.uid,
 
-              rejectedAt:
-                serverTimestamp(),
-            }
-          );
+    rejectedByRole:
+      role,
+
+    rejectedAt:
+      serverTimestamp(),
+  }
+);
 
           const financeLogRef =
             collection(
@@ -353,43 +629,56 @@ console.log(
               "finance_logs"
             );
 
-          transaction.set(
+         transaction.set(
   doc(financeLogRef),
   {
     type: "finance",
 
-  action: "Rejected",
+    action: "Rejected",
 
-  requesterName:
-    financeData.createdBy,
+    requesterName:
+      financeData.createdBy ||
+      financeData.requesterName ||
+      "",
 
-  rpName:
-    user.rpName,
+    rpName:
+      user?.rpName || "",
 
-  role:
-    financeData.role || "",
+    approverRole:
+      role || "",
 
-  transactionTitle:
-    financeData.title,
+    role:
+      financeData.role || "",
 
-  transactionType:
-    financeData.type,
+    transactionTitle:
+      financeData.title ||
+      "Pelunasan Hutang",
 
-  paymentType:
-    financeData.paymentType,
+    transactionType:
+      financeData.type || "",
 
-  moneyType:
-    financeData.moneyType,
+    paymentType:
+      financeData.paymentType || "",
 
-  amount:
-    financeData.amount,
+    moneyType:
+      financeData.moneyType || "",
 
-  imageUrl:
-    financeData.imageUrl || "",
+    amount:
+      financeData.amount || 0,
 
-  status:
-    "Rejected",
+    items:
+      financeData.items ||
+      financeData.withdrawItems ||
+      [],
 
+    note:
+  financeData.note || "",
+
+    imageUrl:
+      financeData.imageUrl || "",
+
+    status:
+      "Rejected",
 
     createdAt:
       serverTimestamp(),
@@ -418,34 +707,63 @@ console.log(
   // =====================================
   // ACCESS DENIED
   // =====================================
-  if (
-    role !== "Oyabun"
-  ) {
+const canApproveFinance =
+  hasPermission(
+    role,
+    "APPROVE_FINANCE"
+  );
 
-    return (
+if (
+  !canApproveFinance
+) {
 
-      <AppLayout>
+  
 
-        <div className="flex items-center justify-center min-h-[70vh]">
+  return (
 
-          <div className="bg-[#111111] border border-red-500/20 rounded-3xl p-10 text-center text-white">
+    <AppLayout>
 
-            <h1 className="text-4xl font-bold text-red-400">
-              ACCESS DENIED
-            </h1>
+      <div className="flex items-center justify-center min-h-[70vh]">
 
-            <p className="text-gray-400 mt-4">
-              Hanya Oyabun yang dapat mengakses halaman approval finance
-            </p>
+        <div
+          className="
+            bg-[#111111]
+            border
+            border-red-500/20
+            rounded-3xl
+            p-10
+            text-center
+            text-white
+          "
+        >
 
-          </div>
+          <h1
+            className="
+              text-4xl
+              font-bold
+              text-red-400
+            "
+          >
+            ACCESS DENIED
+          </h1>
+
+          <p className="text-gray-400 mt-4">
+
+            Hanya Leadership
+            DWARRIORS yang dapat
+            mengakses Finance Approval
+
+          </p>
 
         </div>
 
-      </AppLayout>
-    );
-  }
+      </div>
 
+    </AppLayout>
+
+  );
+
+}
   return (
 
     <AppLayout>
@@ -457,12 +775,20 @@ console.log(
 
           <div>
 
-            <h1 className="text-4xl font-bold">
-              Finance Approval
-            </h1>
+             <h1 className="text-5xl font-black">
+
+  <span className="text-white">
+    DWARRIORS
+  </span>
+
+  <span className="text-red-500 ml-3">
+    ANNOUNCEMENTS
+  </span>
+
+</h1>
 
             <p className="text-gray-400 mt-2">
-              Approval transaksi keuangan & pembayaran hutang user
+              Approval transaksi member DWARRIORS
             </p>
 
           </div>
@@ -534,27 +860,40 @@ console.log(
                     <div className="flex items-center gap-3 flex-wrap">
 
                       <h2 className="text-2xl font-bold">
-                        {
-                          item.title
-                        }
-                      </h2>
+                        {item.createdAt && (
+
+  <p className="text-xs text-gray-500 mt-2">
+
+    {new Date(
+      item.createdAt.seconds * 1000
+    ).toLocaleString("id-ID")}
+
+  </p>
+
+)}
+  {
+    item.type === "Return"
+      ? "Pelunasan Hutang"
+      : item.title
+  }
+</h2>
 
                       {/* TYPE */}
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          item.type ===
-                          "Pemasukan"
-                            ? "bg-green-500/20 text-green-300"
-                            : item.type ===
-                              "Pembayaran Hutang"
-                            ? "bg-yellow-500/20 text-yellow-300"
-                            : "bg-red-500/20 text-red-300"
-                        }`}
-                      >
-                        {
-                          item.type
-                        }
-                      </span>
+  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+    item.type === "Pemasukan"
+      ? "bg-green-500/20 text-green-300"
+      : item.type === "Pembayaran Hutang"
+      ? "bg-yellow-500/20 text-yellow-300"
+      : "bg-red-500/20 text-red-300"
+  }`}
+>
+  {
+    item.type === "Return"
+      ? "Pelunasan Hutang"
+      : item.type
+  }
+</span>
 
                       {/* STATUS */}
                       <span className="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-xs font-semibold">
@@ -569,6 +908,143 @@ console.log(
                         "Tidak ada catatan"}
                     </p>
 
+                    {item.type === "Withdraw" &&
+ item.withdrawItems?.length > 0 && (
+
+  <div className="mt-4">
+
+    <p className="text-sm text-red-300 mb-2">
+      Barang Yang Diambil
+    </p>
+
+    <ul className="space-y-1">
+
+      {item.withdrawItems.map(
+        (barang, index) => (
+
+          <li
+            key={index}
+            className="text-gray-300"
+          >
+            • {barang.itemName}
+            {" "}
+            x
+            {barang.quantity}
+          </li>
+
+        )
+      )}
+
+    </ul>
+
+  </div>
+
+)}
+
+{item.type === "Return" &&
+ item.items?.length > 0 && (
+
+  <div className="mt-5">
+
+    <div className="grid md:grid-cols-2 gap-6">
+
+      {/* KIRI */}
+      <div>
+
+        <p className="text-sm font-semibold text-green-300 mb-3">
+          Barang Yang Dikembalikan
+        </p>
+
+        <div className="space-y-2">
+
+          {item.items.map(
+            (barang, index) => (
+
+              <div
+                key={index}
+                className="
+                  bg-black/40
+                  border
+                  border-green-500/10
+                  rounded-xl
+                  px-4
+                  py-3
+                  flex
+                  justify-between
+                "
+              >
+                <span>
+                  {barang.itemName}
+                </span>
+
+                <span className="text-green-400 font-bold">
+                  x{barang.quantity}
+                </span>
+
+              </div>
+
+            )
+          )}
+
+        </div>
+
+      </div>
+
+      {/* KANAN */}
+      <div
+        className="
+          bg-green-950/20
+          border
+          border-green-500/20
+          rounded-2xl
+          p-5
+        "
+      >
+
+        <p className="text-xs text-gray-400 uppercase">
+          Pelunasan Hutang
+        </p>
+
+        <h3 className="text-3xl font-bold text-green-400 mt-2">
+          {item.items?.length || 0}
+        </h3>
+
+        <p className="text-gray-400 text-sm">
+          Barang Dikembalikan
+        </p>
+
+        <div className="mt-4 space-y-2">
+
+          <div className="flex justify-between">
+            <span className="text-gray-500">
+              Nama
+            </span>
+
+            <span>
+              {item.createdBy || item.requesterName}
+            </span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="text-gray-500">
+              Role
+            </span>
+
+            <span className="text-red-300">
+              {item.role}
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
+
                     {item.imageUrl && (
 
   <img
@@ -580,7 +1056,7 @@ console.log(
       w-72
       rounded-2xl
       border
-      border-purple-500/30
+      border-red-500/30
       object-cover
     "
   />
@@ -629,26 +1105,33 @@ console.log(
                     <div className="flex flex-wrap gap-3 mt-4">
 
                       {/* PAYMENT TYPE */}
-                      <span className="bg-black px-4 py-2 rounded-xl text-sm text-gray-300">
-                        {
-                          item.paymentType
-                        }
-                      </span>
+{item.paymentType && (
+  <span className="bg-black px-4 py-2 rounded-xl text-sm text-gray-300">
+    {item.paymentType}
+  </span>
+)}
 
-                      {/* MONEY TYPE */}
-                      <span className="bg-black px-4 py-2 rounded-xl text-sm text-gray-300">
-                        {
-                          item.moneyType
-                        }
-                      </span>
+{/* MONEY TYPE */}
+{item.moneyType && (
+  <span className="bg-black px-4 py-2 rounded-xl text-sm text-gray-300">
+    {item.moneyType}
+  </span>
+)}
 
                       {/* CREATED BY */}
-                      <span className="bg-black px-4 py-2 rounded-xl text-sm text-gray-300">
-                        By{" "}
-                        {
-                          item.createdBy
-                        }
-                      </span>
+<span className="bg-black px-4 py-2 rounded-xl text-sm text-gray-300">
+  By {item.createdBy || item.requesterName}
+</span>
+
+{item.type === "Return" && (
+  <span className="bg-green-950/20 px-4 py-2 rounded-xl text-sm text-green-300">
+    {item.items?.length || 0} Barang
+  </span>
+)}
+
+<span className="bg-red-950/20 px-4 py-2 rounded-xl text-sm text-red-300">
+  {item.role || "MEMBER"}
+</span>
 
                     </div>
 
@@ -657,29 +1140,99 @@ console.log(
                   {/* RIGHT */}
                   <div className="flex flex-col items-end gap-4">
 
-                    {/* AMOUNT */}
-                    <h3
-                      className={`text-4xl font-bold ${
-                        item.type ===
-                        "Pemasukan"
-                          ? "text-green-400"
-                          : item.type ===
-                            "Pembayaran Hutang"
-                          ? "text-yellow-300"
-                          : "text-red-400"
-                      }`}
-                    >
-                      {item.type ===
-                      "Pemasukan"
-                        ? "+"
-                        : "-"}
-                      Rp{" "}
-                      {Number(
-                        item.amount
-                      ).toLocaleString(
-                        "id-ID"
-                      )}
-                    </h3>
+                 {/* DEPOSIT */}
+
+{item.type === "Deposit" && (
+
+  <h3 className="text-4xl font-bold text-green-400">
+    Rp{" "}
+    {Number(
+      item.amount || 0
+    ).toLocaleString("id-ID")}
+  </h3>
+
+)}
+
+{/* WITHDRAW */}
+
+{item.type === "Withdraw" && (
+
+  <div className="text-left">
+
+    <p className="text-sm text-gray-400 mb-2">
+      Barang Withdraw
+    </p>
+
+    <div className="space-y-2">
+
+      {item.withdrawItems?.map(
+        (barang, index) => (
+
+          <div
+            key={index}
+            className="
+              bg-black
+              px-4
+              py-2
+              rounded-xl
+              flex
+              justify-between
+            "
+          >
+            <span>
+              {barang.itemName}
+            </span>
+
+            <span className="text-red-400 font-bold">
+              x{barang.quantity}
+            </span>
+
+          </div>
+
+        )
+      )}
+
+    </div>
+
+  </div>
+
+)}
+
+{/* PELUNASAN HUTANG */}
+
+{item.type === "Return" && (
+
+  <div
+    className="
+      bg-green-950/20
+      border
+      border-green-500/20
+      rounded-2xl
+      p-5
+      text-center
+      min-w-[220px]
+    "
+  >
+
+    <p className="text-xs text-gray-400 uppercase tracking-widest">
+      Pembayaran
+    </p>
+
+    <h3 className="text-2xl font-bold text-green-400 mt-2">
+      Hutang
+    </h3>
+
+    <p className="text-sm text-gray-300 mt-3">
+      {item.items?.length || 0} Barang
+    </p>
+
+    <p className="text-xs text-gray-500 mt-1">
+      Dikembalikan
+    </p>
+
+  </div>
+
+)}
 
                     {/* BUTTONS */}
                     <div className="flex gap-3 flex-wrap">

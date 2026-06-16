@@ -31,10 +31,18 @@ import { db } from "../services/firebase/config";
 
 import { useAuth } from "../contexts/AuthContext";
 
+import { hasPermission } from "../utils/permissions";
+
 export default function NotificationsPage() {
 
   const { role, user } =
     useAuth();
+
+  const canManageNotification =
+  hasPermission(
+    role,
+    "MANAGE_NOTIFICATION"
+  );
 
   const [
     notifications,
@@ -252,11 +260,11 @@ export default function NotificationsPage() {
       <div className="relative min-h-screen overflow-hidden text-white">
 
         {/* BACKGROUND */}
-        <div className="absolute inset-0 bg-black" />
+        <div className="absolute inset-0 bg-[#0a0000]" />
 
-        <div className="absolute top-[-150px] left-[-100px] [450px] h-[450px] bg-fuchsia-700/20 blur-[140px] rounded-full" />
+        <div className="absolute top-[-150px] left-[-100px] w-full max-w-[450px] min-h-[450px] bg-red-700/20 blur-[140px] rounded-full" />
 
-        <div className="absolute bottom-[-150px] right-[-100px] w-full max-w-[450px] h-[450px] bg-purple-700/20 blur-[140px] rounded-full" />
+        <div className="absolute bottom-[-150px] right-[-100px] w-full max-w-[450px] min-h-[450px] bg-red-700/20 blur-[140px] rounded-full" />
 
         {/* CONTENT */}
         <div className="relative z-10">
@@ -268,7 +276,7 @@ export default function NotificationsPage() {
 
               <div className="flex items-center gap-4">
 
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-fuchsia-700 flex items-center justify-center shadow-[0_0_25px_rgba(168,85,247,0.45)]">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-600 to-red-600 flex items-center justify-center shadow-[0_0_25px_rgba(220,38,38,0.45)]">
 
                   <Bell size={28} />
 
@@ -276,15 +284,21 @@ export default function NotificationsPage() {
 
                 <div>
 
-                  <h1 className="text-5xl font-black tracking-[0.12em]">
+                <h1 className="text-5xl font-black">
 
-                    NOTIFICATIONS
+  <span className="text-white">
+    DWARRIORS
+  </span>
 
-                  </h1>
+  <span className="text-red-500 ml-3">
+    ANNOUNCEMENTS
+  </span>
 
-                  <p className="text-purple-200/60 mt-2">
+</h1>
 
-                    Jigokubara family announcement center
+                  <p className="text-red-200/60 mt-2">
+
+                    DWARRIORS family announcement center
 
                   </p>
 
@@ -295,9 +309,9 @@ export default function NotificationsPage() {
             </div>
 
             {/* STATUS */}
-            <div className="bg-white/[0.04] backdrop-blur-xl border border-purple-500/20 rounded-3xl px-6 py-4">
+            <div className="bg-gradient-to-br from-black via-[#120000] to-[#1a0000] backdrop-blur-xl border border-red-700/30 rounded-3xl px-6 py-4">
 
-              <p className="text-xs uppercase tracking-[0.3em] text-purple-300">
+              <p className="text-xs uppercase tracking-[0.3em] text-red-300">
 
                 Current Role
 
@@ -314,14 +328,13 @@ export default function NotificationsPage() {
           </div>
 
           {/* CREATE ANNOUNCEMENT */}
-          {role ===
-            "Oyabun" && (
+          {canManageNotification && (
 
-            <div className="mb-10 bg-white/[0.04] backdrop-blur-2xl border border-purple-500/20 rounded-[32px] p-8 shadow-[0_0_40px_rgba(168,85,247,0.12)]">
+            <div className="mb-10 bg-gradient-to-br from-black via-[#120000] to-[#1a0000] border border-red-700/30 backdrop-blur-2xl rounded-[32px] p-8 shadow-[0_0_40px_rgba(220,38,38,0.12)]">
 
               <div className="flex items-center gap-3 mb-8">
 
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-600 to-fuchsia-700 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-red-600 to-red-600 flex items-center justify-center">
 
                   <Plus size={20} />
 
@@ -346,7 +359,7 @@ export default function NotificationsPage() {
                 {/* TITLE */}
                 <div>
 
-                  <label className="text-sm text-purple-300 tracking-[0.15em] uppercase">
+                  <label className="text-sm text-red-300 tracking-[0.15em] uppercase">
                     Title
                   </label>
 
@@ -359,7 +372,7 @@ export default function NotificationsPage() {
                       )
                     }
                     placeholder="Announcement title..."
-                    className="w-full mt-3 bg-[#120d1b] border border-purple-500/20 rounded-2xl px-5 py-4 outline-none focus:border-purple-500 text-white"
+                    className="w-full mt-3 bg-[#0a0000] border border-red-500/20 rounded-2xl px-5 py-4 outline-none focus:border-red-500 text-white"
                   />
 
                 </div>
@@ -367,7 +380,7 @@ export default function NotificationsPage() {
                 {/* TYPE */}
                 <div>
 
-                  <label className="text-sm text-purple-300 tracking-[0.15em] uppercase">
+                  <label className="text-sm text-red-300 tracking-[0.15em] uppercase">
                     Type
                   </label>
 
@@ -378,7 +391,7 @@ export default function NotificationsPage() {
                         e.target.value
                       )
                     }
-                    className="w-full mt-3 bg-[#120d1b] border border-purple-500/20 rounded-2xl px-5 py-4 outline-none focus:border-purple-500 text-white"
+                    className="w-full mt-3 bg-[#0a0000] border border-red-500/20 rounded-2xl px-5 py-4 outline-none focus:border-red-500 text-white"
                   >
 
                     <option value="Announcement">
@@ -406,7 +419,7 @@ export default function NotificationsPage() {
               {/* MESSAGE */}
               <div className="mt-5">
 
-                <label className="text-sm text-purple-300 tracking-[0.15em] uppercase">
+                <label className="text-sm text-red-300 tracking-[0.15em] uppercase">
                   Message
                 </label>
 
@@ -419,7 +432,7 @@ export default function NotificationsPage() {
                     )
                   }
                   placeholder="Write announcement..."
-                  className="w-full mt-3 bg-[#120d1b] border border-purple-500/20 rounded-2xl px-5 py-4 outline-none focus:border-purple-500 text-white resize-none"
+                  className="w-full mt-3 bg-[#0a0000] border border-red-500/20 rounded-2xl px-5 py-4 outline-none focus:border-red-500 text-white resize-none"
                 />
 
               </div>
@@ -430,7 +443,7 @@ export default function NotificationsPage() {
                 onClick={
                   createAnnouncement
                 }
-                className="mt-6 bg-gradient-to-r from-purple-700 via-fuchsia-700 to-purple-700 hover:scale-[1.02] transition-all duration-300 px-8 py-4 rounded-2xl font-bold shadow-[0_0_30px_rgba(168,85,247,0.35)] disabled:opacity-50"
+                className="mt-6 bg-gradient-to-r from-red-900 via-red-700 to-red-700 hover:scale-[1.02] transition-all duration-300 px-8 py-4 rounded-2xl font-bold shadow-[0_0_30px_rgba(220,38,38,0.35)] disabled:opacity-50"
               >
 
                 {loading
@@ -451,11 +464,11 @@ export default function NotificationsPage() {
 
                 <div
                   key={item.id}
-                  className="group relative overflow-hidden bg-white/[0.04] backdrop-blur-2xl border border-purple-500/15 rounded-[32px] p-7 hover:border-purple-400/40 transition-all duration-300 hover:shadow-[0_0_40px_rgba(168,85,247,0.15)]"
+                  className="group relative overflow-hidden bg-gradient-to-br from-black via-[#120000] to-[#180000] backdrop-blur-2xl border border-red-700/30 rounded-[32px] p-7 hover:border-red-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(220,38,38,0.25)]"
                 >
 
                   {/* GLOW */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500 bg-gradient-to-r from-purple-600/5 via-fuchsia-500/5 to-transparent" />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500 bg-gradient-to-r from-red-600/5 via-red-500/5 to-transparent" />
 
                   <div className="relative z-10 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
 
@@ -464,7 +477,7 @@ export default function NotificationsPage() {
 
                       <div className="flex flex-wrap items-center gap-3">
 
-                        <span className="px-4 py-2 rounded-full bg-purple-500/15 border border-purple-500/20 text-purple-200 text-xs uppercase tracking-[0.2em]">
+                        <span className="px-4 py-2 rounded-full bg-red-500/15 border border-red-500/20 text-red-200 text-xs uppercase tracking-[0.2em]">
 
                           {item.type}
 
@@ -493,8 +506,7 @@ export default function NotificationsPage() {
                     </div>
 
                     {/* ACTION */}
-                    {role ===
-                      "Oyabun" && (
+                    {canManageNotification && (
 
                       <button
                         onClick={() =>
@@ -523,13 +535,13 @@ export default function NotificationsPage() {
             {notifications.length ===
               0 && (
 
-              <div className="bg-white/[0.03] border border-dashed border-purple-500/20 rounded-[32px] p-16 text-center">
+              <div className="bg-gradient-to-br from-black via-[#120000] to-[#180000] border border-dashed border-red-500/20 rounded-[32px] p-16 text-center">
 
-                <div className="w-20 h-20 rounded-full bg-purple-500/10 flex items-center justify-center mx-auto">
+                <div className="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center mx-auto">
 
                   <Bell
                     size={40}
-                    className="text-purple-300"
+                    className="text-red-300"
                   />
 
                 </div>
@@ -565,7 +577,7 @@ export default function NotificationsPage() {
                       prev - 1
                   )
                 }
-                className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-purple-500/20 flex items-center justify-center hover:bg-purple-500/10 transition-all disabled:opacity-40"
+                className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-red-500/20 flex items-center justify-center hover:bg-red-500/10 transition-all disabled:opacity-40"
               >
 
                 <ChevronLeft size={20} />
@@ -573,7 +585,7 @@ export default function NotificationsPage() {
               </button>
 
               {/* PAGE */}
-              <div className="px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-700/30 to-fuchsia-700/30 border border-purple-500/20 font-bold tracking-[0.2em]">
+              <div className="px-6 py-3 rounded-2xl bg-gradient-to-r from-red-900/30 to-red-600/30 border border-red-500/20 font-bold tracking-[0.2em]">
 
                 {currentPage} / {totalPages}
 
@@ -591,7 +603,7 @@ export default function NotificationsPage() {
                       prev + 1
                   )
                 }
-                className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-purple-500/20 flex items-center justify-center hover:bg-purple-500/10 transition-all disabled:opacity-40"
+                className="w-12 h-12 rounded-2xl bg-black border border-red-500/20 flex items-center justify-center hover:bg-red-500/10 transition-all disabled:opacity-40"
               >
 
                 <ChevronRight size={20} />

@@ -7,6 +7,7 @@ import {
   User,
   LogOut,
   ClipboardList,
+  ClipboardCheck,
   Bell,
   Trash2,
   ShieldCheck,
@@ -190,25 +191,36 @@ useEffect(() => {
       path: "/crafting",
     },
 
+
     {
       name: "Craft Requests",
       icon: ClipboardList,
       path: "/crafting-requests",
-      roles: ["Oyabun"],
+      roles: [
+  "BOSS",
+  "UNDERBOSS",
+  "CONSIGLIERE",
+  "CAPO",
+],
       notification:
         craftingNotif,
     },
     {
-      name: "Deposit / Withdraw",
+      name: "Deposit & Withdraw",
       icon: Wallet,
       path: "/finance",
     },
 
     {
-      name: "Depo / WD Approval",
+      name: "Depo & WD Approval",
       icon: BadgeDollarSign,
       path: "/finance-approval",
-      roles: ["Oyabun"],
+      roles: [
+  "BOSS",
+  "UNDERBOSS",
+  "CONSIGLIERE",
+  "CAPO",
+],
       notification:
         financeNotif,
     },
@@ -229,27 +241,35 @@ useEffect(() => {
       name: "Recycle Bin",
       icon: Trash2,
       path: "/recycle-bin",
-      roles: ["Oyabun"],
+      roles: [
+  "BOSS",
+  "UNDERBOSS",
+  "CONSIGLIERE",
+  "CAPO",
+],
     },
 
     {
       name: "Activity Logs",
       icon: History,
       path: "/activity-logs",
-      roles: ["Oyabun"],
-    },
-
-    {
-      name: "Inventory Approval",
-      icon: ShieldCheck,
-      path: "/inventory-approval",
-      roles: ["Oyabun"],
+      roles: [
+  "BOSS",
+  "UNDERBOSS",
+  "CONSIGLIERE",
+  "CAPO",
+],
     },
     {
-  name: "Role Approval",
+  name: "Recruitment",
   icon: ShieldCheck,
   path: "/role-approval",
-  roles: ["Oyabun"],
+  roles: [
+  "BOSS",
+  "UNDERBOSS",
+  "CONSIGLIERE",
+  "CAPO",
+],
   notification:
     roleNotif,
 },
@@ -280,54 +300,128 @@ menu.push({
       }
     );
 
+    const getRoleBadge = (role) => {
+
+  switch (role) {
+
+    case "BOSS":
+      return {
+        label: "👑 BOSS",
+        className:
+          "bg-red-500/20 text-red-200 border-red-400/30",
+      };
+
+    case "UNDERBOSS":
+      return {
+        label: "♛ UNDERBOSS",
+        className:
+          "bg-yellow-500/20 text-yellow-200 border-yellow-400/30",
+      };
+
+    case "CONSIGLIERE":
+      return {
+        label: "⚖ CONSIGLIERE",
+        className:
+          "bg-gray-500/20 text-gray-200 border-gray-400/30",
+      };
+
+    case "CAPO":
+      return {
+        label: "★ CAPO",
+        className:
+          "bg-orange-500/20 text-orange-200 border-orange-400/30",
+      };
+
+    default:
+      return {
+        label: "● MEMBER",
+        className:
+          "bg-zinc-500/20 text-zinc-200 border-zinc-400/30",
+      };
+  }
+};
+
+// =====================================
+// ROLE PERMISSION HELPERS
+// =====================================
+
+const isBoss =
+  role === "BOSS";
+
+const isUnderboss =
+  role === "UNDERBOSS";
+
+const isConsigliere =
+  role === "CONSIGLIERE";
+
+const isCapo =
+  role === "CAPO";
+
+const isLeadership =
+  isBoss ||
+  isUnderboss ||
+  isConsigliere ||
+  isCapo;
+
   return (
 
-    <aside className="w-full max-w-[320px] min-h-screen bg-gradient-to-b from-[#17051f] via-[#120318] to-black border-r border-[#9333EA]/30 p-6 hidden md:flex flex-col relative overflow-hidden">
+    <aside className="w-full max-w-[320px] min-h-screen bg-gradient-to-b from-[#220000] via-[#120000]
+ to-[#050505] border-r border-red-700/20 p-6 hidden md:flex flex-col relative overflow-hidden">
 
       {/* BACKGROUND GLOW */}
+      <img
+  src="https://i.ibb.co.com/nMrw6G4N/logodw.png"
+  alt="DWARRIORS"
+  className="
+    absolute
+    inset-0
+    m-auto
+
+    w-[220px]
+
+    opacity-[0.03]
+
+    pointer-events-none
+
+    select-none
+  "
+/>
       <div className="absolute inset-0 pointer-events-none">
 
-        <div className="absolute top-[-120px] left-[-80px] w-full max-w-[260px] min-h-[260px] bg-fuchsia-500/20 blur-3xl rounded-full" />
+       <div className="absolute top-[-120px] left-[-80px] w-[300px] h-[300px] bg-red-600/25 blur-[120px] rounded-full" />
 
-        <div className="absolute bottom-[-120px] right-[-80px] w-full max-w-[260px] min-h-[260px] bg-purple-500/20 blur-3xl rounded-full" />
+<div className="absolute bottom-[-120px] right-[-80px] w-[300px] h-[300px] bg-red-900/25 blur-[120px] rounded-full" />
 
         <div className="absolute inset-0 opacity-[0.05] bg-[radial-gradient(circle_at_top,#ffffff_0%,transparent_55%)]" />
-
-      </div>
-
-      {/* JAPANESE DECORATION */}
-      <div className="absolute right-[-30px] top-[120px] rotate-90 text-[80px] font-black text-white/[0.03] tracking-[0.5em] select-none pointer-events-none">
-
-        地獄薔薇
 
       </div>
 
       {/* HEADER */}
       <div className="relative z-10">
 
-        <div className="border border-purple-500/20 rounded-3xl bg-white/[0.03] backdrop-blur-xl p-6 shadow-[0_0_40px_rgba(168,85,247,0.15)]">
+        <div className="border border-red-500/20 rounded-3xl bg-red-950/20 backdrop-blur-xl p-6 shadow-[0_0_40px_rgba(220,38,38,0.15)]">
 
-          <h1 className="text-[#f5e9ff] text-[28px] leading-none font-black tracking-[0.12em] whitespace-nowrap">
+          <h1 className="font-[Cinzel] text-white text-[28px] leading-none font-black tracking-[0.12em] whitespace-nowrap">
 
-            JIGOKUBARA
+            DWARRIORS
 
           </h1>
 
           <div className="mt-3 flex items-center gap-3">
 
-            <div className="min-h-[1px] flex-1 bg-gradient-to-r from-purple-500 to-transparent" />
+            <div className="min-h-[1px] flex-1 bg-gradient-to-r from-red-500 to-transparent" />
 
-            <span className="text-[10px] text-purple-300 tracking-[0.4em]">
+            <span className="font[Cinzel] text-[10px] text-red-300 tracking-[0.4em]">
 
-              地獄薔薇
+              DW
 
             </span>
 
           </div>
 
-          <p className="text-purple-200/70 mt-3 text-xs tracking-[0.25em] uppercase">
+          <p className="text-red-200/70 mt-3 text-xs tracking-[0.25em] uppercase">
 
-            OHAYOU GOZAIMASU, {user?.rpName?.toUpperCase() || "GUEST"}-SAN
+            WELCOME BACK, {user?.rpName?.toUpperCase() || "GUEST"}
 
           </p>
 
@@ -336,13 +430,13 @@ menu.push({
       </div>
 
       {/* PROFILE */}
-      <div className="relative z-10 mt-8 bg-white/[0.04] backdrop-blur-xl border border-purple-400/20 rounded-3xl p-4 shadow-[0_0_30px_rgba(168,85,247,0.15)]">
+      <div className="relative z-10 mt-8 bg-red-950/20 backdrop-blur-xl border border-red-400/20 rounded-3xl p-4 shadow-[0_0_30px_rgba(220,38,38,0.15)]">
 
         <div className="flex items-center gap-4">
 
           <div className="relative">
 
-            <div className="absolute inset-0 bg-purple-500 blur-xl opacity-40 rounded-full" />
+            <div className="absolute inset-0 bg-red-500 blur-xl opacity-40 rounded-full" />
 
             <img
   src={
@@ -351,7 +445,7 @@ menu.push({
   }
   alt="profile"
   referrerPolicy="no-referrer"
-  className="relative w-14 h-14 rounded-full border-2 border-purple-400 object-cover"
+  className="relative w-14 h-14 rounded-full border-2 border-red-400 object-cover"
 />
 
           </div>
@@ -395,15 +489,20 @@ menu.push({
   </p>
 
             <span
-              className={`mt-2 text-[10px] px-3 py-1 rounded-full w-fit border ${
-                role ===
-                "Oyabun"
-                  ? "bg-fuchsia-500/20 text-fuchsia-200 border-fuchsia-400/30"
-                  : "bg-purple-500/20 text-purple-200 border-purple-400/30"
-              }`}
-            >
-              {role}
-            </span>
+  className={`
+    mt-2
+    text-[10px]
+    px-3
+    py-1
+    rounded-full
+    w-fit
+    border
+    font-bold
+    ${getRoleBadge(role).className}
+  `}
+>
+  {getRoleBadge(role).label}
+</span>
 
           </div>
 
@@ -428,8 +527,8 @@ menu.push({
 
                 `group flex items-center justify-between px-4 py-4 rounded-2xl border transition-all duration-300 ${
                   isActive
-                    ? "bg-gradient-to-r from-[#6d28d9]/40 to-[#c026d3]/30 border-purple-400/40 text-white shadow-[0_0_20px_rgba(168,85,247,0.35)]"
-                    : "bg-white/[0.02] border-white/5 text-purple-100/70 hover:bg-purple-500/10 hover:border-purple-400/20 hover:text-white"
+                    ? "bg-gradient-to-r from-red-950 via-red-800/70 to-red-600/40 border-red-400/40 text-white shadow-[0_0_20px_rgba(220,38,38,0.35)]"
+                    : "bg-black/40 border-white/5 text-red-100/70 hover:bg-red-500/10 hover:border-red-400/20 hover:text-white"
                 }`
               }
             >
@@ -451,7 +550,7 @@ menu.push({
               {item.notification >
                 0 && (
 
-                <div className="bg-gradient-to-r from-fuchsia-500 to-purple-600 min-w-[24px] h-6 px-2 rounded-full flex items-center justify-center text-xs font-bold animate-pulse text-white shadow-lg shadow-fuchsia-500/30">
+                <div className="bg-gradient-to-r from-red-500 to-red-600 min-w-[24px] h-6 px-2 rounded-full flex items-center justify-center text-xs font-bold animate-pulse text-white shadow-lg shadow-red-500/30">
 
                   {
                     item.notification
@@ -470,19 +569,19 @@ menu.push({
       {/* JAPANESE QUOTE */}
       <div className="relative z-10 mt-auto mb-6">
 
-        <div className="border border-purple-500/10 bg-white/[0.03] rounded-3xl p-4 backdrop-blur-xl">
+        <div className="border border-red-500/10 bg-red-950/20 rounded-3xl p-4 backdrop-blur-xl">
 
-          <p className="text-purple-200 text-sm tracking-[0.25em] text-center">
+          <p className="font-[Cinzel] text-red-200 text-sm tracking-[0.25em] text-center">
 
-            鬼 ・ 狐 ・ 薔薇
+  DWARRIORS
 
-          </p>
+</p>
 
-          <p className="text-gray-500 text-[10px] text-center mt-2 tracking-[0.2em] uppercase">
+<p className="font-[Cinzel] text-gray-500 text-[10px] text-center mt-2 tracking-[0.2em] uppercase">
 
-            Demon • Fox • Rose
+  Blood • Power • Legacy
 
-          </p>
+</p>
 
         </div>
 
@@ -493,7 +592,7 @@ menu.push({
 
         <button
           onClick={logout}
-          className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-purple-200 hover:bg-purple-500/10 transition-all border border-transparent hover:border-purple-400/20 bg-white/[0.02]"
+          className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-red-200 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-400/20 bg-black/40"
         >
 
           <LogOut size={20} />

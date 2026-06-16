@@ -89,15 +89,15 @@ export function AuthProvider({
         ) {
 
           // EMAIL OYABUN
-          const isOyabun =
-            firebaseUser.email ===
-            "kevinsports05@gmail.com";
+          const isBoss =
+              firebaseUser.email ===
+              "kevinsports05@gmail.com";
 
           // ROLE DEFAULT
           const newRole =
-            isOyabun
-              ? "Oyabun"
-              : "Pending";
+            isBoss
+              ? "BOSS"
+              : "MEMBER";
 
           await setDoc(
             userRef,

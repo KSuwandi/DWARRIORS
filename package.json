@@ -1,5 +1,5 @@
 {
-  "name": "jigokubara",
+  "name": "DWARRIORS",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -9,10 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/cinzel": "^5.2.8",
     "axios": "^1.16.1",
     "browser-image-compression": "^2.0.2",
     "file-saver": "^2.0.5",
-    "firebase": "^10.12.2",
+    "firebase": "^10.14.1",
     "framer-motion": "^11.2.10",
     "lucide-react": "^0.400.0",
     "react": "^18.3.1",

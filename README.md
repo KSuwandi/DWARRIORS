@@ -1,4 +1,4 @@
-# JIGOKUBARA Starter Project
+# DWARRIORS Starter Project
 
 ## Install
 npm install

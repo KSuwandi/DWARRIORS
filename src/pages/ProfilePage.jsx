@@ -52,9 +52,9 @@ export default function ProfilePage() {
   // STATS
   // ================================
   const [
-    totalDebt,
-    setTotalDebt,
-  ] = useState(0);
+  totalIncome,
+  setTotalIncome,
+] = useState(0);
 
   const [
     totalCrafting,
@@ -65,10 +65,10 @@ export default function ProfilePage() {
   // CLOUDINARY
   // =====================================
   const CLOUDINARY_CLOUD_NAME =
-    "dpyhp3o66";
+    "dbn9lgdi4";
 
   const CLOUDINARY_UPLOAD_PRESET =
-    "jigokubara";
+    "DWARRIORS";
 
   // =====================================
   // MASK EMAIL
@@ -176,41 +176,23 @@ export default function ProfilePage() {
               })
             );
 
-          // =========================
-          // HITUNG HUTANG FINAL
-          // =========================
-          const totalHutang = finance
-            .filter(
-              (item) =>
-                item.paymentType === "Hutang" &&
-                item.type === "Pengeluaran" &&
-                item.status === "Approved"
-            )
-            .reduce(
-              (a, b) =>
-                a + Number(b.amount || 0),
-              0
-            );
+         const income = finance
+  .filter(
+    (item) =>
+      (
+        item.type === "Deposit" ||
+        item.type === "Pemasukan"
+      ) &&
+      item.status === "Approved"
+  )
+  .reduce(
+    (acc, item) =>
+      acc + Number(item.amount || 0),
+    0
+  );
 
-          const totalPembayaran = finance
-            .filter(
-              (item) =>
-                item.type === "Pembayaran Hutang" &&
-                item.status === "Approved"
-            )
-            .reduce(
-              (a, b) =>
-                a + Number(b.amount || 0),
-              0
-            );
-
-          setTotalDebt(
-            Math.max(
-              totalHutang - totalPembayaran,
-              0
-            )
-          );
-        }
+setTotalIncome(income);
+      }
       );
 
     return () =>
@@ -276,37 +258,7 @@ export default function ProfilePage() {
 
   }, [user]);
 
-  // =====================================
-  // FINANCE SCORE
-  // =====================================
-  const financeScore =
-    useMemo(() => {
-
-      if (
-        totalDebt <= 0
-      ) {
-
-        return "A+";
-      }
-
-      if (
-        totalDebt <
-        1000000
-      ) {
-
-        return "A";
-      }
-
-      if (
-        totalDebt < 2000000
-      ) {
-
-        return "B";
-      }
-
-      return "C";
-
-    }, [totalDebt]);
+ 
 
   // =====================================
   // UPDATE PROFILE
@@ -440,13 +392,13 @@ export default function ProfilePage() {
 
         formData.append(
   "upload_preset",
-  "jigokubara"
+  "DWARRIORS"
 );
 
         // UPLOAD CLOUDINARY
         const response =
           await axios.post(
-            `https://api.cloudinary.com/v1_1/dpyhp3o66/image/upload`,
+            `https://api.cloudinary.com/v1_1/dbn9lgdi4/image/upload`,
             formData
           );
 
@@ -513,7 +465,19 @@ export default function ProfilePage() {
       <div className="text-white">
 
         {/* PROFILE HEADER */}
-        <div className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-8">
+        <div
+  className="
+    bg-gradient-to-br
+    from-[#180000]
+    via-[#0f0000]
+    to-black
+    border
+    border-red-700/30
+    rounded-3xl
+    p-8
+    shadow-[0_0_40px_rgba(127,29,29,0.25)]
+  "
+>
 
           <div className="flex flex-col lg:flex-row gap-8 items-center">
 
@@ -527,7 +491,15 @@ export default function ProfilePage() {
                 }
                 alt="profile"
                 referrerPolicy="no-referrer"
-                className="w-44 h-44 rounded-3xl object-cover border-4 border-[#7A0019]"
+                className="
+  w-44
+  h-44
+  rounded-3xl
+  object-cover
+  border-4
+  border-red-700
+  shadow-[0_0_30px_rgba(220,38,38,0.4)]
+"
               />
 
               <button
@@ -537,7 +509,7 @@ export default function ProfilePage() {
                 onClick={() =>
                   fileInputRef.current?.click()
                 }
-                className="absolute bottom-0 right-0 bg-[#7A0019] hover:bg-[#99001f] disabled:opacity-50 transition-all px-4 py-2 rounded-xl text-sm font-semibold"
+                className="absolute bottom-0 right-0 bg-red-600 hover:bg-red-500 shadow-lg shadow-red-900/40 disabled:opacity-50 transition-all px-4 py-2 rounded-xl text-sm font-semibold"
               >
                 {loading
                   ? "Uploading..."
@@ -565,7 +537,14 @@ export default function ProfilePage() {
 
                 <>
 
-                  <h1 className="text-5xl font-bold">
+                  <h1
+  className="
+    text-5xl
+    font-black
+    tracking-wide
+    text-white
+  "
+>
                     {
                       profile.rpName ||
                       profile.name
@@ -636,14 +615,14 @@ export default function ProfilePage() {
               {/* BADGES */}
               <div className="flex flex-wrap gap-3 mt-5">
 
-                <span className="bg-red-500/20 text-red-300 px-4 py-2 rounded-xl border border-red-500/30">
+                <span className="bg-red-950 text-red-300 border-red-600/40 px-4 py-2 rounded-xl border border-red-500/30">
                   {
                     profile.role ||
                     "Member"
                   }
                 </span>
 
-                <span className="bg-green-500/20 text-green-300 px-4 py-2 rounded-xl border border-green-500/30">
+                <span className="bg-red-950 text-red-300 px-4 py-2 rounded-xl border border-red-600/40">
                   Online
                 </span>
 
@@ -722,16 +701,27 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
 
           {/* TOTAL HUTANG */}
-          <div className="bg-[#111111] border border-red-500/20 rounded-3xl p-6">
+          <div
+  className="
+    bg-gradient-to-br
+    from-[#180000]
+    to-black
+    border
+    border-red-700/30
+    rounded-3xl
+    p-6
+    shadow-[0_0_25px_rgba(127,29,29,0.25)]
+  "
+>
 
             <p className="text-gray-400">
-              Total Hutang
-            </p>
+  Total Income
+</p>
 
-            <h2 className="text-4xl font-bold text-red-400 mt-3">
+            <h2 className="text-4xl font-bold text-green-400 mt-3">
               Rp{" "}
               {Number(
-                totalDebt || 0
+                totalIncome || 0
               ).toLocaleString(
                 "id-ID"
               )}
@@ -740,13 +730,13 @@ export default function ProfilePage() {
           </div>
 
           {/* PHONE */}
-          <div className="bg-[#111111] border border-yellow-500/20 rounded-3xl p-6">
+          <div className="bg-[#111111] border border-red-700/30 rounded-3xl p-6">
 
             <p className="text-gray-400">
               Phone Number
             </p>
 
-            <h2 className="text-2xl font-bold text-yellow-300 mt-3">
+            <h2 className="text-2xl font-bold text-red-300 mt-3">
               {profile.phone ||
                 "No Number"}
             </h2>
@@ -756,7 +746,20 @@ export default function ProfilePage() {
         </div>
 
         {/* CHARACTER INFO */}
-        <div className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-6 mt-8">
+       <div
+  className="
+    bg-gradient-to-br
+    from-[#180000]
+    via-[#0d0000]
+    to-black
+    border
+    border-red-700/30
+    rounded-3xl
+    p-6
+    mt-8
+    shadow-[0_0_25px_rgba(127,29,29,0.2)]
+  "
+>
 
           <h2 className="text-3xl font-bold mb-5">
             Character Information
@@ -782,7 +785,7 @@ export default function ProfilePage() {
             <div>
 
               <p className="text-gray-400">
-                Family Rank
+                Role
               </p>
 
               <h3 className="text-2xl font-bold mt-2">
@@ -825,16 +828,39 @@ export default function ProfilePage() {
         </div>
 
         {/* EXTRA STATS */}
-        <div className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-6 mt-8">
+        <div
+  className="
+    bg-gradient-to-br
+    from-[#180000]
+    via-[#0d0000]
+    to-black
+    border
+    border-red-700/30
+    rounded-3xl
+    p-6
+    mt-8
+    shadow-[0_0_25px_rgba(127,29,29,0.2)]
+  "
+>
 
           <h2 className="text-3xl font-bold mb-5">
             Statistics
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
             {/* TOTAL CRAFTING */}
-            <div className="bg-black rounded-2xl p-5">
+            <div
+  className="
+    bg-gradient-to-br
+    from-black
+    to-[#120000]
+    border
+    border-red-800/30
+    rounded-2xl
+    p-5
+  "
+>
 
               <p className="text-gray-400">
                 Total Crafting
@@ -846,19 +872,6 @@ export default function ProfilePage() {
 
             </div>
 
-            {/* FINANCE SCORE */}
-            <div className="bg-black rounded-2xl p-5">
-
-              <p className="text-gray-400">
-                Finance Score
-              </p>
-
-              <h2 className="text-3xl font-bold text-green-400 mt-3">
-                {financeScore}
-              </h2>
-
-            </div>
-
             {/* JOINED */}
             <div className="bg-black rounded-2xl p-5">
 
@@ -866,7 +879,7 @@ export default function ProfilePage() {
                 Joined Family
               </p>
 
-              <h2 className="text-xl font-bold text-blue-400 mt-3">
+              <h2 className="text-xl font-bold text-red-400 mt-3">
                 2026
               </h2>
 

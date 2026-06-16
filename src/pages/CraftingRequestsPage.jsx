@@ -27,16 +27,24 @@ import { useAuth } from "../contexts/AuthContext";
 
 import { db } from "../services/firebase/config";
 
+import { hasPermission, } from "../utils/permissions";
+
 export default function CraftingRequestsPage() {
 
   const { user, role } =
     useAuth();
 
+  const canApproveCraft =
+    hasPermission(
+      role,
+      "APPROVE_CRAFT"
+    );
+
   // =========================================
   // ACCESS DENIED
   // =========================================
   if (
-    role === "Shatei"
+     !canApproveCraft
   ) {
 
     return (
@@ -52,7 +60,7 @@ export default function CraftingRequestsPage() {
             </h1>
 
             <p className="text-gray-400 mt-4">
-              Shatei tidak memiliki akses ke halaman crafting requests
+              You do not have permission to access Crafting Requests.
             </p>
 
           </div>
@@ -223,11 +231,11 @@ userName:
         if (!user) return;
 
         if (
-          role !== "Oyabun"
+          !canApproveCraft
         ) {
 
           toast.error(
-            "Only Oyabun can approve"
+            "Access denied"
           );
 
           return;
@@ -629,15 +637,15 @@ historySnapshot.forEach(
       try {
 
         if (
-          role !== "Oyabun"
-        ) {
+            !canApproveCraft
+          ) {
 
-          toast.error(
-            "Only Oyabun can clear request"
-          );
+            toast.error(
+              "Access denied"
+            );
 
-          return;
-        }
+            return;
+          }
 
         await deleteDoc(
           doc(
@@ -672,14 +680,32 @@ historySnapshot.forEach(
         {/* HEADER */}
         <div className="mb-8">
 
-          <h1 className="text-4xl font-bold">
-            Crafting Requests
-          </h1>
+           <h1 className="text-5xl font-black">
 
-          <p className="text-gray-400 mt-2">
-            Approval system for
-            Jigokubara crafting
-          </p>
+  <span className="text-white">
+    CRAFTING
+  </span>
+
+  <span className="text-red-500 ml-3">
+    REQUEST
+  </span>
+
+</h1>
+
+          <p className="text-gray-400 mt-3 text-lg">
+
+  Review production requests
+  submitted by members and
+  determine whether they are
+  approved for manufacturing.
+
+</p>
+
+<p className="text-red-400 text-sm mt-3 uppercase tracking-[0.25em]">
+
+  Leadership Access Only
+
+</p>
 
         </div>
 
@@ -693,7 +719,15 @@ historySnapshot.forEach(
                 key={
                   request.id
                 }
-                className="bg-[#111111] border border-[#7A0019]/30 rounded-3xl p-6"
+                className="
+bg-[#111111]
+border
+border-red-900/30
+rounded-3xl
+p-6
+hover:border-red-700/40
+transition-all
+"
               >
 
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
@@ -709,20 +743,24 @@ historySnapshot.forEach(
                       </h2>
 
                       <span
-                        className={`text-xs px-3 py-1 rounded-full ${
-                          request.status ===
-                          "Approved"
-                            ? "bg-green-500/20 text-green-300"
-                            : request.status ===
-                              "Rejected"
-                            ? "bg-red-500/20 text-red-300"
-                            : "bg-yellow-500/20 text-yellow-300"
-                        }`}
-                      >
-                        {
-                          request.status
-                        }
-                      </span>
+  className={`text-xs px-3 py-1 rounded-full ${
+    request.status ===
+    "Approved"
+      ? "bg-green-500/20 text-green-300"
+      : request.status ===
+        "Rejected"
+      ? "bg-red-500/20 text-red-300"
+      : "bg-yellow-500/20 text-yellow-300"
+  }`}
+>
+  {
+    request.status === "Approved"
+      ? "APPROVED"
+      : request.status === "Rejected"
+      ? "REJECTED"
+      : "PENDING"
+  }
+</span>
 
                     </div>
 
@@ -750,9 +788,8 @@ historySnapshot.forEach(
                   <div className="flex gap-3 flex-wrap">
 
                     {request.status ===
-                      "Pending" &&
-                      role ===
-                        "Oyabun" && (
+                        "Pending" &&
+                        canApproveCraft && (
 
                         <>
                           <button
@@ -783,24 +820,23 @@ historySnapshot.forEach(
                       )}
 
                     {(request.status ===
-                      "Approved" ||
-                      request.status ===
-                        "Rejected") &&
-                      role ===
-                        "Oyabun" && (
+    "Approved" ||
+    request.status ===
+      "Rejected") &&
+    canApproveCraft && (
 
-                        <button
-                          onClick={() =>
-                            clearRequest(
-                              request.id
-                            )
-                          }
-                          className="bg-gray-800 hover:bg-gray-900 px-5 py-3 rounded-xl transition-all border border-gray-700"
-                        >
-                          Clear
-                        </button>
+    <button
+      onClick={() =>
+        clearRequest(
+          request.id
+        )
+      }
+      className="bg-gray-800 hover:bg-gray-900 px-5 py-3 rounded-xl transition-all border border-gray-700"
+    >
+      Clear
+    </button>
 
-                      )}
+)}
 
                   </div>
 

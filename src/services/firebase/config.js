@@ -7,24 +7,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-
-  apiKey:
-    "AIzaSyC_EYs5s0cRZ0uJxqRoD332tqTVylfV0r8",
-
-  authDomain:
-    "jigokubara-6e95e.firebaseapp.com",
-
-  projectId:
-    "jigokubara-6e95e",
-
-  storageBucket:
-    "jigokubara-6e95e.appspot.com",
-
-  messagingSenderId:
-    "1008348631374",
-
-  appId:
-    "1:1008348631374:web:9c0bd32d61f87110080e1f",
+  apiKey: "AIzaSyDjAwr9Hc6DLCZEr-808NfGUeW8S_AoIvw",
+  authDomain: "dwarriors-55228.firebaseapp.com",
+  projectId: "dwarriors-55228",
+  storageBucket: "dwarriors-55228.firebasestorage.app",
+  messagingSenderId: "73177091272",
+  appId: "1:73177091272:web:7c28c8ed46028d765a69fd"
 };
 
 const app =

@@ -2,6 +2,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { hasPermission } from "../utils/permissions";
 
 import toast from "react-hot-toast";
 
@@ -59,12 +60,15 @@ export default function RoleApprovalPage() {
           await getDocs(q);
 
         const data =
-          snapshot.docs.map(
-            (docSnap) => ({
-              id: docSnap.id,
-              ...docSnap.data(),
-            })
-          );
+  snapshot.docs
+    .map((docSnap) => ({
+      id: docSnap.id,
+      ...docSnap.data(),
+    }))
+    .filter(
+      (item) =>
+        item.status === "pending"
+    );
 
         setRequests(data);
 
@@ -98,9 +102,9 @@ export default function RoleApprovalPage() {
       try {
 
         const confirmApprove =
-          window.confirm(
-  `Approve role ${request.requestedRole} untuk ${request.rpName}?`
-);
+  window.confirm(
+    `Approve ${request.rpName} as MEMBER?`
+  );
         if (!confirmApprove)
           return;
 
@@ -111,8 +115,7 @@ export default function RoleApprovalPage() {
             request.userId
           ),
           {
-            role:
-              request.requestedRole,
+            role: "MEMBER",
           }
         );
 
@@ -160,7 +163,7 @@ export default function RoleApprovalPage() {
 
         const confirmReject =
           window.confirm(
-            `Reject role request ${request.name}?`
+            `Reject role request ${request.rpName}?`
           );
 
         if (!confirmReject)
@@ -221,20 +224,24 @@ const maskEmail = (email) => {
 };
 
 
-  if (
-    role !== "Oyabun"
-  ) {
+const canApprove =
+  hasPermission(
+    role,
+    "RECRUITMENT"
+  );
 
-    return (
-      <AppLayout>
+  if (!canApprove) {
 
-        <div className="text-white text-center py-20 text-xl">
-          Access Denied
-        </div>
+  return (
+    <AppLayout>
 
-      </AppLayout>
-    );
-  }
+      <div className="text-white text-center py-20 text-xl">
+        Access Denied
+      </div>
+
+    </AppLayout>
+  );
+}
 
   return (
 
@@ -242,9 +249,34 @@ const maskEmail = (email) => {
 
       <div className="text-white">
 
-        <h1 className="text-3xl font-bold mb-6">
-          Role Approval
-        </h1>
+  <h1 className="text-4xl font-black mb-8">
+
+    <span className="text-white">
+      RECRUITMENT
+    </span>
+
+    <span className="text-red-500">
+      CENTER
+    </span>
+
+  </h1>
+  <div className="mb-8">
+
+  <p className="text-gray-400 text-lg">
+
+    Review incoming applications and
+    determine who is worthy of joining
+    the DWARRIORS organization.
+
+  </p>
+
+  <p className="text-red-400 text-sm mt-3 uppercase tracking-[0.25em]">
+
+    Leadership Access Only
+
+  </p>
+
+</div>
 
         {loading ? (
 
@@ -254,8 +286,8 @@ const maskEmail = (email) => {
 
         ) : requests.length === 0 ? (
 
-          <div className="bg-[#141021] rounded-3xl p-10 text-center">
-            No Request
+          <div className="bg-[#111111] border border-red-900/30 rounded-3xl p-10 text-center">
+            No Pending Applications
           </div>
 
         ) : (
@@ -267,7 +299,7 @@ const maskEmail = (email) => {
 
                 <div
                   key={item.id}
-                  className="bg-[#141021] border border-purple-900/30 rounded-3xl p-5"
+                  className="bg-[#111111] border border-red-900/30 rounded-3xl p-5"
                 >
 
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -281,13 +313,17 @@ const maskEmail = (email) => {
                       <p className="text-gray-400">
   {maskEmail(item.email)}
 </p>
+<p className="text-xs text-gray-500 mt-2">
+  Submitted:
+  {" "}
+  {item.createdAt?.toDate?.().toLocaleString()}
+</p>
 
                       <div className="mt-3 flex gap-2 flex-wrap">
 
-                        <span className="bg-purple-900/30 px-3 py-1 rounded-xl text-sm">
-                          Request:{" "}
-                          {item.requestedRole}
-                        </span>
+                        <span className="bg-red-900/20 text-red-300 px-3 py-1 rounded-xl text-sm">
+  Application: MEMBER
+</span>
 
                         <span
                           className={`px-3 py-1 rounded-xl text-sm ${
@@ -316,7 +352,14 @@ const maskEmail = (email) => {
                               item
                             )
                           }
-                          className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-xl"
+                          className="
+                            bg-green-600
+                            hover:bg-green-700
+                            px-5 py-2
+                            rounded-xl
+                            font-bold
+                            tracking-wide
+                            "
                         >
                           Approve
                         </button>
@@ -327,7 +370,14 @@ const maskEmail = (email) => {
                               item
                             )
                           }
-                          className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-xl"
+                          className="
+                            bg-red-600
+                            hover:bg-red-700
+                            px-5 py-2
+                            rounded-xl
+                            font-bold
+                            tracking-wide
+                            "
                         >
                           Reject
                         </button>

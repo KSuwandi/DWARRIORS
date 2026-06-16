@@ -4,6 +4,9 @@ import {
   useState,
 } from "react";
 
+import {ROLE_WEIGHT,} from "../utils/roles";
+import { hasPermission } from "../utils/permissions";
+
 import {
   collection,
   onSnapshot,
@@ -27,8 +30,9 @@ export default function MemberPage() {
   const [search, setSearch] = useState("");
 
   const [financeData, setFinanceData] = useState([]);
-  const [craftingData, setCraftingData] = useState([]);
   const [activeTab, setActiveTab] = useState("finance");
+  const [craftingData, setCraftingData] = useState([]);
+const [financeLogs, setFinanceLogs] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 5;
@@ -235,7 +239,7 @@ const paySalary = async () => {
           "Approved",
 
         note:
-          "Pembayaran gaji oleh Oyabun",
+            `Salary payment by ${role}`,
 
         createdAt:
           serverTimestamp(),
@@ -512,6 +516,30 @@ useEffect(() => {
 
   }, [selectedMember]);
 
+
+  useEffect(() => {
+
+  const unsub = onSnapshot(
+    collection(db, "finance_logs"),
+    (snap) => {
+
+      const logs = snap.docs.map(doc => ({
+  id: doc.id,
+  debtStatus:
+    doc.data().debtStatus ||
+    "Masih Hutang",
+  ...doc.data()
+}));
+
+      setFinanceLogs(logs);
+
+    }
+  );
+
+  return () => unsub();
+
+}, []);
+  
   // =========================
   // TOTAL FINANCE
   // =========================
@@ -624,6 +652,8 @@ useEffect(() => {
 
     }, [financeData]);
 
+    
+
     // =========================
 // HUTANG GAJI MEMBER
 // =========================
@@ -658,6 +688,73 @@ const salaryDebt = useMemo(() => {
 
 }, [financeData]);
 
+// =========================
+// ROLE HIERARCHY
+// =========================
+const canManageMember = (member) => {
+
+  return (
+    ROLE_WEIGHT[role] >
+    ROLE_WEIGHT[member.role]
+  );
+
+};
+
+const canManageRoles =
+  hasPermission(
+    role,
+    "MANAGE_ROLE"
+  );
+
+const canDeleteMembers =
+  hasPermission(
+    role,
+    "DELETE_MEMBER"
+  );
+
+  // =========================
+// ROLE BADGE
+// =========================
+const getRoleBadge = (role) => {
+
+  switch (role) {
+
+    case "BOSS":
+      return {
+        text: "👑 BOSS",
+        className:
+          "bg-red-900/40 text-red-300 border-red-500/30",
+      };
+
+    case "UNDERBOSS":
+      return {
+        text: "♛ UNDERBOSS",
+        className:
+          "bg-yellow-900/30 text-yellow-300 border-yellow-500/30",
+      };
+
+    case "CONSIGLIERE":
+      return {
+        text: "⚖ CONSIGLIERE",
+        className:
+          "bg-gray-700/40 text-gray-200 border-gray-400/30",
+      };
+
+    case "CAPO":
+      return {
+        text: "★ CAPO",
+        className:
+          "bg-orange-900/30 text-orange-300 border-orange-500/30",
+      };
+
+    default:
+      return {
+        text: "● MEMBER",
+        className:
+          "bg-zinc-800/40 text-zinc-300 border-zinc-500/30",
+      };
+  }
+};
 
     const filteredMembers = members.filter((member) => {
 
@@ -677,11 +774,27 @@ const salaryDebt = useMemo(() => {
   // =========================
   // ACTIVE DATA
   // =========================
+  const depositData =
+  financeData.filter(
+    (item) =>
+      item.type === "Deposit" ||
+      item.type === "Pemasukan" ||
+      item.type === "Pembayaran Gaji"
+  );
+
+  const withdrawFinanceData =
+  financeData.filter(
+    (item) =>
+      item.type === "Withdraw" ||
+      item.type === "Return"
+  );
+
   const activeData =
-    activeTab ===
-    "finance"
-      ? financeData
-      : craftingData;
+  activeTab === "finance"
+    ? depositData
+    : activeTab === "crafting"
+    ? craftingData
+    : withdrawFinanceData;
 
   const totalPages =
     Math.ceil(
@@ -707,23 +820,31 @@ const salaryDebt = useMemo(() => {
         {/* HEADER */}
         <div className="mb-8">
 
-          <h1 className="text-4xl font-bold">
-            Member Monitoring
-          </h1>
+           <h1 className="text-5xl font-black">
 
-          <p className="text-gray-400 mt-2">
-            Monitor finance &
-            crafting activity
-          </p>
+          <span className="text-white">
+            MEMBER
+          </span>
+
+          <span className="text-red-500 ml-2">
+            CENTER
+          </span>
+
+        </h1>
+
+<p className="text-gray-400 mt-2">
+  Monitor every member activity,
+  finance records and organization reports.
+</p>
 
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
           {/* MEMBER LIST */}
-<div className="bg-purple-950/40 backdrop-blur-xl border border-purple-500/20 rounded-3xl p-5 h-fit sticky top-5 shadow-[0_0_35px_rgba(168,85,247,0.25)]">  
-<h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-purple-300 to-fuchsia-400 bg-clip-text text-transparent">
-  Members
+<div className="bg-red-950/40 backdrop-blur-xl border border-red-700/20 rounded-3xl p-5 h-fit sticky top-5 shadow-[0_0_35px_rgba(220,38,38,0.25)]">  
+<h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-red-900 to-red-600 bg-clip-text text-transparent">
+  FAMILY MEMBERS
 </h2>
 <input
   type="text"
@@ -738,15 +859,15 @@ const salaryDebt = useMemo(() => {
     px-4
     py-3
     rounded-2xl
-    bg-purple-900/20
+    bg-red-900/20
     border
-    border-purple-500/20
+    border-red-500/20
     text-white
     placeholder-gray-400
     outline-none
-    focus:border-purple-400
+    focus:border-red-400
     focus:ring-2
-    focus:ring-purple-500/30
+    focus:ring-red-500/30
   "
 />
 
@@ -770,8 +891,8 @@ const salaryDebt = useMemo(() => {
                     className={`w-full flex items-center gap-3 p-3 rounded-2xl border transition-all duration-300 ${
                       selectedMember?.id ===
                       m.id
-                        ? "bg-gradient-to-r from-purple-700 to-fuchsia-700 border-purple-400 shadow-[0_0_25px_rgba(168,85,247,0.6)]"
-                        : "bg-purple-950/20 border-purple-500/20 hover:border-purple-400 hover:bg-purple-900/30"
+                        ? "bg-gradient-to-r from-red-900 to-red-600 border-red-400 shadow-[0_0_25px_rgba(220,38,38,0.5)]"
+                        : "bg-red-950/20 border-red-500/20 hover:border-red-400 hover:bg-red-900/30"
                     }`}
                   >
 
@@ -795,9 +916,21 @@ const salaryDebt = useMemo(() => {
                           "Unknown"}
                       </p>
 
-                      <p className="text-xs text-gray-400">
-                        {m.role}
-                      </p>
+                      <span
+  className={`
+    inline-block
+    mt-1
+    px-2
+    py-0.5
+    rounded-full
+    border
+    text-[10px]
+    font-bold
+    ${getRoleBadge(m.role).className}
+  `}
+>
+  {getRoleBadge(m.role).text}
+</span>
 
                     </div>
 
@@ -822,7 +955,7 @@ const salaryDebt = useMemo(() => {
 
               <div className="text-gray-400 bg-[#111] p-10 rounded-3xl border border-gray-800 text-center">
 
-                Pilih member untuk melihat aktivitas
+                Choose a DWARRIORS member to inspect activity reports.
 
               </div>
 
@@ -831,13 +964,13 @@ const salaryDebt = useMemo(() => {
               <>
 
                 {/* MEMBER CARD */}
-<div className="bg-gradient-to-br from-purple-950/60 to-fuchsia-950/40 border border-purple-500/30 p-6 rounded-3xl flex items-center gap-5 shadow-xl shadow-purple-900/20 backdrop-blur-xl">
+<div className="bg-gradient-to-br from-red-950/60 to-red-950/40 border border-red-500/30 p-6 rounded-3xl flex items-center gap-5 shadow-xl shadow-red-900/20 backdrop-blur-xl">
                   <img
   src={getPhoto(
     selectedMember
   )}
   referrerPolicy="no-referrer"
- className="w-24 h-24 rounded-3xl object-cover border-2 border-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.5)]"
+ className="w-24 h-24 rounded-3xl object-cover border-2 border-red-400 shadow-[0_0_20px_rgba(220,38,38,0.5)]"
 />
 
                   <div>
@@ -866,48 +999,97 @@ const salaryDebt = useMemo(() => {
 
                     <div className="flex gap-3 mt-3 flex-wrap">
 
-  <span className="px-4 py-1 text-xs bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-xl font-semibold">
-    {selectedMember.role}
-  </span>
+  <span
+  className={`
+    px-4
+    py-1.5
+    rounded-full
+    border
+    text-xs
+    font-black
+    tracking-wider
+    ${getRoleBadge(selectedMember.role).className}
+  `}
+>
+  {getRoleBadge(selectedMember.role).text}
+</span>
 
-  {role === "Oyabun" && (
-    <>
-      <button
-        onClick={() =>
-          changeRole(
-            selectedMember,
-            "Oyabun"
-          )
-        }
-        className="px-4 py-1 text-xs bg-green-600 hover:bg-green-700 rounded-xl font-semibold transition-all"
-      >
-        Set Oyabun
-      </button>
+{canManageRoles &&
+ canManageMember(selectedMember) && (
+  <>
+    <button
+      onClick={() =>
+        changeRole(
+          selectedMember,
+          "UNDERBOSS"
+        )
+      }
+      className="px-4 py-1 text-xs bg-red-700 hover:bg-red-800 rounded-xl font-semibold transition-all"
+    >
+      Set UNDERBOSS
+    </button>
 
-      <button
-        onClick={() =>
-          changeRole(
-            selectedMember,
-            "Shatei"
-          )
-        }
-        className="px-4 py-1 text-xs bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold transition-all"
-      >
-        Set Shatei
-      </button>
+    <button
+      onClick={() =>
+        changeRole(
+          selectedMember,
+          "CONSIGLIERE"
+        )
+      }
+      className="px-4 py-1 text-xs bg-orange-700 hover:bg-orange-800 rounded-xl font-semibold transition-all"
+    >
+      Set CONSIGLIERE
+    </button>
 
-      <button
-        onClick={() =>
-          deleteMember(
-            selectedMember
-          )
-        }
-        className="px-4 py-1 text-xs bg-red-600 hover:bg-red-700 rounded-xl font-semibold transition-all"
-      >
-        Delete Member
-      </button>
-    </>
-  )}
+    <button
+      onClick={() =>
+        changeRole(
+          selectedMember,
+          "CAPO"
+        )
+      }
+      className="px-4 py-1 text-xs bg-yellow-700 hover:bg-yellow-800 rounded-xl font-semibold transition-all"
+    >
+      Set CAPO
+    </button>
+
+    <button
+      onClick={() =>
+        changeRole(
+          selectedMember,
+          "MEMBER"
+        )
+      }
+      className="px-4 py-1 text-xs bg-blue-700 hover:bg-blue-800 rounded-xl font-semibold transition-all"
+    >
+      Set MEMBER
+    </button>
+
+  </>
+)}
+{canDeleteMembers &&
+ canManageMember(selectedMember) && (
+
+  <button
+    onClick={() =>
+      deleteMember(
+        selectedMember
+      )
+    }
+    className="
+      px-4 py-1
+      text-xs
+      bg-red-600
+      hover:bg-red-700
+      rounded-xl
+      font-semibold
+      transition-all
+    "
+  >
+    Delete Member
+  </button>
+
+)}
 
 </div>
 
@@ -932,13 +1114,30 @@ const salaryDebt = useMemo(() => {
                     className={`px-6 py-3 rounded-2xl border font-semibold transition-all ${
                       activeTab ===
                       "finance"
-                        ? "bg-gradient-to-r from-purple-700 to-fuchsia-700 border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
-                        : "bg-purple-950/20 border-purple-500/20 hover:border-purple-400"
+                        ? "bg-gradient-to-r from-red-900 to-red-600 border-red-500 shadow-[0_0_20px_rgba(220,38,38,0.4)]"
+                        : "bg-red-950/20 border-red-500/20 hover:border-red-400"
                     }`}
                   >
-                    Finance
+                    Deposit
                   </button>
+<button
+  onClick={() => {
 
+    setActiveTab(
+      "warehouse"
+    );
+
+    setCurrentPage(1);
+
+  }}
+  className={`px-6 py-3 rounded-2xl border font-semibold transition-all ${
+    activeTab === "warehouse"
+      ? "bg-gradient-to-r from-red-900 to-red-600 border-red-500"
+      : "bg-black border-gray-700"
+  }`}
+>
+  Withdraw
+</button>
                   <button
                     onClick={() => {
 
@@ -953,12 +1152,13 @@ const salaryDebt = useMemo(() => {
                     className={`px-6 py-3 rounded-2xl border font-semibold transition-all ${
                       activeTab ===
                       "crafting"
-                        ? "bg-gradient-to-r from-purple-700 to-fuchsia-700 border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+                        ? "bg-gradient-to-r from-red-900 to-red-600 border-red-500 shadow-[0_0_20px_rgba(220,38,38,0.4)]"
                         : "bg-black border-gray-700 hover:border-[#7A0019]"
                     }`}
                   >
                     Crafting
                   </button>
+                  
 
                 </div>
 
@@ -968,7 +1168,7 @@ const salaryDebt = useMemo(() => {
 
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
-                    <div className="bg-purple-950/30 backdrop-blur-xl p-5 rounded-3xl border border-purple-500/20 shadow-[0_0_25px_rgba(168,85,247,0.15)]">
+                    <div className="bg-red-950/30 backdrop-blur-xl p-5 rounded-3xl border border-red-500/20 shadow-[0_0_25px_rgba(220,38,38,0.15)]">
 
                       <p className="text-gray-400 text-sm">
                         Total Income
@@ -983,39 +1183,7 @@ const salaryDebt = useMemo(() => {
 
                     </div>
 
-                    <div className="bg-purple-950/30 backdrop-blur-xl p-5 rounded-3xl border border-purple-500/20 shadow-[0_0_25px_rgba(168,85,247,0.15)]">
-
-                      <p className="text-gray-400 text-sm">
-                        Total Expense
-                      </p>
-
-                      <p className="text-red-400 text-2xl font-bold mt-2">
-                        Rp{" "}
-                        {totalExpense.toLocaleString(
-                          "id-ID"
-                        )}
-                      </p>
-
-                    </div>
-
-                    <div className="bg-purple-950/30 backdrop-blur-xl p-5 rounded-3xl border border-purple-500/20 shadow-[0_0_25px_rgba(168,85,247,0.15)]">
-
-                      <p className="text-gray-400 text-sm">
-                        Total Hutang
-                      </p>
-
-                      <p className="text-yellow-300 text-2xl font-bold mt-2">
-                        Rp{" "}
-                        {Math.max(
-                          totalDebt,
-                          0
-                        ).toLocaleString(
-                          "id-ID"
-                        )}
-                      </p>
-
-                    </div>
-                    <div className="bg-purple-950/30 backdrop-blur-xl p-5 rounded-3xl border border-orange-500/20">
+                    <div className="bg-red-950/30 backdrop-blur-xl p-5 rounded-3xl border border-orange-500/20">
 
   <p className="text-gray-400 text-sm">
     Hutang Gaji
@@ -1031,8 +1199,14 @@ const salaryDebt = useMemo(() => {
     )}
   </p>
 
-  {role === "Oyabun" &&
-    salaryDebt > 0 && (
+ {
+  (
+    role === "BOSS" ||
+    role === "UNDERBOSS" ||
+    role === "CONSIGLIERE" ||
+    role === "CAPO"
+  ) &&
+  salaryDebt > 0 && (
       <button
         onClick={paySalary}
         className="
@@ -1056,16 +1230,19 @@ const salaryDebt = useMemo(() => {
                   </div>
 
                 )}
+<div className="mb-5">
 
+</div>
                 {/* LIST */}
                 <div className="space-y-4">
+                  
 
                   {paginatedData.map(
                     (item) => (
 
                       <div
                         key={item.id}
-                        className={`p-5 rounded-3xl border border-purple-500/20 bg-purple-950/20 backdrop-blur-xl transition-all duration-300 hover:scale-[1.01] hover:border-purple-400 hover:shadow-[0_0_30px_rgba(168,85,247,0.25)] ${
+                        className={`p-5 rounded-3xl border border-red-500/20 bg-red-950/20 backdrop-blur-xl transition-all duration-300 hover:scale-[1.01] hover:border-red-400 hover:shadow-[0_0_30px_rgba(168,85,247,0.25)] ${
                           activeTab ===
                           "finance"
 
@@ -1099,198 +1276,303 @@ const salaryDebt = useMemo(() => {
                         }`}
                       >
 
-                        {activeTab ===
-                        "finance" ? (
+                        {activeTab === "finance" ? (
 
-                          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
-                            <div>
+    <div>
 
-                              <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex items-center gap-3 flex-wrap">
 
-                                <h2 className="text-2xl font-bold">
-                                  {item.title ||
-                                    "Finance"}
-                                </h2>
+        <h2 className="text-2xl font-bold">
+          {item.title || "Finance"}
+        </h2>
 
-                                <span
-                                  className={`px-4 py-1 rounded-full text-xs font-bold ${
-                                    item.type ===
-                                    "Pemasukan"
-                                      ? "bg-green-500/20 text-green-300"
-                                      : item.type ===
-                                          "Pengeluaran"
-                                      ? "bg-red-500/20 text-red-300"
-                                      : "bg-yellow-500/20 text-yellow-300"
-                                  }`}
-                                >
-                                  {item.type ||
-                                    "-"}
-                                </span>
+        <span
+          className={`px-4 py-1 rounded-full text-xs font-bold ${
+            item.type === "Pemasukan"
+              ? "bg-green-500/20 text-green-300"
+              : item.type === "Pengeluaran"
+              ? "bg-red-500/20 text-red-300"
+              : "bg-yellow-500/20 text-yellow-300"
+          }`}
+        >
+          {item.type || "-"}
+        </span>
 
-                                {item.status && (
-                                  <span
-                                    className={`px-4 py-1 rounded-full text-xs font-bold ${
-                                      item.status ===
-                                      "Approved"
-                                        ? "bg-green-500/20 text-green-300"
-                                        : item.status ===
-                                            "Rejected"
-                                        ? "bg-red-500/20 text-red-300"
-                                        : "bg-yellow-500/20 text-yellow-300"
-                                    }`}
-                                  >
-                                    {
-                                      item.status
-                                    }
-                                  </span>
-                                )}
+        {item.status && (
+          <span
+            className={`px-4 py-1 rounded-full text-xs font-bold ${
+              item.status === "Approved"
+                ? "bg-green-500/20 text-green-300"
+                : item.status === "Rejected"
+                ? "bg-red-500/20 text-red-300"
+                : "bg-yellow-500/20 text-yellow-300"
+            }`}
+          >
+            {item.status}
+          </span>
+        )}
 
-                              </div>
+      </div>
 
-                              <div className="flex flex-wrap gap-3 mt-4">
+      <div className="flex flex-wrap gap-3 mt-4">
 
-                                <div className="bg-purple-900/20 border border-purple-500/20 px-4 py-2 rounded-xl text-sm">
-                                  💰 Amount:
-                                  {" "}
-                                  Rp{" "}
-                                  {Number(
-                                    item.amount ||
-                                      0
-                                  ).toLocaleString(
-                                    "id-ID"
-                                  )}
-                                </div>
+        <div className="bg-red-900/20 border border-red-500/20 px-4 py-2 rounded-xl text-sm">
+          💰 Amount:
+          {" "}
+          Rp{" "}
+          {Number(
+            item.amount || 0
+          ).toLocaleString("id-ID")}
+        </div>
 
-                                {item.paymentType && (
-                                  <div className="bg-purple-900/20 border border-purple-500/20 px-4 py-2 rounded-xl text-sm">
-                                    💳 Payment:
-                                    {" "}
-                                    {
-                                      item.paymentType
-                                    }
-                                  </div>
-                                )}
+        {item.paymentType && (
+          <div className="bg-red-900/20 border border-red-500/20 px-4 py-2 rounded-xl text-sm">
+            💳 Payment:
+            {" "}
+            {item.paymentType}
+          </div>
+        )}
 
-                              </div>
+      </div>
 
-                              {item.note && (
-                                <div className="mt-4 bg-purple-900/20 border border-purple-500/20 rounded-2xl p-4">
+      {item.note && (
 
-                                  <p className="text-gray-400 text-sm">
-                                    Note
-                                  </p>
+        <div className="mt-4 bg-red-900/20 border border-red-500/20 rounded-2xl p-4">
 
-                                  <p className="mt-2 text-sm leading-relaxed">
-                                    {
-                                      item.note
-                                    }
-                                  </p>
+          <p className="text-gray-400 text-sm">
+            Note
+          </p>
 
-                                </div>
-                              )}
+          <p className="mt-2 text-sm leading-relaxed">
+            {item.note}
+          </p>
 
-                            </div>
+        </div>
 
-                            <div className="text-right">
+      )}
 
-                              <p className="text-gray-400 text-sm">
-                                Created At
-                              </p>
+    </div>
 
-                              <h3 className="font-bold mt-2 text-lg">
-                                {formatDate(
-                                  item.createdAt
-                                )}
-                              </h3>
+    <div className="text-right">
 
-                            </div>
+      <p className="text-gray-400 text-sm">
+        Created At
+      </p>
 
-                          </div>
+      <h3 className="font-bold mt-2 text-lg">
+        {formatDate(item.createdAt)}
+      </h3>
 
-                        ) : (
+    </div>
 
-                          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+  </div>
 
-                            <div>
+) : activeTab === "crafting" ? (
 
-                              <div className="flex items-center gap-3 flex-wrap">
+  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
-                                <h2 className="text-2xl font-bold">
-                                  {item.recipeName ||
-                                    "Crafting"}
-                                </h2>
+    <div>
 
-                                <span
-                                  className={`px-4 py-1 rounded-full text-xs font-bold ${
-                                    item.status ===
-                                      "Approved" ||
-                                    item.status ===
-                                      "Crafted"
-                                      ? "bg-green-500/20 text-green-300"
-                                      : item.status ===
-                                          "Rejected" ||
-                                        item.status ===
-                                          "Partial Failed"
-                                      ? "bg-red-500/20 text-red-300"
-                                      : "bg-yellow-500/20 text-yellow-300"
-                                  }`}
-                                >
-                                  {item.status ||
-                                    "Pending"}
-                                </span>
+      <div className="flex items-center gap-3 flex-wrap">
 
-                              </div>
+        <h2 className="text-2xl font-bold">
+          {item.recipeName || "Crafting"}
+        </h2>
 
-                              <div className="flex flex-wrap gap-3 mt-4">
+        <span
+          className={`px-4 py-1 rounded-full text-xs font-bold ${
+            item.status === "Approved" ||
+            item.status === "Crafted"
+              ? "bg-green-500/20 text-green-300"
+              : item.status === "Rejected" ||
+                item.status === "Partial Failed"
+              ? "bg-red-500/20 text-red-300"
+              : "bg-yellow-500/20 text-yellow-300"
+          }`}
+        >
+          {item.status || "Pending"}
+        </span>
 
-                                <div className="bg-purple-900/20 border border-purple-500/20 px-4 py-2 rounded-xl text-sm">
-                                  ✅ Success:
-                                  {" "}
-                                  {item.successQty ||
-                                    0}
-                                </div>
+      </div>
 
-                                <div className="bg-purple-900/20 border border-purple-500/20 px-4 py-2 rounded-xl text-sm">
-                                  ❌ Failed:
-                                  {" "}
-                                  {item.failedQty ||
-                                    0}
-                                </div>
+      <div className="flex flex-wrap gap-3 mt-4">
 
-                                <div className="bg-purple-900/20 border border-purple-500/20 px-4 py-2 rounded-xl text-sm">
-                                  📦 Output:
-                                  {" "}
-                                  {item.outputQty ||
-                                    0}
-                                </div>
+        <div className="bg-red-900/20 border border-red-500/20 px-4 py-2 rounded-xl text-sm">
+          ✅ Success:
+          {" "}
+          {item.successQty || 0}
+        </div>
 
-                              </div>
+        <div className="bg-red-900/20 border border-red-500/20 px-4 py-2 rounded-xl text-sm">
+          ❌ Failed:
+          {" "}
+          {item.failedQty || 0}
+        </div>
 
-                            </div>
+        <div className="bg-red-900/20 border border-red-500/20 px-4 py-2 rounded-xl text-sm">
+          📦 Output:
+          {" "}
+          {item.outputQty || 0}
+        </div>
 
-                            <div className="text-right">
+      </div>
 
-                              <p className="text-gray-400 text-sm">
-                                Created At
-                              </p>
+    </div>
 
-                              <h3 className="font-bold mt-2 text-lg">
-                                {formatDate(
-                                  item.createdAt
-                                )}
-                              </h3>
+    <div className="text-right">
 
-                            </div>
+      <p className="text-gray-400 text-sm">
+        Created At
+      </p>
 
-                          </div>
+      <h3 className="font-bold mt-2 text-lg">
+        {formatDate(item.createdAt)}
+      </h3>
 
-                        )}
+    </div>
 
-                      </div>
+  </div>
 
-                    )
-                  )}
+) : (
+
+ <div className="space-y-5">
+
+  <div className="flex items-center justify-between">
+
+    <div>
+
+      <p className="text-red-400 text-xs uppercase tracking-[0.3em]">
+
+        {item.type === "Return"
+          ? "RETURN REPORT"
+          : "WITHDRAW REPORT"}
+
+      </p>
+
+      <h2 className="text-2xl font-black mt-1">
+
+        {item.title || "-"}
+
+      </h2>
+
+    </div>
+
+    {item.paymentType === "Hutang" && (
+
+  <span
+    className={`px-4 py-2 rounded-full text-xs font-black ${
+      item.debtStatus === "Lunas"
+        ? "bg-green-500/20 text-green-300 border border-green-500/30"
+        : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+    }`}
+  >
+    {item.debtStatus === "Lunas"
+      ? "LUNAS"
+      : "MASIH HUTANG"}
+  </span>
+
+)}
+
+  </div>
+  <div className="grid md:grid-cols-3 gap-3">
+
+  <div className="bg-black/30 rounded-2xl p-4 border border-red-500/20">
+
+    <p className="text-gray-500 text-xs uppercase">
+      Type
+    </p>
+
+    <p className="font-bold mt-1">
+      {item.type}
+    </p>
+
+  </div>
+
+  <div className="bg-black/30 rounded-2xl p-4 border border-red-500/20">
+
+    <p className="text-gray-500 text-xs uppercase">
+      Payment
+    </p>
+
+    <p className="font-bold mt-1">
+      {item.paymentType || "-"}
+    </p>
+
+  </div>
+
+  <div className="bg-black/30 rounded-2xl p-4 border border-red-500/20">
+
+    <p className="text-gray-500 text-xs uppercase">
+      Created
+    </p>
+
+    <p className="font-bold mt-1">
+      {formatDate(item.createdAt)}
+    </p>
+
+  </div>
+
+</div>
+
+<div className="space-y-2">
+
+  {(item.items ||
+    item.withdrawItems ||
+    []).map((row, idx) => (
+
+    <div
+      key={idx}
+      className="
+        flex
+        justify-between
+        items-center
+        bg-black/40
+        border
+        border-red-500/10
+        rounded-2xl
+        px-5
+        py-4
+      "
+    >
+
+      <div>
+
+        <p className="font-bold">
+          {row.itemName}
+        </p>
+
+      </div>
+
+      <div
+        className="
+          bg-red-500/20
+          text-red-300
+          px-4
+          py-2
+          rounded-xl
+          font-black
+        "
+      >
+        x{row.quantity}
+      </div>
+
+    </div>
+
+  ))}
+
+</div>
+
+</div>
+
+)}
+
+ </div>
+
+                )
+
+              )}
 
                   {paginatedData.length ===
                     0 && (
@@ -1349,8 +1631,8 @@ const salaryDebt = useMemo(() => {
                           className={`px-5 py-3 rounded-2xl border ${
                             currentPage ===
                             i + 1
-                              ? "bg-gradient-to-r from-purple-700 to-fuchsia-700 border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
-                              : "bg-purple-950/20 border-purple-500/20 hover:border-purple-400"
+                              ? "bg-gradient-to-r from-red-900 to-red-600 border-red-500 shadow-[0_0_20px_rgba(220,38,38,0.4)]"
+                              : "bg-red-950/20 border-red-500/20 hover:border-red-400"
                           }`}
                         >
                           {i + 1}

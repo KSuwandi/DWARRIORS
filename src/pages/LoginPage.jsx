@@ -1,29 +1,27 @@
+
 import { motion } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function LoginPage() {
-
   const { loginWithGoogle } = useAuth();
 
   return (
-
-    <div className="relative min-h-screen overflow-hidden bg-[#090011] flex items-center justify-center px-6">
+    <div className="relative min-h-screen overflow-hidden bg-black flex items-center justify-center px-6">
 
       {/* BACKGROUND */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#14001f] via-[#090011] to-black" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-[#120000] to-black" />
 
-      {/* PURPLE GLOW */}
-      <div className="absolute top-[-150px] left-[-120px] w-[450px] h-[450px] bg-fuchsia-700/20 blur-3xl rounded-full" />
+      {/* RED GLOW TOP LEFT */}
+      <div className="absolute top-[-150px] left-[-120px] w-[500px] h-[500px] bg-red-700/20 blur-[150px] rounded-full" />
 
-      <div className="absolute bottom-[-150px] right-[-120px] w-[450px] h-[450px] bg-purple-700/20 blur-3xl rounded-full" />
+      {/* RED GLOW BOTTOM RIGHT */}
+      <div className="absolute bottom-[-150px] right-[-120px] w-[500px] h-[500px] bg-red-900/20 blur-[150px] rounded-full" />
 
-      {/* JAPANESE GRID */}
+      {/* GRID */}
       <div className="absolute inset-0 opacity-[0.04] bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:60px_60px]" />
 
-      {/* JAPANESE TEXT */}
-      <div className="absolute left-10 top-1/2 -translate-y-1/2 rotate-180 writing-mode-vertical text-purple-300/10 text-6xl font-black tracking-[12px] hidden lg:block">
-        地獄薔薇
-      </div>
+      {/* RED ATMOSPHERE */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.25)_0%,transparent_60%)]" />
 
       {/* CARD */}
       <motion.div
@@ -43,14 +41,26 @@ export default function LoginPage() {
         className="relative z-10 w-full max-w-md"
       >
 
-        {/* GLOW */}
-        <div className="absolute inset-0 bg-purple-600/20 blur-3xl rounded-[40px]" />
+        {/* OUTER GLOW */}
+        <div className="absolute inset-0 bg-red-600/20 blur-[60px] rounded-[40px]" />
 
         {/* MAIN CARD */}
-        <div className="relative overflow-hidden rounded-[36px] border border-purple-400/20 bg-white/5 backdrop-blur-2xl p-10 shadow-[0_0_50px_rgba(168,85,247,0.15)]">
+        <div
+          className="
+            relative
+            overflow-hidden
+            rounded-[36px]
+            border
+            border-red-700/30
+            bg-black/45
+            backdrop-blur-2xl
+            p-10
+            shadow-[0_0_60px_rgba(220,38,38,0.2)]
+          "
+        >
 
-          {/* TOP DECOR */}
-          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-purple-400 to-transparent opacity-60" />
+          {/* TOP LINE */}
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-80" />
 
           {/* LOGO */}
           <div className="flex justify-center">
@@ -58,56 +68,144 @@ export default function LoginPage() {
             <div className="relative">
 
               <img
-  src="https://i.ibb.co.com/tTKwhGt1/Asset-18.png"
-  alt="Jigokubara"
-  className="w-32 drop-shadow-[0_0_25px_rgba(192,132,252,0.5)]"
-/>
-              <div className="absolute inset-0 bg-purple-500/20 blur-2xl rounded-full" />
+                src="https://i.ibb.co.com/nMrw6G4N/logodw.png"
+                alt="DWARRIORS"
+                className="
+                  w-40
+                  object-contain
+                  drop-shadow-[0_0_40px_rgba(220,38,38,0.8)]
+                "
+              />
+
+              <div className="absolute inset-0 bg-red-500/20 blur-3xl rounded-full" />
 
             </div>
 
           </div>
 
           {/* TITLE */}
-          <h1 className="mt-6 text-center text-[#f5e6ff] text-4xl font-black tracking-[0.22em]">
-            JIGOKUBARA
-          </h1>
+          <div className="flex justify-center">
+  <h1
+    className="
+      mt-6
 
-          {/* JAPANESE */}
-          <p className="text-center text-purple-300/70 tracking-[0.5em] mt-2 text-sm">
-            地獄薔薇
+      text-4xl
+      md:text-5xl
+
+      font-black
+
+      uppercase
+
+      tracking-[0.03em]
+
+      bg-gradient-to-b
+      from-red-300
+      via-red-500
+      to-red-900
+
+      bg-clip-text
+      text-transparent
+    "
+    style={{
+      WebkitTextStroke: "1.5px rgba(80,0,0,0.8)",
+      textShadow: `
+        0 2px 0 rgba(255,255,255,0.15),
+        0 4px 0 rgba(120,0,0,0.7),
+        0 10px 20px rgba(0,0,0,0.6),
+        0 0 25px rgba(245, 245, 245, 0.8),
+        0 0 50px rgba(220,38,38,0.5)
+      `
+    }}
+  >
+    DWARRIORS
+  </h1>
+</div>
+
+          {/* SUBTITLE */}
+          <p
+            className="
+              mt-3
+              text-center
+              text-red-400
+              tracking-[0.45em]
+              uppercase
+              text-sm
+              font-semibold
+            "
+          >
+            BLOOD • POWER • LEGACY
           </p>
 
-          {/* LINE */}
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-purple-400/40 to-transparent my-6" />
+          {/* DIVIDER */}
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent my-8" />
 
-          {/* DESC */}
-          <p className="text-center text-purple-100/60 text-sm leading-7">
-            Selamat Datang di Jigokubara-Gumi 
+          {/* DESCRIPTION */}
+          <p
+            className="
+              text-center
+              text-gray-300
+              text-sm
+              leading-7
+            "
+          >
+            Welcome to DWARRIORS Organization.
             <br />
-            Login using your Google account to continue.
+            Login using your Google account to access the community portal.
           </p>
 
-          {/* BUTTON */}
+          {/* LOGIN BUTTON */}
           <button
             onClick={loginWithGoogle}
-            className="group relative overflow-hidden w-full mt-10 rounded-2xl bg-gradient-to-r from-purple-700 to-fuchsia-700 py-4 text-white font-bold tracking-wider transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)]"
+            className="
+              group
+              relative
+              overflow-hidden
+
+              w-full
+              mt-10
+
+              rounded-2xl
+
+              bg-gradient-to-r
+              from-red-950
+              via-red-700
+              to-red-500
+
+              py-4
+
+              text-white
+              font-bold
+              tracking-wider
+
+              transition-all
+              duration-300
+
+              hover:scale-[1.02]
+              hover:shadow-[0_0_40px_rgba(220,38,38,0.6)]
+            "
           >
 
-            {/* BUTTON GLOW */}
+            {/* BUTTON SHINE */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/10" />
 
             <span className="relative z-10">
-              LOGIN WITH GOOGLE
+              ENTER DWARRIORS
             </span>
 
           </button>
 
-          {/* BOTTOM JAPANESE */}
+          {/* FOOTER */}
           <div className="mt-8 text-center">
 
-            <p className="text-[11px] uppercase tracking-[0.35em] text-purple-300/40">
-              Ohayou gozaimasu, welcome to Jigokubara
+            <p
+              className="
+                text-[11px]
+                uppercase
+                tracking-[0.35em]
+                text-red-400/40
+              "
+            >
+              DWARRIORS FAMILY • ROLEPLAY ORGANIZATION
             </p>
 
           </div>
@@ -119,3 +217,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

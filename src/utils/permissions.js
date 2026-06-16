@@ -5,8 +5,7 @@ export const hasPermission = (
   permission
 ) => {
   return (
-    PERMISSIONS[
-      permission
-    ]?.includes(role) || false
+    PERMISSIONS[permission]?.includes(role) ||
+    false
   );
 };

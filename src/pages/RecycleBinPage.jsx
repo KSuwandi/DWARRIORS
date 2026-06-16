@@ -118,9 +118,17 @@ export default function RecycleBinPage() {
     <AppLayout>
       <div className="text-white">
 
-        <h1 className="text-4xl font-bold mb-8">
-          Recycle Bin
-        </h1>
+         <h1 className="text-5xl font-black">
+
+  <span className="text-white">
+    RECYCLE
+  </span>
+
+  <span className="text-red-500 ml-3">
+    BIN
+  </span>
+
+</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
 

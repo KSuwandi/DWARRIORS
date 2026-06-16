@@ -221,18 +221,26 @@ export default function DashboardPage() {
   // =========================
   // CATEGORY
   // =========================
-  const disnakerInventory = inventory.filter(
-    (item) => item.category === "DISNAKER"
-  );
-
-  const barhamInventory = inventory.filter(
-    (item) => item.category === "BARHAM"
-  );
-
-  const prepareInventory = inventory.filter(
+  const resourceInventory = inventory
+  .filter(
     (item) =>
-      item.category === "PREPARE" ||
+      item.category === "RESOURCE"
+  )
+  .sort(
+    (a, b) =>
+      Number(b.stock) -
+      Number(a.stock)
+  );
+
+const prepareInventory = inventory
+  .filter(
+    (item) =>
       item.category === "PREPAREAN"
+  )
+  .sort(
+    (a, b) =>
+      Number(b.stock) -
+      Number(a.stock)
   );
 
   // =========================
@@ -254,10 +262,17 @@ export default function DashboardPage() {
 
           <div className="mb-8">
 
-            <div className="relative overflow-hidden rounded-[32px] border border-purple-500/20 bg-gradient-to-br from-[#1a1027] to-[#120d1b] shadow-[0_0_40px_rgba(168,85,247,0.15)]">
+            <div className="relative overflow-hidden rounded-[32px] border border-red-500/20 bg-gradient-to-br from-black via-[#120000] to-[#250000] shadow-[0_0_40px_rgba(220,38,38,0.15)]">
 
               {/* BACKGROUND GLOW */}
-              <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-600/10 via-purple-600/5 to-transparent" />
+              <div className="
+absolute
+inset-0
+bg-gradient-to-r
+from-red-700/20
+via-red-900/10
+to-transparent
+" />
 
               {/* CONTENT */}
               <div className="relative z-10 p-6">
@@ -271,12 +286,12 @@ export default function DashboardPage() {
                     <div
                       className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg ${
                         latestNotification.type === "Warning"
-                          ? "bg-red-500/15 text-red-300"
+                          ? "bg-gradient-to-br from-red-700/30 to-red-900/20 text-red-300 border border-red-500/20"
                           : latestNotification.type === "Event"
-                          ? "bg-blue-500/15 text-blue-300"
+                          ? "bg-gradient-to-br from-red-700/30 to-red-900/20 text-red-300 border border-red-500/20"
                           : latestNotification.type === "News"
                           ? "bg-green-500/15 text-green-300"
-                          : "bg-purple-500/15 text-purple-300"
+                          : "bg-gradient-to-br from-red-700/30 to-red-900/20 text-red-300 border border-red-500/20"
                       }`}
                     >
 
@@ -292,12 +307,12 @@ export default function DashboardPage() {
                         <span
                           className={`px-4 py-2 rounded-full text-xs font-bold tracking-[0.15em] uppercase border ${
                             latestNotification.type === "Warning"
-                              ? "bg-red-500/10 text-red-300 border-red-500/20"
+                              ? "bg-gradient-to-r from-red-900/40 text-red-200 border-red-500/30"
                               : latestNotification.type === "Event"
                               ? "bg-blue-500/10 text-blue-300 border-blue-500/20"
                               : latestNotification.type === "News"
                               ? "bg-green-500/10 text-green-300 border-green-500/20"
-                              : "bg-purple-500/10 text-purple-300 border-purple-500/20"
+                              : "bg-gradient-to-r from-red-900/40 text-red-200 border-red-500/30"
                           }`}
                         >
                           {latestNotification.type || "Announcement"}
@@ -312,7 +327,14 @@ export default function DashboardPage() {
                       </div>
 
                       {/* TITLE */}
-                      <h2 className="text-2xl font-black mt-4 leading-tight">
+                      <h2 className="
+text-3xl
+font-black
+mt-4
+leading-tight
+text-white
+tracking-wide
+">
 
                         {latestNotification.title}
 
@@ -349,9 +371,10 @@ export default function DashboardPage() {
                       w-11
                       h-11
                       rounded-2xl
-                      bg-white/5
-                      hover:bg-white/10
-                      border
+                      bg-black/60
+                      hover:bg-red-900/40
+                      border-red-700/30
+                      
                       border-white/10
                       flex
                       items-center
@@ -379,15 +402,51 @@ export default function DashboardPage() {
         {/* ===================================== */}
         <div className="mb-10">
 
-          <h1 className="text-5xl font-extrabold tracking-tight">
-            Dashboard
-          </h1>
+          <h1 className="text-5xl font-black tracking-tight">
 
-          <p className="text-gray-400 mt-2">
-            Luxury management overview system
-          </p>
+  <span className="text-white">
+    DASHBOARD
+  </span>
+
+  <span className="text-red-500 ml-3">
+    DWARRIORS
+  </span>
+
+</h1>
+
+<p className="text-gray-400 mt-2">
+  Central command for DWARRIORS Organization.
+</p>
 
         </div>
+
+        <div
+  className="
+    mb-8
+    p-6
+    rounded-3xl
+    border
+    border-red-700/30
+    bg-gradient-to-r
+    from-red-950/40
+    to-black
+  "
+>
+
+  <p className="text-red-400 text-xs tracking-[0.3em] uppercase">
+    DWARRIORS ORGANIZATION
+  </p>
+
+  <h2 className="text-3xl font-black mt-2">
+    Blood • Power • Legacy
+  </h2>
+
+  <p className="text-gray-400 mt-3">
+    Every operation, every transaction,
+    every member activity is monitored here.
+  </p>
+
+</div>
 
         {/* ===================================== */}
         {/* STATS */}
@@ -395,24 +454,42 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
           {/* UANG MERAH */}
-          <div className={`${cardBase} border-[#7A0019]/40`}>
+<div
+  className="
+    bg-gradient-to-br
+    from-red-950/60
+    to-black
+    border
+    border-red-500/30
+    rounded-3xl
+    p-6
+    shadow-lg
+    hover:shadow-red-900/30
+    transition-all
+  "
+>
 
-            <p className="text-gray-400">
-              Uang Merah
-            </p>
+  <p className="text-red-400 text-xs uppercase tracking-[0.25em]">
+    Uang Merah
+  </p>
 
-            <h2 className="text-4xl font-bold text-red-400 mt-3">
-              {uangMerahStock.toLocaleString()}
-            </h2>
+  <h2 className="text-4xl font-bold text-red-400 mt-3">
+    {uangMerahStock.toLocaleString()}
+  </h2>
 
-            <Boxes className="text-red-400 mt-4" />
+  <Wallet
+    className="
+      text-red-400
+      mt-4
+      drop-shadow-[0_0_15px_rgba(239,68,68,0.7)]
+    "
+  />
 
-          </div>
-
+</div>
           {/* UANG PUTIH */}
           <div className={`${cardBase} border-green-500/30`}>
 
-            <p className="text-gray-400">
+            <p className="text-green-400 text-xs uppercase tracking-[0.25em]">
               Uang Putih
             </p>
 
@@ -427,7 +504,7 @@ export default function DashboardPage() {
           {/* CRAFT */}
           <div className={`${cardBase} border-yellow-500/30`}>
 
-            <p className="text-gray-400">
+            <p className="text-yellow-400 text-xs uppercase tracking-[0.25em]">
               Pending Crafting
             </p>
 
@@ -442,7 +519,7 @@ export default function DashboardPage() {
           {/* WITHDRAW */}
           <div className={`${cardBase} border-red-500/30`}>
 
-            <p className="text-gray-400">
+            <p className="text-red-400 text-xs uppercase tracking-[0.25em]">
               Pending Withdraw
             </p>
 
@@ -459,101 +536,26 @@ export default function DashboardPage() {
         {/* ===================================== */}
         {/* INVENTORY */}
         {/* ===================================== */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-10">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-10">
 
-          {/* DISNAKER */}
-          <div className={`${cardBase}`}>
-
-            <h2 className="text-orange-400 text-2xl font-bold mb-5">
-              DISNAKER
-            </h2>
-
-            <div
-              className="
-                space-y-3
-                max-h-[420px]
-                overflow-y-auto
-                pr-2
-                custom-scrollbar
-              "
-            >
-
-              {disnakerInventory.map((item) => (
-
-                <div
-                  key={item.id}
-                  className="
-                    group
-                    bg-gradient-to-br
-                    from-white/[0.03]
-                    to-white/[0.01]
-                    hover:from-orange-500/10
-                    hover:to-orange-500/5
-                    transition-all
-                    duration-300
-                    p-4
-                    rounded-2xl
-                    border
-                    border-white/5
-                    hover:border-orange-500/30
-                    backdrop-blur-xl
-                    hover:scale-[1.02]
-                  "
-                >
-
-                  <p className="font-semibold">
-                    {item.name}
-                  </p>
-
-                  <div className="flex items-center justify-between mt-3">
-
-                    <span className="text-xs text-gray-500">
-                      Available Stock
-                    </span>
-
-                    <span
-                      className="
-                        px-3
-                        py-1
-                        rounded-full
-                        bg-white/5
-                        border
-                        border-white/10
-                        text-sm
-                        font-semibold
-                      "
-                    >
-                      {Number(item.stock).toLocaleString()}
-                    </span>
-
-                  </div>
-
-                </div>
-
-              ))}
-
-            </div>
-
-          </div>
-
-          {/* BARHAM */}
+          {/* RESOURCE */}
           <div className={`${cardBase}`}>
 
             <h2 className="text-red-400 text-2xl font-bold mb-5">
-              BARHAM
-            </h2>
+  RESOURCE
+</h2>
 
             <div
-              className="
-                space-y-3
-                max-h-[420px]
-                overflow-y-auto
-                pr-2
-                custom-scrollbar
-              "
-            >
+  className="
+    space-y-3
+    max-h-[450px]
+    overflow-y-auto
+    pr-2
+    jgb-scrollbar
+  "
+>
 
-              {barhamInventory.map((item) => (
+              {resourceInventory.map((item) => (
 
                 <div
                   key={item.id}
@@ -614,19 +616,19 @@ export default function DashboardPage() {
           {/* PREPARE */}
           <div className={`${cardBase}`}>
 
-            <h2 className="text-blue-400 text-2xl font-bold mb-5">
+            <h2 className="text-red-300 text-2xl font-bold mb-5">
               PREPAREAN
             </h2>
 
             <div
-              className="
-                space-y-3
-                max-h-[420px]
-                overflow-y-auto
-                pr-2
-                custom-scrollbar
-              "
-            >
+  className="
+    space-y-3
+    max-h-[450px]
+    overflow-y-auto
+    pr-2
+    jgb-scrollbar
+  "
+>
 
               {prepareInventory.map((item) => (
 
@@ -637,15 +639,15 @@ export default function DashboardPage() {
                     bg-gradient-to-br
                     from-white/[0.03]
                     to-white/[0.01]
-                    hover:from-blue-500/10
-                    hover:to-blue-500/5
+                    hover:from-red-500/10
+                    hover:to-red-500/5
                     transition-all
                     duration-300
                     p-4
                     rounded-2xl
                     border
                     border-white/5
-                    hover:border-blue-500/30
+                    hover:border-red-500/30
                     backdrop-blur-xl
                     hover:scale-[1.02]
                   "

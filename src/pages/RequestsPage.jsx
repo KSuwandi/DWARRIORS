@@ -226,7 +226,6 @@ export default function RequestsPage() {
 
           approvedBy:
             user?.rpName ||
-              user?.displayName ||
             "Oyabun",
 
           approvedAt:
@@ -243,7 +242,6 @@ export default function RequestsPage() {
 
         user:
           user?.rpName ||
-              user?.displayName ||
           "Unknown",
 
         role,
@@ -310,7 +308,6 @@ export default function RequestsPage() {
 
           rejectedBy:
             user?.rpName ||
-              user?.displayName ||
             "Oyabun",
 
           rejectedAt:
@@ -324,7 +321,6 @@ export default function RequestsPage() {
 
         user:
           user?.rpName ||
-              user?.displayName ||
           "Unknown",
 
         role,

@@ -4,6 +4,7 @@ import {
   useState,
 } from "react";
 
+import { hasPermission,} from "../utils/permissions";
 import toast from "react-hot-toast";
 
 import {
@@ -34,148 +35,107 @@ import { db } from "../services/firebase/config";
 // CRAFTING RECIPES
 // ============================================
 const CRAFTING_RECIPES = [
-  {
-    name: "Light Armor",
-    outputAmount: 1,
-    materials: [
-      { item: "Paketan Jamur", qty: 2 },
-      { item: "Paketan Singkong", qty: 3 },
-      { item: "Botol", qty: 5 },
-      { item: "Kulit Jadi", qty: 5 },
-      { item: "Alumunium Powder", qty: 10 },
-      { item: "Iron Powder", qty: 10 },
-      { item: "Baju", qty: 15 },
-      { item: "Emas", qty: 15 },
-      { item: "Karet", qty: 15 },
-      { item: "Baja", qty: 20 },
-      { item: "Alumunium", qty: 20 },
-      { item: "MetalScrap", qty: 20 },
-      { item: "Kain", qty: 20 },
-      { item: "Besi", qty: 20 },
-      { item: "Tembaga", qty: 20 },
-      { item: "Kayu Kemasan", qty: 50 },
-    ],
-  },
+
+ {
+  name: "Cannabis Bag",
+
+  category: "RESOURCE",
+
+  outputAmount: 1,
+
+  materials: [
+    {
+      item: "Cannabis",
+      qty: 4,
+    },
+  ],
+},
+
 
   {
-    name: "Peluru .44 Magnum",
-    outputAmount: 16,
-    materials: [
-      { item: "Berlian", qty: 1 },
-      { item: "Paketan Jamur", qty: 3 },
-      { item: "Paketan Borax", qty: 6 },
-      { item: "Kaca", qty: 10 },
-      { item: "Besi", qty: 25 },
-      { item: "Tembaga", qty: 30 },
-    ],
-  },
+  name: "LSD",
+
+  category: "RESOURCE",
+
+  outputAmount: 1,
+
+  materials: [
+    {
+      item: "Coca",
+      qty: 4,
+    },
+  ],
+},
+
+ {
+  name: "Joint",
+
+  category: "RESOURCE",
+
+  outputAmount: 1,
+
+  materials: [
+    {
+      item: "Cannabis Bag",
+      qty: 1,
+    },
+    {
+      item: "Paper Roll",
+      qty: 1,
+    },
+  ],
+},
 
   {
-    name: "Peluru 9mm",
-    outputAmount: 35,
-    materials: [
-      { item: "Berlian", qty: 1 },
-      { item: "Paketan Jamur", qty: 3 },
-      { item: "Paketan Borax", qty: 5 },
-      { item: "Kaca", qty: 10 },
-      { item: "Besi", qty: 20 },
-      { item: "Tembaga", qty: 25 },
-    ],
-  },
+  name: "Gold Desert Eagle",
+
+  category: "PREPAREAN",
+
+  outputAmount: 1,
+
+  materials: [
+    {
+      item: "Desert Eagle",
+      qty: 3,
+    },
+    {
+      item: "Cube",
+      qty: 1,
+    },
+  ],
+},
 
   {
-    name: "Peluru Double Action",
-    outputAmount: 16,
-    materials: [
-      { item: "Berlian", qty: 1 },
-      { item: "Paketan Jamur", qty: 3 },
-      { item: "Paketan Borax", qty: 6 },
-      { item: "Kaca", qty: 10 },
-      { item: "Tembaga", qty: 25 },
-      { item: "Besi", qty: 30 },
-    ],
-  },
+  name: "Gold Revolver Mk2",
 
-  {
-    name: "Peluru Ak-47",
-    outputAmount: 45,
-    materials: [
-      { item: "Berlian", qty: 1 },
-      { item: "Paketan Jamur", qty: 5 },
-      { item: "Paketan Borax", qty: 6 },
-      { item: "Kaca", qty: 15 },
-      { item: "Besi", qty: 30 },
-      { item: "Tembaga", qty: 35 },
-    ],
-  },
+  category: "PREPAREAN",
 
-  {
-    name: "Peluru .50 MBG",
-    outputAmount: 5,
-    materials: [
-      { item: "Berlian", qty: 1 },
-      { item: "Paketan Jamur", qty: 5 },
-      { item: "Paketan Borax", qty: 6 },
-      { item: "Kaca", qty: 15 },
-      { item: "Besi", qty: 35 },
-      { item: "Tembaga", qty: 40 },
-    ],
-  },
+  outputAmount: 1,
 
-  {
-    name: "Lockpick",
-    outputAmount: 1,
-    materials: [
-      { item: "Berlian", qty: 1 },
-      { item: "Paketan Jamur", qty: 2 },
-      { item: "Paketan Singkong", qty: 3 },
-      { item: "Besi", qty: 5 },
-      { item: "Botol", qty: 15 },
-      { item: "Tembaga", qty: 15 },
-    ],
-  },
+  materials: [
+    {
+      item: "Revolver Mk2",
+      qty: 3,
+    },
+    {
+      item: "Cube",
+      qty: 1,
+    },
+  ],
+}
 
-  {
-    name: "Alat Peretas",
-    outputAmount: 1,
-    materials: [
-      { item: "Berlian", qty: 1 },
-      { item: "Paketan Jamur", qty: 4 },
-      { item: "Emas", qty: 5 },
-      { item: "Besi", qty: 11 },
-      { item: "Tembaga", qty: 56 },
-    ],
-  },
-
-  {
-    name: "Thermite",
-    outputAmount: 1,
-    materials: [
-      { item: "Berlian", qty: 1 },
-      { item: "Paketan Jamur", qty: 2 },
-      { item: "Paketan Borax", qty: 3 },
-      { item: "Plastik", qty: 10 },
-      { item: "Tembaga", qty: 27 },
-    ],
-  },
-
-  {
-    name: "Drill",
-    outputAmount: 1,
-    materials: [
-      { item: "Berlian", qty: 1 },
-      { item: "Paketan Borax", qty: 3 },
-      { item: "Paketan Jamur", qty: 3 },
-      { item: "Botol", qty: 10 },
-      { item: "Tembaga", qty: 27 },
-    ],
-  },
 ];
 
 export default function CraftingPage() {
 
   const { role, user } =
     useAuth();
+  
+  const canCraft =
+    hasPermission(
+      role,
+      "CRAFTING"
+    );
 
   const [inventory, setInventory] =
     useState([]);
@@ -184,7 +144,7 @@ export default function CraftingPage() {
     useState(false);
 
   const [selectedRecipe, setSelectedRecipe] =
-    useState("Light Armor");
+  useState("Cannabis Bag");
 
   const [successQuantity, setSuccessQuantity] =
     useState(1);
@@ -549,8 +509,8 @@ const processCraftingTransaction =
               name:
                 recipe.name,
 
-              category:
-                "CRAFTING",
+               category:
+                recipe.category,
 
               stock:
                 Number(
@@ -706,7 +666,7 @@ const processCraftingTransaction =
           return;
         }
 
-        if (role === "Oyabun") {
+        if (canCraft) {
 
   await processCraftingTransaction({
     recipe,
@@ -898,8 +858,12 @@ const processCraftingTransaction =
   // ============================================
   const handleClearHistory = async () => {
 
-    if (role !== "Oyabun") {
-      toast.error("Only Oyabun can clear history");
+    if (!canCraft) {
+
+      toast.error(
+        "Access denied"
+      );
+
       return;
     }
 
@@ -965,12 +929,20 @@ const processCraftingTransaction =
         {/* HEADER */}
         <div className="mb-6">
 
-          <h1 className="text-3xl font-black bg-gradient-to-r from-purple-300 to-fuchsia-500 bg-clip-text text-transparent">
-            Crafting System
-          </h1>
+           <h1 className="text-5xl font-black">
 
-          <p className="text-sm text-purple-200/60 mt-1">
-            Jigokubara crafting management
+  <span className="text-white">
+    CRAFTING
+  </span>
+
+  <span className="text-red-500 ml-3">
+    SYSTEM
+  </span>
+
+</h1>
+
+          <p className="text-sm text-red-200/60 mt-1">
+            DWARRIORS crafting management
           </p>
 
         </div>
@@ -999,7 +971,7 @@ const processCraftingTransaction =
           <div className="xl:col-span-2 space-y-6">
 
             {/* CREATE */}
-            <div className="bg-gradient-to-br from-[#14051f] to-[#0b0614] border border-purple-500/20 rounded-3xl p-5">
+            <div className="bg-gradient-to-br from-[#160404] to-black border border-red-500/20 rounded-3xl p-5">
 
               <div className="flex items-center justify-between mb-5">
 
@@ -1007,9 +979,22 @@ const processCraftingTransaction =
                   Create Crafting
                 </h2>
 
-                <div className="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300">
-                  {role}
-                </div>
+                <div
+  className="
+    px-4
+    py-2
+    rounded-full
+    bg-red-500/10
+    border
+    border-red-500/20
+    text-xs
+    text-red-300
+    uppercase
+    tracking-[0.2em]
+  "
+>
+  {role}
+</div>
 
               </div>
 
@@ -1017,7 +1002,7 @@ const processCraftingTransaction =
 
                 <div className="md:col-span-2">
 
-                  <label className="text-xs text-purple-200/60">
+                  <label className="text-xs text-red-200/60">
                     Recipe
                   </label>
 
@@ -1030,7 +1015,7 @@ const processCraftingTransaction =
                         e.target.value
                       )
                     }
-                    className="w-full mt-2 bg-[#0b0812] border border-purple-500/20 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
+                    className="w-full mt-2 bg-[#0b0812] border border-red-500/20 rounded-2xl px-4 py-3 outline-none focus:border-red-500"
                   >
 
                     {CRAFTING_RECIPES.map(
@@ -1120,7 +1105,7 @@ const processCraftingTransaction =
               {/* OUTPUT */}
               <div className="grid grid-cols-3 gap-3 mt-5">
 
-                <div className="bg-black/30 border border-purple-500/10 rounded-2xl p-4 text-center">
+                <div className="bg-black/30 border border-red-500/10 rounded-2xl p-4 text-center">
 
                   <p className="text-xs text-gray-400">
                     Success
@@ -1132,7 +1117,7 @@ const processCraftingTransaction =
 
                 </div>
 
-                <div className="bg-black/30 border border-purple-500/10 rounded-2xl p-4 text-center">
+                <div className="bg-black/30 border border-red-500/10 rounded-2xl p-4 text-center">
 
                   <p className="text-xs text-gray-400">
                     Failed
@@ -1144,13 +1129,13 @@ const processCraftingTransaction =
 
                 </div>
 
-                <div className="bg-black/30 border border-purple-500/10 rounded-2xl p-4 text-center">
+                <div className="bg-black/30 border border-red-500/10 rounded-2xl p-4 text-center">
 
                   <p className="text-xs text-gray-400">
                     Output
                   </p>
 
-                  <h2 className="text-2xl font-black text-purple-300 mt-1">
+                  <h2 className="text-2xl font-black text-red-300 mt-1">
                     {totalOutput}
                   </h2>
 
@@ -1163,13 +1148,12 @@ const processCraftingTransaction =
                   handleCreateCrafting
                 }
                 disabled={loading}
-                className="w-full mt-5 bg-gradient-to-r from-purple-700 to-fuchsia-700 hover:opacity-90 transition-all rounded-2xl py-4 font-bold shadow-lg shadow-purple-900/30"
+                className="w-full mt-5 bg-gradient-to-r from-red-900 to-red-600 hover:opacity-90 transition-all rounded-2xl py-4 font-bold shadow-lg shadow-red-900/30"
               >
 
                 {loading
                   ? "Loading..."
-                  : role ===
-                    "Oyabun"
+                  : canCraft
                   ? "Craft Now"
                   : "Request Crafting"}
 
@@ -1178,15 +1162,17 @@ const processCraftingTransaction =
             </div>
 
             {/* MATERIALS */}
-            <div className="bg-gradient-to-br from-[#14051f] to-[#0b0614] border border-purple-500/20 rounded-3xl p-5">
+            <div className="bg-gradient-to-br from-[#160404] to-black border border-red-500/20 rounded-3xl p-5">
 
               <div className="flex items-center justify-between mb-5">
 
-                <h2 className="text-xl font-bold">
-                  Materials
-                </h2>
+                <h2 className="text-xl font-black">
 
-                <span className="text-xs text-purple-300">
+  REQUIRED RESOURCES
+
+</h2>
+
+                <span className="text-xs text-red-300">
                   {recipe?.materials.length} Items
                 </span>
 
@@ -1227,7 +1213,7 @@ const processCraftingTransaction =
 
                       <div
                         key={index}
-                        className="bg-black/30 border border-purple-500/10 rounded-2xl px-4 py-3 flex items-center justify-between"
+                        className="bg-black/30 border border-red-500/10 rounded-2xl px-4 py-3 flex items-center justify-between"
                       >
 
                         <div>
@@ -1239,7 +1225,7 @@ const processCraftingTransaction =
                           </h4>
 
                           <p className="text-xs text-gray-400 mt-1">
-                            Need {required}
+                            Required: {required}
                           </p>
 
                         </div>
@@ -1268,7 +1254,7 @@ const processCraftingTransaction =
           {/* RIGHT */}
           <div>
 
-            <div className="bg-gradient-to-br from-[#14051f] to-[#0b0614] border border-purple-500/20 rounded-3xl p-5">
+            <div className="bg-gradient-to-br from-[#160404] to-black border border-red-500/20 rounded-3xl p-5">
 
               <div className="flex items-center justify-between mb-5">
 
@@ -1278,13 +1264,13 @@ const processCraftingTransaction =
                     History
                   </h2>
 
-                  <p className="text-xs text-purple-200/50 mt-1">
+                  <p className="text-xs text-red-200/50 mt-1">
                     Recent crafting activity
                   </p>
 
                 </div>
 
-                {role === "Oyabun" && (
+                {canCraft && (
 
                   <button
                     onClick={handleClearHistory}
@@ -1305,7 +1291,7 @@ const processCraftingTransaction =
 
                     <div
                       key={item.id}
-                      className="bg-black/30 border border-purple-500/10 rounded-2xl p-4"
+                      className="bg-black/30 border border-red-500/10 rounded-2xl p-4"
                     >
 
                       <div className="flex items-center justify-between gap-3">
@@ -1380,7 +1366,7 @@ const processCraftingTransaction =
                             OUT
                           </p>
 
-                          <h4 className="font-bold text-purple-300 text-sm mt-1">
+                          <h4 className="font-bold text-red-300 text-sm mt-1">
                             {
                               item.outputQty
                             }
@@ -1397,7 +1383,7 @@ const processCraftingTransaction =
                 {paginatedHistory.length ===
                   0 && (
 
-                  <div className="bg-black/20 border border-dashed border-purple-500/20 rounded-2xl p-6 text-center text-sm text-gray-400">
+                  <div className="bg-black/20 border border-dashed border-red-500/20 rounded-2xl p-6 text-center text-sm text-gray-400">
 
                     No crafting history
 
@@ -1425,7 +1411,7 @@ const processCraftingTransaction =
                           prev - 1
                       )
                     }
-                    className="bg-black/30 border border-purple-500/20 px-3 py-2 rounded-xl text-sm disabled:opacity-40"
+                    className="bg-black/30 border border-red-500/20 px-3 py-2 rounded-xl text-sm disabled:opacity-40"
                   >
                     Prev
                   </button>
@@ -1446,8 +1432,8 @@ const processCraftingTransaction =
                         className={`w-10 h-10 rounded-xl text-sm font-bold ${
                           historyPage ===
                           index + 1
-                            ? "bg-gradient-to-r from-purple-700 to-fuchsia-700"
-                            : "bg-black/30 border border-purple-500/20"
+                            ? "bg-gradient-to-r from-red-900 to-red-600"
+                            : "bg-black/30 border border-red-500/20"
                         }`}
                       >
                         {index + 1}
@@ -1469,7 +1455,7 @@ const processCraftingTransaction =
                           prev + 1
                       )
                     }
-                    className="bg-black/30 border border-purple-500/20 px-3 py-2 rounded-xl text-sm disabled:opacity-40"
+                    className="bg-black/30 border border-red-500/20 px-3 py-2 rounded-xl text-sm disabled:opacity-40"
                   >
                     Next
                   </button>

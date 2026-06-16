@@ -22,7 +22,7 @@ import RequestsPage from "./pages/RequestsPage";
 import FinanceApprovalPage from "./pages/FinanceApprovalPage";
 import RoleRequestPage from "./pages/RoleRequestPage";
 import RoleApprovalPage from "./pages/RoleApprovalPage";
-import ProfileJGBPage from "./pages/ProfileJGBPage";
+import ProfileDwPage from "./pages/ProfileDwPage";
 import WardrobePage from "./pages/WardrobePage";
 
 import {
@@ -44,18 +44,18 @@ export default function App() {
 ///console.log("ROLE =", role);
   if (loading) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#0B0714]">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#050505]">
 
       <div className="relative">
 
-        <div className="w-20 h-20 rounded-full border-4 border-purple-900" />
+        <div className="w-20 h-20 rounded-full border-4 border-red-900" />
 
-        <div className="absolute inset-0 w-20 h-20 rounded-full border-4 border-purple-500 border-t-transparent animate-spin" />
+        <div className="absolute inset-0 w-20 h-20 rounded-full border-4 border-red-500 border-t-transparent animate-spin" />
 
       </div>
 
       <h2 className="mt-6 text-xl font-bold text-white">
-        Jigokubara Family
+        DWARRIORS ORGANIZATION
       </h2>
 
       <p className="text-gray-400 text-sm mt-2">
@@ -70,8 +70,8 @@ export default function App() {
   // PENDING USER
   // =====================================
   const isPending =
-    user &&
-    role === "Pending";
+  user &&
+  role === "Pending";
 
   return (
 
@@ -129,7 +129,17 @@ export default function App() {
       {/* ROLE APPROVAL */}
       <Route
   path="/role-approval"
-  element={<RoleApprovalPage />}
+  element={
+    user &&
+    (
+      role === "BOSS" ||
+      role === "UNDERBOSS" ||
+      role === "CONSIGLIERE" ||
+      role === "CAPO"
+    )
+      ? <RoleApprovalPage />
+      : <Navigate to="/dashboard" />
+  }
 />
 
       {/* DASHBOARD */}
@@ -356,13 +366,14 @@ export default function App() {
         }
       />
 <Route
-  path="/profile-jgb"
-  element={<ProfileJGBPage />}
+  path="/organization-profile"
+  element={<ProfileDwPage />}
 />
 <Route
   path="/wardrobe"
   element={<WardrobePage />}
 />
+
 
     </Routes>
   );

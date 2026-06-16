@@ -332,42 +332,41 @@ useEffect(() => {
     type
   ) => {
 
-    switch (type) {
-      
+   switch (type) {
 
-      case "inventory_add":
-        return "from-emerald-500/20 to-green-500/10 border-emerald-500/30 text-emerald-300";
+  case "inventory_add":
+    return "from-red-950/60 to-black border-red-700/40 text-red-200";
 
-      case "inventory_update":
-        return "from-blue-500/20 to-cyan-500/10 border-blue-500/30 text-blue-300";
+  case "inventory_update":
+    return "from-red-950/60 to-black border-red-600/30 text-red-300";
 
-      case "inventory_delete":
-        return "from-red-500/20 to-rose-500/10 border-red-500/30 text-red-300";
+  case "inventory_delete":
+    return "from-red-900/60 to-black border-red-500/40 text-red-300";
 
-      case "crafting_request":
-        return "from-yellow-500/20 to-orange-500/10 border-yellow-500/30 text-yellow-300";
+  case "crafting_request":
+    return "from-red-950/60 to-black border-red-700/30 text-red-300";
 
-      case "crafting_approved":
-        return "from-green-500/20 to-lime-500/10 border-green-500/30 text-green-300";
+  case "crafting_approved":
+    return "from-red-900/50 to-black border-red-500/30 text-red-200";
 
-      case "crafting_rejected":
-        return "from-red-500/20 to-pink-500/10 border-red-500/30 text-red-300";
+  case "crafting_rejected":
+    return "from-red-800/50 to-black border-red-500/40 text-red-300";
 
-      case "crafting_failed":
-  return "from-orange-500/20 to-yellow-500/10 border-orange-500/30 text-orange-300";
+  case "crafting_failed":
+    return "from-red-800/50 to-black border-red-500/40 text-red-300";
 
-case "crafting_completed":
-  return "from-green-500/20 to-emerald-500/10 border-green-500/30 text-green-300";
+  case "crafting_completed":
+    return "from-red-900/50 to-black border-red-500/30 text-red-200";
 
-        case "finance_approved":
-      return "from-green-500/20 to-emerald-500/10 border-green-500/30 text-green-300";
+  case "finance_approved":
+    return "from-red-900/50 to-black border-red-500/30 text-red-200";
 
-    case "finance_rejected":
-      return "from-red-500/20 to-rose-500/10 border-red-500/30 text-red-300";
+  case "finance_rejected":
+    return "from-red-800/50 to-black border-red-500/40 text-red-300";
 
-      default:
-        return "from-gray-500/20 to-gray-500/10 border-gray-500/30 text-gray-300";
-    }
+  default:
+    return "from-red-950/60 to-black border-red-700/30 text-red-200";
+}
   };
 
   // =========================
@@ -511,6 +510,12 @@ case "crafting_completed":
       item.action === "Approved"
         ? "finance_approved"
         : "finance_rejected",
+
+    items:
+      item.items || [],
+
+      note:
+  item.note || "",
 
     action:
       item.action === "Approved"
@@ -701,9 +706,23 @@ case "crafting_completed":
     <AppLayout>
 
       <div className="text-white w-full relative">
+        <div
+  className="
+    absolute
+    top-20
+    left-1/2
+    -translate-x-1/2
+    w-[700px]
+    h-[700px]
+    bg-red-900/20
+    blur-[180px]
+    rounded-full
+    pointer-events-none
+  "
+/>
 
         {/* BACKGROUND EFFECT */}
-        <div className="absolute top-0 right-0 w-full max-w-[400px] min-h-[400px] bg-purple-700/10 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute top-0 right-0 w-full max-w-[400px] min-h-[400px] bg-red-700/10 blur-3xl rounded-full pointer-events-none" />
 
         {/* HEADER */}
         <div className="mb-10 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
@@ -712,7 +731,7 @@ case "crafting_completed":
 
             <div className="flex items-center gap-3 mb-3">
 
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-purple-900/40">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-600 to-red-600 flex items-center justify-center shadow-lg shadow-red-900/40">
 
                 <Shield size={24} />
 
@@ -720,12 +739,20 @@ case "crafting_completed":
 
               <div>
 
-                <h1 className="text-5xl font-black tracking-wide bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
-                  Activity Logs
-                </h1>
+                 <h1 className="text-5xl font-black">
 
-                <p className="text-purple-300/70 text-sm tracking-[0.3em] uppercase mt-1">
-                  地獄薔薇 • System Monitoring
+  <span className="text-white">
+    ACTIVITY
+  </span>
+
+  <span className="text-red-500 ml-3">
+    LOGS
+  </span>
+
+</h1>
+
+                <p className="text-red-300/70 text-sm tracking-[0.3em] uppercase mt-1">
+                  DWARRIORS • System Monitoring
                 </p>
 
               </div>
@@ -743,7 +770,7 @@ case "crafting_completed":
             onClick={
               clearLogs
             }
-            className="group bg-gradient-to-r from-red-700 to-rose-700 hover:scale-[1.03] transition-all px-6 py-4 rounded-2xl font-semibold shadow-lg shadow-red-900/30 flex items-center gap-3"
+            className="group bg-gradient-to-r from-red-700 to-red-500 hover:scale-[1.03] transition-all px-6 py-4 rounded-2xl font-semibold shadow-lg shadow-red-900/30 flex items-center gap-3"
           >
 
             <Trash2
@@ -762,7 +789,7 @@ case "crafting_completed":
 
           <Search
             size={20}
-            className="absolute left-5 top-1/2 -translate-y-1/2 text-purple-300/50"
+            className="absolute left-5 top-1/2 -translate-y-1/2 text-red-300/50"
           />
 
           <input
@@ -779,7 +806,21 @@ case "crafting_completed":
                 1
               );
             }}
-            className="w-full bg-[#121018]/90 backdrop-blur-xl border border-purple-500/20 rounded-3xl pl-14 pr-5 py-5 outline-none focus:border-purple-400 transition-all"
+            className="
+w-full
+bg-black/80
+backdrop-blur-xl
+border
+border-red-700/30
+rounded-3xl
+pl-14
+pr-5
+py-5
+outline-none
+focus:border-red-500
+focus:shadow-[0_0_20px_rgba(220,38,38,0.3)]
+transition-all
+"
           />
 
         </div>
@@ -787,7 +828,7 @@ case "crafting_completed":
         {/* STATS */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-10">
 
-          <div className="bg-gradient-to-br from-[#161122] to-[#0d0b14] border border-purple-500/20 rounded-3xl p-6 shadow-xl">
+          <div className="bg-gradient-to-br from-[#180000] to-black border border-red-500/20 rounded-3xl p-6 shadow-xl">
 
             <p className="text-gray-400 text-sm">
               Total Activities
@@ -799,51 +840,51 @@ case "crafting_completed":
 
           </div>
 
-          <div className="bg-gradient-to-br from-[#161122] to-[#0d0b14] border border-blue-500/20 rounded-3xl p-6 shadow-xl">
+          <div className="bg-gradient-to-br from-[#180000] to-black border border-red-700/30 rounded-3xl p-6 shadow-xl">
 
             <p className="text-gray-400 text-sm">
               Inventory Activities
             </p>
 
-            <h2 className="text-5xl font-black mt-4 text-blue-400">
+            <h2 className="text-5xl font-black mt-4 text-red-400">
               {stats.inventory}
             </h2>
 
           </div>
 
-          <div className="bg-gradient-to-br from-[#161122] to-[#0d0b14] border border-yellow-500/20 rounded-3xl p-6 shadow-xl">
+          <div className="bg-gradient-to-br from-[#180000] to-black border border-red-700/30 rounded-3xl p-6 shadow-xl">
 
             <p className="text-gray-400 text-sm">
               Crafting Activities
             </p>
 
-            <h2 className="text-5xl font-black mt-4 text-yellow-300">
+            <h2 className="text-5xl font-black mt-4 text-red-400">
               {stats.crafting}
             </h2>
 
           </div>
 
-          <div className="bg-gradient-to-br from-emerald-900/20 to-green-900/10 border border-emerald-500/30 rounded-3xl p-6 shadow-xl shadow-emerald-900/20">
+          <div className="from-[#180000] to-black border border-red-700/30 rounded-3xl p-6 shadow-xl shadow-red-700/30">
 
   <div className="flex items-center justify-between">
 
     <div>
 
-      <p className="text-emerald-300 text-sm">
+      <p className="text-red-300 text-sm">
         Finance Activities
       </p>
 
-      <h2 className="text-5xl font-black mt-4 text-emerald-400">
+      <h2 className="text-5xl font-black mt-4 text-red-400">
         {stats.finance}
       </h2>
 
     </div>
 
-    <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
+    <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center">
 
       <Wallet
         size={28}
-        className="text-emerald-400"
+        className="text-red-400"
       />
 
     </div>
@@ -944,7 +985,7 @@ case "crafting_completed":
 
                           <div className="flex items-center gap-4 flex-wrap">
 
-                            <div className="w-12 h-12 rounded-2xl bg-black/30 border border-white/10 flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-2xl bg-red-950/30 border border-red-700/30 flex items-center justify-center">
 
                               {getTypeIcon(
                                 log.type
@@ -971,7 +1012,7 @@ case "crafting_completed":
 
                             </div>
 
-                            <span className="ml-auto px-4 py-2 rounded-full bg-black/30 border border-white/10 text-xs font-bold">
+                            <span className="ml-auto px-4 py-2 rounded-full bg-red-950/30 border border-red-700/30 text-xs font-bold">
 
                               {getLogLabel(
                                 log.type
@@ -1018,7 +1059,7 @@ case "crafting_completed":
       Requester
     </p>
 
-    <h3 className="font-bold text-lg mt-2 text-yellow-300">
+    <h3 className="font-bold text-lg mt-2 text-red-400">
       {log.requesterName ||
         log.createdBy ||
         "-"}
@@ -1040,17 +1081,26 @@ case "crafting_completed":
 
                             </div>
 
-                            <div className="bg-black/25 border border-white/5 rounded-2xl p-4">
-  <p className="text-white/50 text-xs uppercase tracking-widest">
-    Amount
-  </p>
+                            {
+  log.transactionType ===
+  "Deposit" && (
 
-  <h3 className="font-bold text-lg mt-2">
-    Rp {Number(
-      log.amount || 0
-    ).toLocaleString("id-ID")}
-  </h3>
-</div>
+    <div className="bg-black/25 border border-white/5 rounded-2xl p-4">
+
+      <p className="text-white/50 text-xs uppercase tracking-widest">
+        Amount
+      </p>
+
+      <h3 className="font-bold text-lg mt-2">
+        Rp {Number(
+          log.amount || 0
+        ).toLocaleString("id-ID")}
+      </h3>
+
+    </div>
+
+  )
+}
 
                             {log.type?.includes("finance") && (
   <>
@@ -1074,7 +1124,12 @@ case "crafting_completed":
       </h3>
     </div>
 
+    {
+  log.transactionType ===
+  "Deposit" && (
+
     <div className="bg-black/25 border border-white/5 rounded-2xl p-4">
+
       <p className="text-white/50 text-xs uppercase tracking-widest">
         Money
       </p>
@@ -1082,16 +1137,147 @@ case "crafting_completed":
       <h3 className="font-bold text-lg mt-2">
         {log.moneyType || "-"}
       </h3>
+
     </div>
+
+  )
+}
   </>
 )}
 
                           </div>
 
+    {
+  (
+    log.transactionType ===
+      "Withdraw" ||
+
+    log.transactionType ===
+      "Return"
+  ) &&
+
+  log.items?.length > 0 && (
+
+    <div className="mt-5">
+
+      <p
+        className="
+          text-xs
+          uppercase
+          tracking-[0.2em]
+          text-red-300
+          mb-3
+        "
+      >
+        {
+  log.transactionType === "Return"
+    ? "Returned Items"
+    : "Withdraw Items"
+}
+      </p>
+
+      <div className="space-y-2">
+
+        {
+          log.items.map(
+            (item) => (
+
+              <div
+                key={item.itemId}
+                className="
+                  flex
+                  justify-between
+                  items-center
+                  bg-black/30
+                  border
+                  border-white/10
+                  rounded-xl
+                  px-4
+                  py-3
+                "
+              >
+
+                <span>
+                  {item.itemName}
+                </span>
+
+                <div className="text-right">
+
+  <div className="text-red-400 font-bold">
+    x{item.quantity}
+  </div>
+
+  {
+    item.originalQuantity && (
+      <div className="text-xs text-gray-400">
+        Hutang:
+        {" "}
+        {item.originalQuantity}
+      </div>
+    )
+  }
+
+  
+
+</div>
+
+              </div>
+
+            )
+          )
+        }
+        
+
+      </div>
+{
+  log.transactionType === "Return" &&
+  log.note && (
+
+    <div className="mt-5">
+
+      <div className="border-t border-white/10 mb-4" />
+
+      <div
+        className="
+          bg-black/30
+          border
+          border-red-700/30
+          rounded-2xl
+          p-4
+        "
+      >
+
+        <p
+          className="
+            text-xs
+            uppercase
+            tracking-widest
+            text-red-300
+            mb-2
+          "
+        >
+          Deskripsi Pengembalian
+        </p>
+
+        <p className="text-white whitespace-pre-wrap">
+          {log.note}
+        </p>
+
+      </div>
+
+    </div>
+
+  )
+}
+    </div>
+
+  )
+}
+
                           {/* DESCRIPTION */}
                           {description && (
 
-                            <div className="mt-5 bg-black/30 border border-white/10 rounded-3xl p-5">
+                            <div className="mt-5 bg-red-950/30 border border-red-700/30 rounded-3xl p-5">
 
                               <p className="text-white/80 leading-relaxed">
                                 {
@@ -1129,7 +1315,7 @@ case "crafting_completed":
                         {/* RIGHT */}
                         <div className="xl:text-right">
 
-                          <div className="bg-black/30 border border-white/10 px-5 py-4 rounded-2xl inline-block">
+                          <div className="bg-red-950/30 border border-red-700/30 px-5 py-4 rounded-2xl inline-block">
 
                             <p className="text-white/50 text-xs uppercase tracking-widest mb-2">
                               Created At
@@ -1157,7 +1343,7 @@ case "crafting_completed":
             {/* PAGINATION */}
             <div className="mt-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
-              <div className="text-gray-400 text-sm bg-[#121018] border border-purple-500/20 rounded-2xl px-5 py-4">
+              <div className="text-gray-400 text-sm bg-black border border-red-500/20 rounded-2xl px-5 py-4">
 
                 Showing{" "}
 
@@ -1194,14 +1380,14 @@ case "crafting_completed":
                         )
                     )
                   }
-                  className="w-14 h-14 rounded-2xl bg-[#121018] border border-purple-500/20 flex items-center justify-center hover:border-purple-400 transition-all"
+                  className="w-14 h-14 rounded-2xl bg-black border border-red-500/20 flex items-center justify-center hover:border-red-400 transition-all"
                 >
 
                   <ChevronLeft size={20} />
 
                 </button>
 
-                <div className="px-6 py-4 rounded-2xl bg-gradient-to-r from-purple-700/20 to-fuchsia-700/20 border border-purple-500/20 text-purple-200 font-bold">
+                <div className="px-6 py-4 rounded-2xl bg-gradient-to-r from-red-950 to-red-700/40 border border-red-500/20 text-red-200 font-bold">
 
                   {currentPage} /{" "}
                   {totalPages}
@@ -1218,7 +1404,7 @@ case "crafting_completed":
                         )
                     )
                   }
-                  className="w-14 h-14 rounded-2xl bg-[#121018] border border-purple-500/20 flex items-center justify-center hover:border-purple-400 transition-all"
+                  className="w-14 h-14 rounded-2xl bg-black border border-red-500/20 flex items-center justify-center hover:border-red-400 transition-all"
                 >
 
                   <ChevronRight size={20} />

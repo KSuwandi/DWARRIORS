@@ -20,123 +20,17 @@ import {
   startAfter,
   where,
   increment,
+  getDoc,
 } from "firebase/firestore";
 
 import AppLayout from "../layouts/AppLayout";
 import imageCompression from "browser-image-compression";
 import { useAuth } from "../contexts/AuthContext";
+import {
+  hasPermission,
+} from "../utils/permissions";
 import { db } from "../services/firebase/config";
 
-
-const PRICE_LIST = [
-
-  // =========================
-  // SENJATA
-  // =========================
-
-  {
-    category: "Senjata",
-    title: "PELURU 9MM",
-    merah: 150000,
-    putih: 150000,
-  },
-
-  {
-    category: "Senjata",
-    title: "PELURU .44 (MAGNUM)",
-    merah: 70000,
-    putih: 70000,
-  },
-
-  {
-    category: "Senjata",
-    title: "PELURU Double Action",
-    merah: 75000,
-    putih: 75000,
-  },
-
-  {
-    category: "Senjata",
-    title: "VEST",
-    merah: 80000,
-    putih: 70000,
-  },
-
-  {
-    category: "Senjata",
-    title: "COMBAT PISTOL",
-    merah: 200000,
-    putih: 180000,
-  },
-
-  {
-    category: "Senjata",
-    title: "SMG MK2",
-    merah: 500000,
-    putih: 450000,
-  },
-
-  {
-    category: "Senjata",
-    title: "MINI SMG",
-    merah: 450000,
-    putih: 415000,
-  },
-
-  {
-    category: "Senjata",
-    title: "PYTHON",
-    merah: 400000,
-    putih: 360000,
-  },
-
-  {
-    category: "Senjata",
-    title: "AK 47",
-    merah: 650000,
-    putih: 585000,
-  },
-
-  {
-    category: "Senjata",
-    title: "HEAVY SNIPER",
-    merah: 1250000,
-    putih: 1125000,
-  },
-
-  {
-    category: "Senjata",
-    title: "DOUBLE ACTION",
-    merah: 450000,
-    putih: 370000,
-  },
-
-  {
-    category: "Senjata",
-    title: "WM",
-    merah: 150000,
-    putih: 130000,
-  },
-
-    // =========================
-  // PAKET
-  // =========================
-
-  {
-    category: "Paket",
-    title: "1 SET FULL CASH",
-    merah: 1590000,
-    putih: 1300000,
-  },
-
-  {
-    category: "Paket",
-    title: "1 SET PYTHON",
-    merah: 790000,
-    putih: 710000,
-  },
-
-];
 
 export default function FinancePage() {
 
@@ -151,6 +45,11 @@ export default function FinancePage() {
   const [
   inventoryItems,
   setInventoryItems,
+] = useState([]);
+
+const [
+  withdrawItems,
+  setWithdrawItems,
 ] = useState([]);
 
 const [
@@ -214,6 +113,101 @@ useState({
   const [selectedPriceItem, setSelectedPriceItem] =
   useState("");
 
+  const [activeTab, setActiveTab] =
+  useState("DEPOSIT");
+
+  const [
+  showDebtModal,
+  setShowDebtModal,
+] = useState(false);
+
+const [
+  debtItems,
+  setDebtItems,
+] = useState([]);
+
+const [
+  selectedReturns,
+  setSelectedReturns,
+] = useState([]);
+
+const [
+  returnDescription,
+  setReturnDescription,
+] = useState("");
+
+const [
+  returnImageUrl,
+  setReturnImageUrl,
+] = useState("");
+
+const loadDebtItems = async () => {
+
+  try {
+
+    const snapshot =
+      await getDocs(
+        query(
+          collection(
+            db,
+            "finance_logs"
+          ),
+
+          where(
+            "requesterName",
+            "==",
+            user.rpName
+          ),
+
+          where(
+            "paymentType",
+            "==",
+            "Hutang"
+          ),
+
+          where(
+            "transactionType",
+            "==",
+            "Withdraw"
+          ),
+
+          where(
+            "status",
+            "==",
+            "Approved"
+          )
+        )
+      );
+
+    const data =
+  snapshot.docs
+    .map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    .filter(
+      (item) =>
+        item.debtStatus !== "Lunas"
+    );
+
+    setDebtItems(data);
+
+    console.log(
+      "Debt Items:",
+      data
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Load hutang error:",
+      error
+    );
+
+  }
+
+};
+
   // =====================================
   // CREATE ACTIVITY LOG
   // =====================================
@@ -270,12 +264,12 @@ useState({
 
       body.append(
         "upload_preset",
-        "jigokubara"
+        "DWARRIORS"
       );
 
       const response =
         await fetch(
-          "https://api.cloudinary.com/v1_1/dpyhp3o66/image/upload",
+          "https://api.cloudinary.com/v1_1/dbn9lgdi4/image/upload",
           {
             method: "POST",
             body,
@@ -290,7 +284,7 @@ useState({
         throw new Error(
           "Upload gagal"
         );
-      }
+      } 
 
       setForm((prev) => ({
         ...prev,
@@ -318,6 +312,80 @@ useState({
       setUploadingImage(false);
     }
   };
+
+  const handleReturnImageUpload =
+async (e) => {
+
+  try {
+
+    const file =
+      e.target.files?.[0];
+
+    if (!file) return;
+
+    setUploadingImage(true);
+
+    const compressedFile =
+      await imageCompression(
+        file,
+        {
+          maxSizeMB: 0.4,
+          maxWidthOrHeight: 1280,
+          useWebWorker: true,
+        }
+      );
+
+    const body =
+      new FormData();
+
+    body.append(
+      "file",
+      compressedFile
+    );
+
+    body.append(
+      "upload_preset",
+      "DWARRIORS"
+    );
+
+    const response =
+      await fetch(
+        "https://api.cloudinary.com/v1_1/dbn9lgdi4/image/upload",
+        {
+          method: "POST",
+          body,
+        }
+      );
+
+    const data =
+      await response.json();
+
+    setReturnImageUrl(
+      data.secure_url.replace(
+        "/upload/",
+        "/upload/f_auto,q_auto/"
+      )
+    );
+
+    toast.success(
+      "Bukti berhasil diupload"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    toast.error(
+      "Upload gagal"
+    );
+
+  } finally {
+
+    setUploadingImage(false);
+
+  }
+
+};
 
   const loadTransactions =
   async () => {
@@ -634,6 +702,37 @@ useEffect(() => {
       )
   );
 
+  const addWithdrawItem = (item) => {
+
+  const existing =
+    withdrawItems.find(
+      (x) =>
+        x.itemId === item.id
+    );
+
+  if (existing) {
+
+    toast.error(
+      "Barang sudah ditambahkan"
+    );
+
+    return;
+  }
+
+  setWithdrawItems((prev) => [
+
+    ...prev,
+
+    {
+      itemId: item.id,
+      itemName: item.name,
+      quantity: 1,
+    },
+
+  ]);
+
+};
+
   const filteredTransactions =
     useMemo(() => {
 
@@ -675,6 +774,19 @@ useEffect(() => {
       if (!user) return;
 
       if (
+  activeTab === "WITHDRAW" &&
+  withdrawItems.length === 0
+) {
+
+  toast.error(
+    "Pilih minimal 1 barang"
+  );
+
+  return;
+
+}
+
+      if (
         !form.title.trim()
       ) {
 
@@ -686,15 +798,16 @@ useEffect(() => {
       }
 
       if (
-        !form.amount
-      ) {
+  activeTab === "DEPOSIT" &&
+  !form.amount
+) {
 
-        toast.error(
-          "Jumlah uang wajib diisi"
-        );
+  toast.error(
+    "Jumlah uang wajib diisi"
+  );
 
-        return;
-      }
+  return;
+}
 
       if (!form.note.trim()) {
 
@@ -706,10 +819,9 @@ useEffect(() => {
       }
 
       if (
-      form.type ===
-        "Deposit" &&
-      !form.imageUrl
-    ) {
+  activeTab === "DEPOSIT" &&
+  !form.imageUrl
+){
 
       toast.error(
         "Foto bukti deposit wajib diupload"
@@ -719,11 +831,14 @@ useEffect(() => {
     }
 
       const amount =
-        Number(form.amount);
+  activeTab === "DEPOSIT"
+    ? Number(form.amount)
+    : 0;
 
       if (
-        amount <= 0
-      ) {
+  activeTab === "DEPOSIT" &&
+  amount <= 0
+) {
 
         toast.error(
           "Jumlah uang tidak valid"
@@ -745,20 +860,31 @@ useEffect(() => {
           ),
           {
 
-            inventoryItemId:
-              form.inventoryItemId,
+            withdrawItems:
+  activeTab === "WITHDRAW"
+    ? withdrawItems
+    : [],
 
-            quantity:
-              Number(form.quantity || 1),
+inventoryItemId:
+  form.inventoryItemId,
+
+quantity:
+  Number(form.quantity || 1),
 
             type:
-              form.type,
+  activeTab === "DEPOSIT"
+    ? "Deposit"
+    : "Withdraw",
 
             paymentType:
-              form.paymentType,
+  activeTab === "WITHDRAW"
+    ? "Hutang"
+    : form.paymentType,
 
-            moneyType:
-              form.moneyType,
+moneyType:
+  activeTab === "WITHDRAW"
+    ? ""
+    : form.moneyType,
 
             role: 
               role || "",
@@ -790,20 +916,26 @@ useEffect(() => {
         );
 
         toast.success(
-          `${form.type} berhasil dikirim untuk approval`
-        );
+  `${activeTab} berhasil dikirim untuk approval`
+);
 
        setForm({
   type: "Deposit",
+
   paymentType: "Cash",
-  moneyType: "Uang Putih",
+
+  moneyType: "",
 
   inventoryItemId: "",
+
   quantity: 1,
 
   title: "",
+
   amount: "",
+
   note: "",
+
   imageUrl: "",
 });
 
@@ -824,9 +956,9 @@ useEffect(() => {
     };
 
   // =====================================
-  // BAYAR HUTANG
+  // Pengembalian Barang
   // =====================================
-  const handlePayDebt =
+  const handleItemReturn =
     async () => {
 
       if (
@@ -853,9 +985,9 @@ useEffect(() => {
         Number(input);
 
       if (
-        !amount ||
-        amount <= 0
-      ) {
+  activeTab === "DEPOSIT" &&
+  amount <= 0
+) {
 
         toast.error(
           "Jumlah pembayaran tidak valid"
@@ -889,7 +1021,7 @@ useEffect(() => {
           ),
           {
             type:
-              "Pembayaran Hutang",
+                "Pengembalian Barang",
 
             role: 
               role || "",
@@ -901,7 +1033,7 @@ useEffect(() => {
               "Uang Putih",
 
             title:
-              "Pembayaran Hutang",
+              "Pengembalian Barang",
 
             amount,
 
@@ -961,14 +1093,20 @@ useEffect(() => {
 
   try {
 
-    if (role !== "Oyabun") {
+   if (
+  !hasPermission(
+    role,
+    "APPROVE_FINANCE"
+  )
+) {
 
-      toast.error(
-        "Hanya Oyabun yang bisa approve"
-      );
+  toast.error(
+    "Tidak memiliki akses approval"
+  );
 
-      return;
-    }
+  return;
+
+}
 
     const transactionRef = doc(
       db,
@@ -987,9 +1125,9 @@ useEffect(() => {
       }
     );
 
-    // =====================================
-    // AUTO TAMBAH INVENTORY
-    // =====================================
+   // ==========================
+    // DEPOSIT
+    // ==========================
 
     if (
       item.type === "Deposit" &&
@@ -1003,13 +1141,70 @@ useEffect(() => {
       );
 
       await updateDoc(
-  inventoryRef,
-  {
-    stock: increment(
-      Number(item.quantity || 1)
-    ),
-  }
-);
+        inventoryRef,
+        {
+          stock: increment(
+            Number(item.quantity || 1)
+          ),
+        }
+      );
+
+    }
+
+    // ==========================
+    // WITHDRAW
+    // ==========================
+
+    if (
+      item.type === "Withdraw" &&
+      item.withdrawItems?.length
+    ) {
+
+      for (const withdrawItem of item.withdrawItems) {
+
+        const inventoryRef = doc(
+          db,
+          "inventory",
+          withdrawItem.itemId
+        );
+
+        const inventorySnap =
+          await getDoc(
+            inventoryRef
+          );
+
+        if (!inventorySnap.exists()) {
+
+          throw new Error(
+            `${withdrawItem.itemName} tidak ditemukan`
+          );
+
+        }
+
+        const stock =
+          inventorySnap.data().stock || 0;
+
+        if (
+          stock <
+          withdrawItem.quantity
+        ) {
+
+          throw new Error(
+            `Stock ${withdrawItem.itemName} tidak mencukupi`
+          );
+
+        }
+
+        await updateDoc(
+          inventoryRef,
+          {
+            stock: increment(
+              -withdrawItem.quantity
+            ),
+          }
+        );
+
+      }
 
     }
 
@@ -1022,12 +1217,14 @@ useEffect(() => {
     console.error(error);
 
     toast.error(
-      "Gagal approve transaksi"
+      error.message
     );
 
   }
 
 };
+
+
 
 
   // =====================================
@@ -1037,24 +1234,30 @@ const deleteTransaction = async (item) => {
 
   if (!user) return;
 
-  if (role !== "Oyabun") {
+  if (
+  !hasPermission(
+    role,
+    "DELETE_MEMBER"
+  )
+) {
 
-    toast.error(
-      "Hanya Oyabun yang bisa menghapus history"
-    );
+  toast.error(
+    "Tidak memiliki akses hapus"
+  );
 
-    return;
-  }
+  return;
+
+}
 
   // VALIDASI DATA
-  if (!item?.id || !item?.createdByUid) {
+  if (!item?.id) {
 
-    toast.error(
-      "Data transaksi tidak valid"
-    );
+  toast.error(
+    "Data transaksi tidak valid"
+  );
 
-    return;
-  }
+  return;
+}
 
   // REMINDER DELETE
   const confirmDelete = window.confirm(
@@ -1093,14 +1296,14 @@ Klik Cancel untuk membatalkan.`
     setLoading(true);
 
     await deleteDoc(
-      doc(
-        db,
-        "users",
-        item.createdByUid,
-        "finance",
-        item.id
-      )
-    );
+  doc(
+    db,
+    "users",
+    user.uid,
+    "finance",
+    item.id
+  )
+);
 
     // REFRESH DATA
     await loadTransactions();
@@ -1123,6 +1326,92 @@ Klik Cancel untuk membatalkan.`
 
   }
 };
+const submitItemReturn = async () => {
+
+  if (!returnImageUrl) {
+
+  toast.error(
+    "Upload foto bukti terlebih dahulu"
+  );
+
+  return;
+
+}
+
+  if (selectedReturns.length === 0) {
+
+    toast.error(
+      "Pilih barang yang dikembalikan"
+    );
+
+    return;
+  }
+
+  try {
+
+    await addDoc(
+  collection(
+    db,
+    "users",
+    user.uid,
+    "finance"
+  ),
+      {
+  type: "Return",
+
+  paymentType: "Hutang",
+
+  role: role || "",
+
+  requesterUid: user.uid,
+
+  requesterName: user.rpName,
+
+  title: "Pengembalian Barang",
+
+  note:
+  returnDescription ||
+  `Mengembalikan ${selectedReturns.length} item`,
+
+  items: selectedReturns,
+
+  imageUrl:
+  returnImageUrl,
+
+  debtStatus:
+  activeTab === "WITHDRAW"
+    ? "Masih Hutang"
+    : "",
+
+  status: "Pending",
+
+  createdAt: serverTimestamp(),
+}
+    );
+
+    toast.success(
+      "Request pengembalian berhasil dikirim"
+    );
+
+    setSelectedReturns([]);
+
+setReturnDescription("");
+
+setReturnImageUrl("");
+
+setShowDebtModal(false);
+
+  } catch (error) {
+
+    console.error(error);
+
+    toast.error(
+      "Gagal mengirim request"
+    );
+
+  }
+
+};
 
   return (
 
@@ -1135,10 +1424,11 @@ Klik Cancel untuk membatalkan.`
 
   <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
 
-    <div className="w-full max-w-5xl max-h-[90vh] bg-[#14091F] border border-purple-700/40 rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/50 flex flex-col">
+    <div className="w-full max-w-5xl max-h-[90vh] bg-[#14091F] border border-red-700/40 rounded-3xl overflow-hidden shadow-2xl shadow-red-900/50 flex flex-col">
 
       {/* HEADER */}
-      <div className="bg-gradient-to-r from-purple-900 to-violet-700 px-6 py-5 flex items-center justify-between flex-shrink-0">
+      
+      <div className="bg-gradient-to-r from-red-900 to-violet-700 px-6 py-5 flex items-center justify-between flex-shrink-0">
 
         <div>
 
@@ -1146,8 +1436,8 @@ Klik Cancel untuk membatalkan.`
             PRICE LIST SENJATA
           </h2>
 
-          <p className="text-purple-200 text-sm mt-1">
-            Jigokubara Family
+          <p className="text-red-200 text-sm mt-1">
+            DWARRIORS Family
           </p>
 
         </div>
@@ -1170,17 +1460,17 @@ Klik Cancel untuk membatalkan.`
 
             <thead>
 
-              <tr className="bg-gradient-to-r from-purple-800 to-violet-700 text-white">
+              <tr className="bg-gradient-to-r from-red-800 to-violet-700 text-white">
 
-                <th className="p-4 text-left border border-purple-500">
+                <th className="p-4 text-left border border-red-500">
                   BARANG
                 </th>
 
-                <th className="p-4 text-left border border-purple-500">
+                <th className="p-4 text-left border border-red-500">
                   UANG MERAH
                 </th>
 
-                <th className="p-4 text-left border border-purple-500">
+                <th className="p-4 text-left border border-red-500">
                   UANG PUTIH
                 </th>
 
@@ -1268,15 +1558,15 @@ Klik Cancel untuk membatalkan.`
                   className="bg-[#1A1028] hover:bg-[#241437] transition-all"
                 >
 
-                  <td className="p-4 border border-purple-900/40 font-semibold">
+                  <td className="p-4 border border-red-900/40 font-semibold">
                     {row.item}
                   </td>
 
-                  <td className="p-4 border border-purple-900/40 text-red-300">
+                  <td className="p-4 border border-red-900/40 text-red-300">
                     {row.merah}
                   </td>
 
-                  <td className="p-4 border border-purple-900/40 text-yellow-200">
+                  <td className="p-4 border border-red-900/40 text-yellow-200">
                     {row.putih}
                   </td>
 
@@ -1293,7 +1583,7 @@ Klik Cancel untuk membatalkan.`
         {/* PACKAGE */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
 
-          <div className="bg-gradient-to-br from-red-900/40 to-purple-900/40 border border-red-500/30 rounded-3xl p-5">
+          <div className="bg-gradient-to-br from-red-900/40 to-red-900/40 border border-red-500/30 rounded-3xl p-5">
 
             <h3 className="text-xl font-bold text-red-300">
               1 SET FULL CASH UNGMER
@@ -1309,7 +1599,7 @@ Klik Cancel untuk membatalkan.`
 
           </div>
 
-          <div className="bg-gradient-to-br from-yellow-700/30 to-purple-900/40 border border-yellow-400/30 rounded-3xl p-5">
+          <div className="bg-gradient-to-br from-yellow-700/30 to-red-900/40 border border-yellow-400/30 rounded-3xl p-5">
 
             <h3 className="text-xl font-bold text-yellow-200">
               1 SET FULL CASH UNGPUT
@@ -1325,7 +1615,7 @@ Klik Cancel untuk membatalkan.`
 
           </div>
 
-          <div className="bg-gradient-to-br from-red-900/40 to-purple-900/40 border border-red-500/30 rounded-3xl p-5">
+          <div className="bg-gradient-to-br from-red-900/40 to-red-900/40 border border-red-500/30 rounded-3xl p-5">
 
             <h3 className="text-xl font-bold text-red-300">
               1 SET PYTHON UANG MERAH
@@ -1337,7 +1627,7 @@ Klik Cancel untuk membatalkan.`
 
           </div>
 
-          <div className="bg-gradient-to-br from-yellow-700/30 to-purple-900/40 border border-yellow-400/30 rounded-3xl p-5">
+          <div className="bg-gradient-to-br from-yellow-700/30 to-red-900/40 border border-yellow-400/30 rounded-3xl p-5">
 
             <h3 className="text-xl font-bold text-yellow-200">
               1 SET PYTHON UANG PUTIH
@@ -1364,9 +1654,9 @@ Klik Cancel untuk membatalkan.`
 
           <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
 
-            <div className="w-full max-w-4xl bg-[#14091F] border border-purple-700/40 rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/50">
+            <div className="w-full max-w-4xl bg-[#14091F] border border-red-700/40 rounded-3xl overflow-hidden shadow-2xl shadow-red-900/50">
 
-              <div className="bg-gradient-to-r from-purple-900 to-violet-700 px-6 py-5 flex items-center justify-between">
+              <div className="bg-gradient-to-r from-red-900 to-violet-700 px-6 py-5 flex items-center justify-between">
 
                 <div>
 
@@ -1374,8 +1664,8 @@ Klik Cancel untuk membatalkan.`
                     PRICE LIST DISNAKER
                   </h2>
 
-                  <p className="text-purple-200 text-sm mt-1">
-                    Jigokubara Family
+                  <p className="text-red-200 text-sm mt-1">
+                    DWARRIORS Family
                   </p>
 
                 </div>
@@ -1399,17 +1689,17 @@ Klik Cancel untuk membatalkan.`
 
                   <thead>
 
-  <tr className="bg-gradient-to-r from-purple-800 to-violet-700 text-white">
+  <tr className="bg-gradient-to-r from-red-800 to-violet-700 text-white">
 
-    <th className="p-4 text-left border border-purple-500">
+    <th className="p-4 text-left border border-red-500">
       NAMA BARANG
     </th>
 
-    <th className="p-4 text-center border border-purple-500">
+    <th className="p-4 text-center border border-red-500">
       /PAKET
     </th>
 
-    <th className="p-4 text-left border border-purple-500">
+    <th className="p-4 text-left border border-red-500">
       HARGA
     </th>
 
@@ -1542,15 +1832,15 @@ Klik Cancel untuk membatalkan.`
       className="bg-[#1A1028] hover:bg-[#241437]"
     >
 
-      <td className="p-4 border border-purple-900/40 font-semibold">
+      <td className="p-4 border border-red-900/40 font-semibold">
         {row.paket}
       </td>
 
-      <td className="p-4 border border-purple-900/40 text-center text-cyan-200">
+      <td className="p-4 border border-red-900/40 text-center text-cyan-200">
         {row.perPaket}
       </td>
 
-      <td className="p-4 border border-purple-900/40 text-yellow-200">
+      <td className="p-4 border border-red-900/40 text-yellow-200">
         {row.harga}
       </td>
 
@@ -1578,60 +1868,73 @@ Klik Cancel untuk membatalkan.`
 
   <div>
 
-    <div className="flex items-center gap-3 flex-wrap">
+    <div className="flex items-start justify-between flex-wrap gap-4">
 
-      <h1 className="text-3xl font-bold tracking-tight">
-        Deposit - Withdraw System
-      </h1>
+  <div>
 
-      <span
-        className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-          role === "Oyabun"
-            ? "bg-purple-500/20 text-purple-300 border-purple-500/30"
-            : "bg-[#1A1330] text-gray-300 border-purple-900/40"
-        }`}
-      >
-        {role}
+    <h1 className="text-4xl font-black tracking-tight">
+
+      <span className="text-red-500">
+        WITHDRAW
       </span>
 
-    </div>
+      {" "}
+
+      <span className="text-white">
+        AND DEPOSIT
+      </span>
+
+    </h1>
+
+  </div>
+
+  <div className="flex items-center gap-3">
+
+    <span
+      className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+        hasPermission(
+          role,
+          "APPROVE_FINANCE"
+        )
+          ? "bg-red-500/20 text-red-300 border-red-500/30"
+          : "bg-[#1A1330] text-gray-300 border-red-900/40"
+      }`}
+    >
+      {role}
+    </span>
+
+    <button
+      onClick={async () => {
+
+        await loadDebtItems();
+
+        setShowDebtModal(true);
+
+      }}
+      className="
+        bg-red-600
+        hover:bg-red-700
+        px-5
+        py-2
+        rounded-xl
+        font-semibold
+        transition-all
+      "
+    >
+      BAYAR HUTANG
+    </button>
+
+  </div>
+
+</div>
 
     <p className="text-gray-400 mt-2 text-sm">
-      Sistem Deposit dan Withdraw Jigokubara Family
+      Manage Deposit, Withdraw, and Return Operations
     </p>
 
   </div>
 
-  <div className="flex gap-3 flex-wrap">
-
-    <button
-      onClick={() =>
-        setShowWeaponPriceList(true)
-      }
-      className="bg-gradient-to-r from-fuchsia-700 to-purple-700 hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-purple-900/30"
-    >
-      Pricelist Senjata
-    </button>
-
-    <button
-      onClick={() =>
-        setShowDisnakerPriceList(true)
-      }
-      className="bg-gradient-to-r from-indigo-700 to-blue-700 hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-blue-900/30"
-    >
-      Pricelist Disnaker
-    </button>
-
-    <button
-      onClick={
-        handlePayDebt
-      }
-      className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:opacity-90 px-5 py-3 rounded-2xl font-semibold transition-all shadow-lg shadow-yellow-900/30"
-    >
-      Bayar Hutang
-    </button>
-
-  </div>
+ 
 
 </div>
 
@@ -1639,7 +1942,15 @@ Klik Cancel untuk membatalkan.`
 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
 
   {/* TOTAL PEMASUKAN */}
-  <div className="bg-[#141021] border border-green-500/20 rounded-3xl p-5">
+  <div className="
+bg-gradient-to-br
+from-black
+to-[#220000]
+border
+border-red-500/20
+rounded-3xl
+p-5
+">
 
     <p className="text-sm text-gray-400">
       Total Deposit
@@ -1655,7 +1966,15 @@ Klik Cancel untuk membatalkan.`
   </div>
 
   {/* TOTAL PENGELUARAN */}
-  <div className="bg-[#141021] border border-red-500/20 rounded-3xl p-5">
+  <div className="
+bg-gradient-to-br
+from-black
+to-[#220000]
+border
+border-red-500/20
+rounded-3xl
+p-5
+" >
 
     <p className="text-sm text-gray-400">
       Total Withdraw
@@ -1670,58 +1989,86 @@ Klik Cancel untuk membatalkan.`
 
   </div>
 
-  {/* TOTAL HUTANG */}
-  <div className="bg-[#141021] border border-yellow-500/20 rounded-3xl p-5">
+</div>
 
-    <p className="text-sm text-gray-400">
-      Total Hutang
-    </p>
+<div
+  className="
+    flex
+    gap-2
+    mb-6
+  "
+>
 
-    <h2 className="text-3xl font-black text-yellow-300 mt-2">
-      Rp{" "}
-      {totalDebt.toLocaleString(
-        "id-ID"
-      )}
-    </h2>
+{[
+  "DEPOSIT",
+  "WITHDRAW",
+].map((tab) => (
 
-  </div>
+    <button
+      key={tab}
+      onClick={() =>
+        setActiveTab(tab)
+      }
+      className={`
+        px-5
+        py-3
+        rounded-2xl
+        font-bold
+        transition-all
+
+        ${
+          activeTab === tab
+? "bg-gradient-to-r from-red-700 to-red-500 shadow-lg shadow-red-900/40"
+: "bg-black border border-red-900/30"
+        }
+      `}
+    >
+
+      {tab}
+
+    </button>
+
+  ))}
 
 </div>
 
                 {/* FORM */}
+                {
+  activeTab === "DEPOSIT" && (
+    
         <form
           onSubmit={
             handleSubmit
           }
-          className="bg-[#141021] border border-purple-900/30 rounded-3xl p-5 mb-6"
+          className="
+bg-gradient-to-br
+from-black
+via-[#120000]
+to-[#1a0000]
+border
+border-red-700/40
+rounded-3xl
+p-6
+mb-6
+shadow-xl
+shadow-red-900/20
+"
         >
+          <h2 className="
+text-3xl
+font-black
+mb-6
+text-transparent
+bg-clip-text
+bg-gradient-to-r
+from-red-500
+to-white
+tracking-wide
+">
+  DEPOSIT FORM
+</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-3">
-
-            <select
-              value={
-                form.type
-              }
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  type:
-                    e.target
-                      .value,
-                })
-              }
-              className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
-            >
-
-              <option>
-                Deposit
-              </option>
-
-              <option>
-                Withdraw
-              </option>
-
-            </select>
 
             <select
               value={
@@ -1735,7 +2082,7 @@ Klik Cancel untuk membatalkan.`
                       .value,
                 })
               }
-              className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
+              className="bg-black/70 border border-red-700/40 rounded-2xl px-4 py-3 outline-none focus:border-red-400"
             >
 
               <option>
@@ -1789,7 +2136,7 @@ Klik Cancel untuk membatalkan.`
     });
 
   }}
-  className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
+  className="bg-black/70 border border-red-700/40 rounded-2xl px-4 py-3 outline-none focus:border-red-400"
 >
 
   <option>
@@ -1802,75 +2149,7 @@ Klik Cancel untuk membatalkan.`
 
 </select>
 
-  {form.type === "Withdraw" && (
-
-<select
-  value={selectedPriceItem}
-  onChange={(e) => {
-
-    const value = e.target.value;
-
-    setSelectedPriceItem(value);
-
-    const selectedItem =
-      PRICE_LIST.find(
-        item => item.title === value
-      );
-
-    if (!selectedItem) return;
-
-    const price =
-      form.moneyType === "Uang Merah"
-        ? selectedItem.merah
-        : selectedItem.putih;
-
-    setForm(prev => ({
-      ...prev,
-      title: selectedItem.title,
-      amount: price,
-    }));
-
-  }}
-  className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
->
-
-  <option value="">
-    Pilih Dari Pricelist
-  </option>
-
-  <optgroup label="Senjata">
-    {PRICE_LIST
-      .filter(item => item.category === "Senjata")
-      .map(item => (
-        <option
-          key={item.title}
-          value={item.title}
-        >
-          {item.title}
-        </option>
-      ))}
-  </optgroup>
-
-  <optgroup label="Paket">
-    {PRICE_LIST
-      .filter(item => item.category === "Paket")
-      .map(item => (
-        <option
-          key={item.title}
-          value={item.title}
-        >
-          {item.title}
-        </option>
-      ))}
-  </optgroup>
-
-</select>
-
-)}
-
-
-
-     {form.type === "Deposit" && (
+     {activeTab === "DEPOSIT" && (
 
 <div className="relative">
 
@@ -1883,14 +2162,14 @@ Klik Cancel untuk membatalkan.`
     }
     className="
       w-full
-      bg-[#0F0B18]
+      bg-black/70
       border
-      border-purple-900/30
+      border-red-700/40
       rounded-2xl
       px-4
       py-3
       text-left
-      hover:border-purple-500
+      hover:border-red-500
       transition-all
     "
   >
@@ -1908,22 +2187,23 @@ Klik Cancel untuk membatalkan.`
   {showInventoryDropdown && (
 
     <div
-      className="
-        absolute
-        top-full
-        left-0
-        mt-2
-        w-full
-        bg-[#14091F]
-        border
-        border-purple-700/30
-        rounded-2xl
-        shadow-2xl
-        z-50
-      "
-    >
+  className="
+    absolute
+    top-full
+    left-0
+    mt-2
+    w-full
+    bg-black
+    border
+    border-red-700/40
+    rounded-2xl
+    shadow-2xl
+    shadow-red-900/40
+    z-50
+  "
+>
 
-      <div className="p-3 border-b border-purple-900/30">
+      <div className="p-3 border-b border-red-700/40">
 
         <input
           type="text"
@@ -1936,14 +2216,14 @@ Klik Cancel untuk membatalkan.`
           }
           className="
             w-full
-            bg-[#0F0B18]
+            bg-black/70
             border
-            border-purple-900/30
+            border-red-700/40
             rounded-xl
             px-3
             py-2
             outline-none
-            focus:border-purple-500
+            focus:border-red-400
           "
         />
 
@@ -1982,9 +2262,9 @@ Klik Cancel untuk membatalkan.`
                 text-left
                 px-4
                 py-3
-                hover:bg-purple-700/20
+                hover:bg-red-700/20
                 border-b
-                border-purple-900/20
+                border-red-900/20
                 transition-all
               "
             >
@@ -2029,7 +2309,7 @@ Klik Cancel untuk membatalkan.`
                       .value,
                 })
               }
-              className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
+              className="bg-black/70 border border-red-700/40 rounded-2xl px-4 py-3 outline-none focus:border-red-400"
             />
 
             <input
@@ -2046,9 +2326,9 @@ Klik Cancel untuk membatalkan.`
                       .value,
                 })
               }
-              className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
+              className="bg-black/70 border border-red-700/40 rounded-2xl px-4 py-3 outline-none focus:border-red-400"
             />
-            {form.type === "Deposit" && (
+            {activeTab === "DEPOSIT" && (
 
   <input
     type="number"
@@ -2061,7 +2341,7 @@ Klik Cancel untuk membatalkan.`
         quantity: e.target.value,
       })
     }
-    className="bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 outline-none focus:border-purple-500"
+    className="bg-black/70 border border-red-700/40 rounded-2xl px-4 py-3 outline-none focus:border-red-400"
   />
 
 )}
@@ -2086,12 +2366,12 @@ Klik Cancel untuk membatalkan.`
       onChange={
         handleImageUpload
       }
-      className="w-full bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3"
+      className="w-full bg-black/70 border border-red-700/40 rounded-2xl px-4 py-3"
     />
 
     {uploadingImage && (
 
-      <p className="text-sm text-purple-300 mt-2">
+      <p className="text-sm text-red-300 mt-2">
         Uploading...
       </p>
 
@@ -2104,7 +2384,7 @@ Klik Cancel untuk membatalkan.`
           form.imageUrl
         }
         alt="preview"
-        className="mt-4 w-48 rounded-2xl border border-purple-500/30"
+        className="mt-4 w-48 rounded-2xl border border-red-500/30"
       />
 
     )}
@@ -2127,7 +2407,7 @@ Klik Cancel untuk membatalkan.`
                     .value,
               })
             }
-            className="w-full mt-4 bg-[#0F0B18] border border-purple-900/30 rounded-2xl px-4 py-3 min-h-[110px] outline-none focus:border-purple-500"
+            className="w-full mt-4 bg-black/70 border border-red-700/40 rounded-2xl px-4 py-3 min-h-[110px] outline-none focus:border-red-400"
           />
 
           <button
@@ -2135,7 +2415,22 @@ Klik Cancel untuk membatalkan.`
             disabled={
               loading
             }
-            className="mt-4 bg-gradient-to-r from-purple-700 to-violet-700 hover:opacity-90 disabled:opacity-50 rounded-2xl px-5 py-3 font-semibold transition-all shadow-lg shadow-purple-900/30"
+           className="
+mt-5
+bg-gradient-to-r
+from-red-700
+via-red-600
+to-red-500
+hover:scale-105
+transition-all
+duration-300
+rounded-2xl
+px-8
+py-3
+font-bold
+shadow-xl
+shadow-red-900/40
+"
           >
             {loading
               ? "Menyimpan..."
@@ -2143,9 +2438,408 @@ Klik Cancel untuk membatalkan.`
           </button>
 
         </form>
+          )
+}
 
+{
+  activeTab === "WITHDRAW" && (
+
+    <form
+      onSubmit={handleSubmit}
+      className="
+bg-gradient-to-br
+from-black
+via-[#120000]
+to-[#1a0000]
+border
+border-red-700/40
+rounded-3xl
+p-6
+mb-6
+shadow-xl
+shadow-red-900/20
+"
+    >
+
+          <h2 className="
+text-3xl
+font-black
+mb-6
+text-transparent
+bg-clip-text
+bg-gradient-to-r
+from-red-500
+to-white
+tracking-wide
+">
+  WITHDRAW FORM
+</h2>
+
+          <div
+  className="
+    grid
+    grid-cols-1
+    lg:grid-cols-12
+    gap-4
+  "
+>
+
+            <div
+  className="
+    lg:col-span-3
+    bg-black/70
+    border
+    border-red-700/40
+    rounded-2xl
+    px-4
+    py-3
+    h-[72px]
+    flex
+    flex-col
+    justify-center
+  "
+>
+
+  <p className="text-gray-400 text-sm">
+    Status
+  </p>
+
+  <p className="font-bold text-red-400">
+    Hutang
+  </p>
+
+</div>
+
+     {activeTab === "WITHDRAW" && (
+
+<div
+  className="
+    relative
+    lg:col-span-4
+  "
+>
+
+  <button
+    type="button"
+    onClick={() =>
+      setShowInventoryDropdown(
+        !showInventoryDropdown
+      )
+    }
+   className="
+  w-full
+  h-[72px]
+  bg-black/70
+  border
+  border-red-700/40
+  rounded-2xl
+  px-4
+  text-left
+  hover:border-red-500
+  transition-all
+"
+  >
+
+    {form.inventoryItemId
+      ? inventoryItems.find(
+          item =>
+            item.id ===
+            form.inventoryItemId
+        )?.name
+      : "Pilih Barang Inventory"}
+
+  </button>
+
+  {showInventoryDropdown && (
+
+    <div
+  className="
+    absolute
+    top-full
+    left-0
+    mt-2
+    w-full
+    bg-black
+    border
+    border-red-700/40
+    rounded-2xl
+    shadow-2xl
+    shadow-red-900/40
+    z-50
+  "
+>
+
+      <div className="p-3 border-b border-red-700/40">
+
+        <input
+          type="text"
+          placeholder="Cari Barang..."
+          value={inventorySearch}
+          onChange={(e) =>
+            setInventorySearch(
+              e.target.value
+            )
+          }
+          className="
+            w-full
+            bg-black/70
+            border
+            border-red-700/40
+            rounded-xl
+            px-3
+            py-2
+            outline-none
+            focus:border-red-400
+          "
+        />
+
+      </div>
+
+      <div
+        className="
+          max-h-72
+          overflow-y-auto
+        "
+      >
+
+        {filteredInventoryItems.map(
+          (item) => (
+
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => {
+
+  addWithdrawItem(item);
+
+  setShowInventoryDropdown(false);
+
+}}
+              className="
+                w-full
+                text-left
+                px-4
+                py-3
+                hover:bg-red-700/20
+                border-b
+                border-red-900/20
+                transition-all
+              "
+            >
+
+              <div className="font-semibold">
+                {item.name}
+              </div>
+
+              <div className="text-xs text-gray-400">
+                Stock :
+                {" "}
+                {item.stock || 0}
+              </div>
+
+            </button>
+
+          )
+        )}
+
+      </div>
+
+    </div>
+
+  )}
+
+</div>
+
+)}
+
+
+            <input
+  type="text"
+  placeholder="Judul Transaksi"
+  value={form.title}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      title: e.target.value,
+    })
+  }
+  className="
+    lg:col-span-5
+    bg-black/70
+    border
+    border-red-700/40
+    rounded-2xl
+    px-4
+    py-3
+    outline-none
+    focus:border-red-400
+  "
+/>
+
+          
+
+          </div>
+
+          <div className="mt-4 space-y-3">
+
+  {withdrawItems.map(
+    (item, index) => (
+
+      <div
+        key={index}
+        className="
+          flex
+          justify-between
+          items-center
+          bg-black/70
+          border
+          border-red-700/40
+          rounded-2xl
+          p-3
+        "
+      >
+
+        <div>
+
+          <p className="font-semibold">
+            {item.itemName}
+          </p>
+
+        </div>
+
+        <div className="flex gap-2">
+
+          <input
+            type="number"
+            min="1"
+            value={item.quantity}
+            onChange={(e) => {
+
+              const qty =
+                Number(
+                  e.target.value
+                );
+
+              setWithdrawItems(
+                (prev) =>
+                  prev.map(
+                    (x) =>
+                      x.itemId ===
+                      item.itemId
+                        ? {
+                            ...x,
+                            quantity: qty,
+                          }
+                        : x
+                  )
+              );
+
+            }}
+            className="
+              w-20
+              bg-black
+              rounded-xl
+              px-3
+              py-2
+            "
+          />
+
+          <button
+            type="button"
+            onClick={() => {
+
+              setWithdrawItems(
+                (prev) =>
+                  prev.filter(
+                    (x) =>
+                      x.itemId !==
+                      item.itemId
+                  )
+              );
+
+            }}
+            className="
+              bg-red-600
+              px-3
+              py-2
+              rounded-xl
+            "
+          >
+            ✕
+          </button>
+
+        </div>
+
+      </div>
+
+    )
+  )}
+
+</div>
+
+          <textarea
+            placeholder="Catatan transaksi..."
+            value={
+              form.note
+            }
+            onChange={(e) =>
+              setForm({
+                ...form,
+                note:
+                  e.target
+                    .value,
+              })
+            }
+            className="w-full mt-4 bg-black/70 border border-red-700/40 rounded-2xl px-4 py-3 min-h-[110px] outline-none focus:border-red-400"
+          />
+
+          <button
+            type="submit"
+            disabled={
+              loading
+            }
+            className="
+mt-5
+bg-gradient-to-r
+from-red-700
+via-red-600
+to-red-500
+hover:scale-105
+transition-all
+duration-300
+rounded-2xl
+px-8
+py-3
+font-bold
+shadow-xl
+shadow-red-900/40
+"
+          >
+            {loading
+              ? "Menyimpan..."
+              : "Simpan Transaksi"}
+          </button>
+
+        </form>
+  )
+}
         {/* FILTER */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div
+  className="
+    flex
+    flex-wrap
+    gap-2
+    mb-6
+    p-3
+    bg-black/40
+    border
+    border-red-900/30
+    rounded-3xl
+    backdrop-blur-sm
+    shadow-lg
+    shadow-red-900/20
+  "
+>
 
           {[
             "Semua",
@@ -2166,10 +2860,33 @@ Klik Cancel untuk membatalkan.`
   setFilter(type);
 
 }}
-              className={`px-4 py-2 rounded-xl text-sm border transition-all ${
+              className={`px-5
+py-2.5
+rounded-2xl
+font-semibold
+text-sm
+border
+transition-all
+duration-300
+hover:scale-105 ${
                 filter === type
-                  ? "bg-gradient-to-r from-purple-700 to-violet-700 border-transparent"
-                  : "bg-[#141021] border-purple-900/30 hover:border-purple-500/40"
+ ? `
+   bg-gradient-to-r
+   from-red-700
+   via-red-600
+   to-red-500
+   border-transparent
+   shadow-lg
+   shadow-red-900/40
+   text-white
+ `
+ : `
+   bg-black/80
+   border-red-700/40
+   hover:border-red-500
+   hover:bg-red-950/30
+   text-gray-300
+ `
               }`}
             >
               {type}
@@ -2179,6 +2896,8 @@ Klik Cancel untuk membatalkan.`
 
         </div>
 
+        
+
         {/* HISTORY */}
         <div className="space-y-4">
 
@@ -2187,7 +2906,18 @@ Klik Cancel untuk membatalkan.`
 
               <div
                 key={item.id}
-                className="bg-[#141021] border border-purple-900/30 rounded-3xl p-5 hover:border-purple-500/30 transition-all"
+                className="
+bg-gradient-to-br
+from-black
+via-[#120000]
+to-[#180000]
+border
+border-red-700/30
+rounded-3xl
+p-5
+hover:border-red-500/40
+transition-all
+"
               >
 
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
@@ -2223,7 +2953,7 @@ Klik Cancel untuk membatalkan.`
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           item.status ===
                           "Approved"
-                            ? "bg-purple-500/20 text-purple-300"
+                            ? "bg-red-500/20 text-red-300"
                             : "bg-yellow-500/20 text-yellow-300"
                         }`}
                       >
@@ -2244,77 +2974,38 @@ Klik Cancel untuk membatalkan.`
   loading="lazy"
   src={item.imageUrl}
     alt="bukti"
-    className="mt-4 w-56 rounded-2xl border border-purple-500/30 object-cover"
+    className="mt-4 w-56 rounded-2xl border border-red-500/30 object-cover"
   />
 
 )}
 
-                    <div className="flex flex-wrap gap-2 mt-4">
 
-                      <span className="bg-[#0F0B18] border border-purple-900/20 px-3 py-2 rounded-xl text-xs">
-                        {
-                          item.paymentType
-                        }
-                      </span>
-
-                      {item.quantity && (
-
-  <span className="bg-[#0F0B18] border border-purple-900/20 px-3 py-2 rounded-xl text-xs">
-    Qty {item.quantity}
-  </span>
-
-)}
-
-                      <span className="bg-[#0F0B18] border border-purple-900/20 px-3 py-2 rounded-xl text-xs">
-                        {
-                          item.moneyType
-                        }
-                      </span>
-
-                      <span className="bg-[#0F0B18] border border-purple-900/20 px-3 py-2 rounded-xl text-xs">
-                        By{" "}
-                        {
-                          item.createdBy
-                        }
-                      </span>
-
-                    </div>
 
                   </div>
 
                   {/* RIGHT */}
                   <div className="flex flex-col items-start lg:items-end gap-3">
 
-                    <h3
-                      className={`text-3xl font-bold ${
-                        item.type ===
-                        "Deposit"
-                          ? "text-green-400"
-                          : item.type ===
-                            "Pembayaran Hutang"
-                          ? "text-yellow-300"
-                          : "text-red-400"
-                      }`}
-                    >
-                      {item.type ===
-                      "Deposit"
-                        ? "+"
-                        : "-"}
-                      Rp{" "}
-                      {Number(
-                        item.amount
-                      ).toLocaleString(
-                        "id-ID"
-                      )}
-                    </h3>
+                    {item.type === "Deposit" && (
+
+  <h3 className="text-3xl font-bold text-green-400">
+    + Rp{" "}
+    {Number(
+      item.amount || 0
+    ).toLocaleString("id-ID")}
+  </h3>
+
+)}
 
                     <div className="flex gap-2 flex-wrap">
 
                       {/* APPROVE */}
-                      {role ===
-                        "Oyabun" &&
-                        item.status ===
-                          "Pending" && (
+                      {
+hasPermission(
+  role,
+  "APPROVE_FINANCE"
+) &&
+item.status === "Pending" && (
 
                         <button
                           onClick={() =>
@@ -2328,8 +3019,11 @@ Klik Cancel untuk membatalkan.`
                       )}
 
                       {/* DELETE */}
-                      {role ===
-                        "Oyabun" && (
+                      {
+hasPermission(
+  role,
+  "DELETE_MEMBER"
+) && (
 
                         <button
   onClick={() =>
@@ -2356,7 +3050,7 @@ Klik Cancel untuk membatalkan.`
           {filteredTransactions.length ===
             0 && (
 
-            <div className="bg-[#141021] border border-dashed border-purple-900/30 rounded-3xl p-10 text-center text-gray-400">
+            <div className="bg-[#141021] border border-dashed border-red-700/40 rounded-3xl p-10 text-center text-gray-400">
 
               Tidak ada history transaksi
 
@@ -2371,7 +3065,7 @@ Klik Cancel untuk membatalkan.`
     <button
   onClick={loadMoreTransactions}
   disabled={loadingMore}
-  className="bg-purple-700 hover:bg-purple-800 disabled:opacity-50 transition-all px-6 py-3 rounded-2xl font-semibold"
+  className="bg-red-700 hover:bg-red-800 disabled:opacity-50 transition-all px-6 py-3 rounded-2xl font-semibold"
 >
   {loadingMore
     ? "Loading..."
@@ -2384,7 +3078,431 @@ Klik Cancel untuk membatalkan.`
 
         </div>
 
-        
+        {showDebtModal && (
+
+<div
+  className="
+    fixed
+    inset-0
+    z-50
+    bg-black/80
+    flex
+    items-center
+    justify-center
+    p-4
+  "
+>
+
+  <div
+  className="
+    w-full
+    max-w-5xl
+    h-[85vh]
+    bg-[#141021]
+    border
+    border-red-500/20
+    rounded-3xl
+    overflow-hidden
+    flex
+    flex-col
+    shadow-2xl
+    shadow-red-900/30
+  "
+>
+
+    <div
+  className="
+    flex
+    items-center
+    justify-between
+    px-6
+    py-5
+    border-b
+    border-red-700/40
+    bg-gradient-to-r
+    from-red-950
+    via-[#1A1028]
+    to-red-950
+  "
+>
+
+  <div>
+
+    <h2 className="text-2xl font-black">
+      PENGEMBALIAN BARANG
+    </h2>
+
+    <p className="text-gray-400 text-sm mt-1">
+      Pilih barang yang ingin dikembalikan
+    </p>
+
+  </div>
+
+  <button
+    onClick={() =>
+      setShowDebtModal(false)
+    }
+    className="
+      w-10
+      h-10
+      rounded-xl
+      bg-red-600/20
+      hover:bg-red-600
+      transition-all
+    "
+  >
+    ✕
+  </button>
+
+</div>
+
+   <div
+  className="
+    flex-1
+    overflow-y-auto
+    p-6
+    space-y-4
+  "
+>
+
+      {debtItems.map((debt) => (
+
+        <div
+          key={debt.id}
+          className="
+  bg-gradient-to-br
+  from-[#0F0B18]
+  to-[#191126]
+  border
+  border-red-900/20
+  rounded-3xl
+  p-5
+  hover:border-red-500/30
+  transition-all
+"
+        >
+
+          <div className="flex justify-between items-center mb-4">
+
+  <div>
+
+    <h3 className="font-bold text-lg">
+      {debt.transactionTitle}
+    </h3>
+
+    <p className="text-xs text-gray-400">
+      {debt.items?.length || 0} Barang
+    </p>
+
+  </div>
+
+  <span
+    className="
+      px-3
+      py-1
+      rounded-full
+      bg-red-500/20
+      text-red-300
+      text-xs
+    "
+  >
+    Hutang
+  </span>
+
+</div>
+
+          {debt.items?.map((item) => (
+
+  <label
+    key={item.itemId}
+    className="
+      flex
+      justify-between
+      items-center
+      py-2
+      cursor-pointer
+    "
+  >
+
+    <div className="flex items-center gap-3">
+
+      <input
+        type="checkbox"
+        checked={selectedReturns.some(
+          x =>
+            x.transactionId === debt.id &&
+            x.itemId === item.itemId
+        )}
+        onChange={(e) => {
+
+          if (e.target.checked) {
+
+            setSelectedReturns(prev => [
+
+              ...prev,
+
+              {
+  transactionId: debt.id,
+  itemId: item.itemId,
+  itemName: item.itemName,
+
+  originalQuantity:
+    item.quantity,
+
+  quantity:
+    item.quantity,
+},
+
+            ]);
+
+          } else {
+
+            setSelectedReturns(prev =>
+              prev.filter(
+                x =>
+                  !(
+                    x.transactionId === debt.id &&
+                    x.itemId === item.itemId
+                  )
+              )
+            );
+
+          }
+
+        }}
+      />
+
+      <span>
+        {item.itemName}
+      </span>
+
+    </div>
+
+    <div className="flex items-center gap-3">
+
+  <span
+    className="
+      text-xs
+      text-gray-400
+    "
+  >
+    Hutang:
+    {" "}
+    {item.quantity}
+  </span>
+
+  <input
+    type="number"
+    min="0"
+    value={
+      selectedReturns.find(
+        x =>
+          x.transactionId === debt.id &&
+          x.itemId === item.itemId
+      )?.quantity ?? 0
+    }
+    onChange={(e) => {
+
+      const qty =
+        Number(
+          e.target.value
+        );
+
+      setSelectedReturns(
+        prev =>
+          prev.map(x => {
+
+            if (
+              x.transactionId === debt.id &&
+              x.itemId === item.itemId
+            ) {
+
+              return {
+                ...x,
+                quantity: qty,
+              };
+
+            }
+
+            return x;
+
+          })
+      );
+
+    }}
+    className="
+      w-24
+      bg-black
+      border
+      border-red-700/40
+      rounded-xl
+      px-3
+      py-2
+      text-center
+    "
+  />
+
+</div>
+
+  </label>
+
+))}
+<div className="flex justify-end mt-6">
+
+  
+
+</div>
+
+        </div>
+
+      ))}
+
+      <div
+  className="
+    mt-6
+    bg-black/70
+    border
+    border-red-900/20
+    rounded-2xl
+    p-4
+  "
+>
+
+<div className="mb-4">
+
+  <label className="block text-sm text-gray-400 mb-2">
+
+    Upload Bukti Pengembalian
+
+  </label>
+
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleReturnImageUpload}
+    className="
+      w-full
+      bg-[#141021]
+      border
+      border-red-700/40
+      rounded-2xl
+      p-3
+    "
+  />
+
+  {returnImageUrl && (
+
+    <img
+      src={returnImageUrl}
+      alt="Bukti"
+      className="
+        mt-3
+        w-48
+        rounded-2xl
+        border
+        border-red-500/30
+      "
+    />
+
+  )}
+
+</div>
+
+  <label
+    className="
+      block
+      text-sm
+      text-gray-400
+      mb-2
+    "
+  >
+    Deskripsi Pengembalian
+  </label>
+
+  <textarea
+    value={
+      returnDescription
+    }
+    onChange={(e) =>
+      setReturnDescription(
+        e.target.value
+      )
+    }
+    placeholder="
+      Contoh:
+      Barang masih bagus,
+      pengembalian setelah event,
+      dll...
+    "
+    className="
+      w-full
+      min-h-[120px]
+      bg-[#141021]
+      border
+      border-red-700/40
+      rounded-2xl
+      p-4
+      outline-none
+      focus:border-red-400
+    "
+  />
+
+</div>
+      {/* FOOTER */}
+
+<div
+  className="
+    border-t
+    border-red-700/40
+    bg-[#141021]
+    p-5
+    flex
+    justify-between
+    items-center
+  "
+>
+
+  <div>
+
+    <p className="text-sm text-gray-400">
+      Barang Dipilih
+    </p>
+
+    <p className="text-2xl font-bold text-green-400">
+      {selectedReturns.length}
+    </p>
+
+  </div>
+
+  <button
+    onClick={submitItemReturn}
+    disabled={
+      selectedReturns.length === 0
+    }
+    className="
+      bg-green-600
+      hover:bg-green-700
+      disabled:opacity-50
+      disabled:cursor-not-allowed
+      px-6
+      py-3
+      rounded-2xl
+      font-bold
+      transition-all
+    "
+  >
+    Kirim Pengembalian
+  </button>
+
+</div>
+
+    </div>
+
+  </div>
+
+</div>
+
+)}
 
       </div>
 

@@ -73,22 +73,22 @@ if (loading) {
     <div className="min-h-screen bg-black flex items-center justify-center overflow-hidden relative">
 
       {/* Background Glow */}
-      <div className="absolute w-[500px] h-[500px] bg-purple-700/30 blur-[180px] rounded-full" />
+      <div className="absolute w-[500px] h-[500px] bg-red-700/30 blur-[180px] rounded-full" />
 
       <div className="relative z-10 text-center animate-fadeIn">
 
         <h1 className="text-6xl md:text-8xl font-black tracking-[0.3em] text-white">
-          JIGOKUBARA
+          DWARRIORS
         </h1>
 
-        <p className="mt-4 text-3xl text-purple-400">
-          極道
+        <p className="mt-4 text-3xl text-red-400">
+          BLOOD • POWER • LEGACY
         </p>
 
         <div className="mt-10 w-72 h-2 bg-white/10 rounded-full overflow-hidden mx-auto">
 
           <div
-  className="h-full w-0 bg-gradient-to-r from-purple-500 via-fuchsia-500 to-red-500 animate-loading"
+  className="h-full w-0 bg-gradient-to-r from-red-800 via-red-600 to-red-400 animate-loading"
 />
         </div>
 
@@ -104,10 +104,58 @@ if (loading) {
 
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden relative">
+    <div className="fixed inset-0 bg-black text-white overflow-hidden">
 
-      {/* BACKGROUND EFFECT */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#120012] via-black to-[#09000f]" />
+      {/* MAIN BACKGROUND */}
+
+<div className="absolute inset-0 overflow-hidden">
+
+  <img
+    src="https://i.ibb.co.com/M5N31ymd/image-4d5022a.png"
+    alt=""
+    className="
+      absolute
+      inset-0
+      w-full
+      h-full
+      object-cover
+      opacity-200
+      scale-110
+    "
+  />
+
+  {/* DARK OVERLAY */}
+
+  <div
+    className="
+      absolute
+      inset-0
+      bg-black/55
+    "
+  />
+
+  {/* RED ATMOSPHERE */}
+
+  <div
+    className="
+      absolute
+      inset-0
+      bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.35)_0%,rgba(0,0,0,0)_50%)]
+    "
+  />
+
+  {/* VIGNETTE */}
+
+  <div
+    className="
+      absolute
+      inset-0
+      bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.9)_100%)]
+    "
+  />
+
+</div>
+
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
 
 {particles.map((particle, i) => (
@@ -120,8 +168,8 @@ if (loading) {
       height: `${particle.size}px`,
       animationDuration: `${3 + Math.random() * 4}s`,
 animationDelay: `${Math.random() * 2}s`,
-      background: "#a855f7",
-      boxShadow: "0 0 10px #a855f7",
+      background: "#dc2626",
+boxShadow: "0 0 10px #dc2626",
     }}
   />
 ))}
@@ -129,8 +177,8 @@ animationDelay: `${Math.random() * 2}s`,
 </div>
 
       <div className="absolute top-0 left-0 w-full h-full opacity-20">
-        <div className="absolute w-full max-w-[500px] min-h-[500px] bg-purple-700 blur-[180px] rounded-full top-[-150px] left-[-100px]" />
-        <div className="absolute w-full max-w-[400px] min-h-[400px] bg-fuchsia-700 blur-[160px] rounded-full bottom-[-120px] right-[-80px]" />
+        <div className="absolute w-full max-w-[500px] min-h-[500px] bg-red-700 blur-[180px] rounded-full top-[-150px] left-[-100px]" />
+        <div className="absolute w-full max-w-[400px] min-h-[400px] bg-red-900 blur-[160px] rounded-full bottom-[-120px] right-[-80px]" />
       </div>
 
       {/* MAIN */}
@@ -139,16 +187,16 @@ animationDelay: `${Math.random() * 2}s`,
   className="
   fixed
   bottom-6
-  right-6
+  left-6
   z-50
-  w-[280px]
-  bg-white/5
+  w-[320px]
+  bg-black/70
   backdrop-blur-xl
   border
-  border-purple-700/30
+  border-red-700/30
   rounded-3xl
   p-4
-  shadow-[0_0_30px_rgba(168,85,247,0.25)]
+  shadow-[0_0_30px_rgba(220,38,38,0.25)]
 "
 >
 
@@ -163,13 +211,13 @@ animationDelay: `${Math.random() * 2}s`,
         animationDuration: "6s",
       }}
     >
-      🎵
+      ♬
     </div>
 
     <div className="flex-1">
 
-      <p className="font-bold text-purple-300">
-        Jigokubara Theme
+      <p className="font-[Cinzel] text-red-300">
+        DWARRIORS ANTHEM
       </p>
 
       <p className="text-xs text-gray-400">
@@ -184,8 +232,8 @@ animationDelay: `${Math.random() * 2}s`,
       px-4
       py-2
       rounded-xl
-      bg-purple-700
-      hover:bg-purple-600
+      bg-red-700
+hover:bg-red-600
       transition-all
     "
     >
@@ -209,386 +257,417 @@ animationDelay: `${Math.random() * 2}s`,
   loop
 >
   <source
-    src="https://res.cloudinary.com/dpyhp3o66/video/upload/v1780497295/Jigokubara_Gumi_jzwu4f.mp3"
+    src="https://res.cloudinary.com/dbn9lgdi4/video/upload/v1781335095/D.WARRIORS_ANTHEM_-_Prod.By_MANGBORIS_Official_Audio_GTA_jsl6fg.mp3"
     type="audio/mpeg"
   />
 </audio>
 
-        {/* HERO */}
-        <section className="min-h-screen flex items-center justify-center px-6 py-20">
+        {/* HERO DWARRIORS V2 */}
+{/* HERO DWARRIORS RED LEGACY */}
 
-          <div className="max-w-7xl w-full grid lg:grid-cols-2 gap-16 items-center">
-
-            {/* LEFT CONTENT */}
-            <div>
-
-              <div className="inline-flex items-center gap-3 bg-[#1a001f]/80 border border-purple-700/30 px-5 py-2 rounded-full backdrop-blur-md mb-8">
-
-                <div className="w-3 h-3 rounded-full bg-purple-500 animate-pulse" />
-
-                <span className="text-sm tracking-[0.2em] text-purple-200 uppercase">
-                  JIGOKUBARA-GUMI FAMILY ROLEPLAY COMMUNITY
-                </span>
-
-              </div>
-
-              <h1 className="text-6xl md:text-8xl font-black leading-none tracking-[0.18em]">
-
-                <span className="text-white drop-shadow-[0_0_20px_rgba(168,85,247,0.6)]">
-                  JIGOKU
-                </span>
-
-                <br />
-
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-500 to-red-500">
-                  BARA
-                </span>
-
-              </h1>
-
-              <div className="mt-8 w-40 min-h-[3px] bg-gradient-to-r from-purple-500 to-red-500 rounded-full" />
-
-              <p className="text-gray-300 text-lg md:text-xl leading-relaxed mt-10 max-w-2xl">
-                Jigokubara-gumi, atau “Mawar Neraka”, adalah organisasi kriminal bergaya Yakuza yang lahir pada era 1980-an oleh Akihiro Ryu setelah kehancuran klannya di Osaka. Dengan filosofi “Yang indah juga bisa menjadi kehancuran”, keluarga ini membangun kekuasaan melalui loyalitas, kehormatan, dan kekuatan tanpa ampun. Kini Jigokubara dikenal sebagai keluarga bawah tanah yang disegani dan diwariskan turun-temurun oleh keturunan Akihiro.
-              </p>
-
-              {/* BUTTONS */}
-              <div className="flex flex-wrap gap-5 mt-12">
-
-                <Link to="/login">
-
-                  <button className="group relative overflow-hidden bg-gradient-to-r from-[#4d0066] via-[#7A0019] to-[#a0005a] hover:scale-105 transition-all duration-300 px-10 py-5 rounded-2xl text-xl font-bold shadow-[0_0_40px_rgba(168,85,247,0.35)]">
-
-                    <span className="relative z-10">
-                      Enter Organization
-                    </span>
-
-                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-all" />
-
-                  </button>
-
-                </Link>
-
-                <Link to="/wardrobe">
-
-  <button className="border border-purple-700/40 hover:border-purple-500 bg-white/5 hover:bg-white/10 transition-all duration-300 px-10 py-5 rounded-2xl text-xl font-semibold backdrop-blur-md">
-
-    Explore the Family
-
-  </button>
-
-</Link>
-
-              </div>
-
-              {/* STATS */}
-              <div className="grid grid-cols-3 gap-5 mt-16">
-
-                <div className="bg-white/5 border border-purple-700/20 backdrop-blur-xl rounded-3xl p-5">
-                  <h2 className="text-3xl font-black text-purple-400">
-                    Place
-                  </h2>
-                  <p className="text-gray-400 text-sm mt-2">
-                    Roxwood Island
-                  </p>
-                </div>
-
-                <div className="bg-white/5 border border-purple-700/20 backdrop-blur-xl rounded-3xl p-5">
-                  <h2 className="text-3xl font-black text-fuchsia-400">
-                    極道
-                  </h2>
-                  <p className="text-gray-400 text-sm mt-2">
-                    Japanese Style
-                  </p>
-                </div>
-
-                <div className="bg-white/5 border border-purple-700/20 backdrop-blur-xl rounded-3xl p-5">
-                  <h2 className="text-3xl font-black text-red-400">
-                    Server
-                  </h2>
-                  <p className="text-gray-400 text-sm mt-2">
-                    Kota Kita Roleplay
-                  </p>
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* RIGHT CONTENT */}
-            <div className="relative flex justify-center">
-
-              {/* GLOW */}
-              <div className="absolute w-full max-w-[500px] min-h-[500px] bg-purple-700/30 blur-[120px] rounded-full" />
-
-              {/* LOGO CARD */}
-              <div className="relative group">
-
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-[40px] blur-xl opacity-40 group-hover:opacity-60 transition-all duration-500" />
-
-                <div className="relative bg-[#0d0d0d]/90 border border-purple-700/30 backdrop-blur-xl rounded-[40px] p-8 shadow-2xl">
-
-                  {/* GANTI DENGAN LOGO KAMU */}
-                  <img
-  src="https://i.ibb.co.com/tTKwhGt1/Asset-18.png"
-  alt="Jigokubara"
+<section
   className="
-    w-full
-    max-w-[500px]
-    object-contain
-    animate-floating
-    drop-shadow-[0_0_35px_rgba(168,85,247,0.45)]
+    relative
+    h-screen
+    flex
+    items-center
+    justify-center
+    overflow-hidden
+    px-6
+  "
+>
+  {/* SKYLINE */}
+  
+  <div
+    className="
+      absolute
+      bottom-0
+      left-0
+      w-full
+      h-[350px]
+      bg-gradient-to-t
+      from-black
+      via-black/70
+      to-transparent
+      pointer-events-none
+    "
+  />
+  {/* LIGHTNING LEFT */}
+  <div
+  className="
+    absolute
+    left-[20%]
+    top-[5%]
+    w-[3px]
+    h-[220px]
+    bg-red-300
+    rotate-[25deg]
+    lightning-flash
+    blur-[1px]
   "
 />
 
-                </div>
+<div
+  className="
+    absolute
+    left-[22%]
+    top-[18%]
+    w-[3px]
+    h-[160px]
+    bg-red-400
+    -rotate-[20deg]
+    lightning-flash
+    blur-[1px]
+  "
+/>
 
-              </div>
+<div
+  className="
+    absolute
+    left-[18%]
+    top-[30%]
+    w-[3px]
+    h-[140px]
+    bg-red-500
+    rotate-[35deg]
+    lightning-flash
+    blur-[1px]
+  "
+/>
 
-            </div>
+<div
+  className="
+    absolute
+    left-[15%]
+    top-0
+    w-[4px]
+    h-[350px]
+    bg-gradient-to-b
+    from-red-300
+    via-red-500
+    to-transparent
+    rotate-[15deg]
+    blur-[2px]
+    lightning-flash
+    opacity-0
+    pointer-events-none
+  "
+/>
+<div
+  className="
+    absolute
+    right-[18%]
+    top-0
+    w-[4px]
+    h-[300px]
+    bg-gradient-to-b
+    from-red-300
+    via-red-500
+    to-transparent
+    -rotate-[20deg]
+    blur-[2px]
+    lightning-flash
+    opacity-0
+    pointer-events-none
+  "
+/>
 
-          </div>
+{/* RED SKY GLOW */}
 
-        </section>
+<div
+  className="
+    absolute
+    inset-0
+    red-sky-pulse
+    bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.35)_0%,transparent_60%)]
+    pointer-events-none
+  "
+/>
 
-{/* JAPANESE QUOTE */}
+{/* LIGHTNING FLASH */}
 
-<section className="py-40 px-6 relative">
+<div
+  className="
+    absolute
+    inset-0
+    lightning-flash
+    bg-red-500/20
+    pointer-events-none
+  "
+/>
 
-  <div className="max-w-5xl mx-auto text-center">
+ {/* WILL OF THE D */}
 
-    <p className="text-purple-400 tracking-[0.5em] uppercase text-sm mb-6">
-      Philosophy
-    </p>
+<img
+  src="https://i.ibb.co.com/QFmF4W7W/logodw-2-Photoroom.png"
+  alt="Will Of The D"
+  className="
+  block
+  absolute
+  z-30
+  left-[-370px]
+  top-1/2
+  -translate-y-1/2
+  w-[1200px]
+  opacity-100
+  select-none
+  pointer-events-none
+  will-logo
+"
+/>
+<div
+  className="
+    hidden
+    xl:block
 
-    <h2
-      className="
-      quote-glow
-      text-5xl md:text-7xl
-      font-black
-      leading-tight
-      bg-gradient-to-r
-      from-purple-300
-      via-fuchsia-400
-      to-red-400
-      bg-clip-text
-      text-transparent
+    absolute
+    left-[-200px]
+    top-1/2
+    -translate-y-1/2
+
+    w-[500px]
+    h-[700px]
+
+    bg-red-700/10
+    blur-[120px]
+
+    pointer-events-none
+  "
+/>
+
+  {/* RIGHT RAVEN */}
+  <div
+  className="
+    hidden
+    xl:block
+    absolute
+    right-[-80px]
+    top-1/2
+    -translate-y-1/2
+    opacity-100
+    pointer-events-none
+  "
+>
+    <img
+  src="https://i.ibb.co.com/gLwhkLsg/logodw-1.png"
+  alt=""
+  className="
+    w-[650px]
+    drop-shadow-[0_0_60px_rgba(220,38,38,0.4)]
+  "
+/>
+  </div>
+
+  <div
+  className="
+    relative
+    z-10
+    w-full
+    max-w-[1800px]
+    mx-auto
+    text-center
+  "
+>
+
+    {/* TOP BADGE */}
+
+    <div className="flex justify-center w-full">
+
+  <div
+    className="
+      inline-flex
+      items-center
+      gap-3
+      px-8
+      py-3
+      rounded-full
+      border
+      border-red-700/30
+      bg-black/50
+      backdrop-blur-xl
     "
-    >
-      美しいものは破壊
-      <br />
-      的でもある
-    </h2>
+  >
+      <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
 
-    <p className="mt-8 text-gray-300 text-xl italic">
-      "Yang indah juga bisa menjadi kehancuran"
+      <span className="uppercase tracking-[0.35em] text-sm text-red-100">
+        DWARRIORS COMMUNITY ROLEPLAY GTA V
+      </span>
+    </div>
+    </div>
+
+    {/* TITLE */}
+
+    <div className="relative mt-10 inline-block">
+
+      <div
+        className="
+          absolute
+          inset-0
+          bg-red-600
+          blur-[120px]
+          opacity-50
+          scale-150
+        "
+      />
+
+   <h1
+  className="
+  font-[Cinzel]
+    relative
+    text-6xl
+    md:text-[8rem]
+    lg:text-[10rem]
+    text-center
+    font-black
+    uppercase
+    tracking-tight
+    leading-none
+
+    bg-gradient-to-b
+    from-[#ffffff]
+    via-[#ff6b6b]
+    to-[#7a0000]
+
+    bg-clip-text
+    text-transparent
+    opacity-100
+  "
+  style={{
+    WebkitTextStroke: "1px rgba(60,0,0,0.85)",
+
+    textShadow: `
+      0 1px 0 rgba(255,255,255,0.4),
+      0 3px 0 rgba(170,0,0,0.7),
+      0 8px 15px rgba(0,0,0,0.6),
+      0 0 20px rgba(255,50,50,0.8),
+      0 0 40px rgba(220,38,38,0.6),
+      0 0 80px rgba(220,38,38,0.35)
+    `
+  }}
+>
+  DWARRIORS
+</h1>
+
+    </div>
+
+    {/* SUBTITLE */}
+
+    <p
+      className="
+        mt-6
+        text-red-300
+        uppercase
+        tracking-[0.5em]
+        font-semibold
+      "
+    >
+      BLOOD • POWER • LEGACY
     </p>
+
+    {/* CENTER LOGO */}
 
     <div
       className="
-      w-40
-      h-[2px]
-      mx-auto
-      mt-10
-      bg-gradient-to-r
-      from-purple-500
-      to-red-500
-    "
-    />
+        relative
+        mt-12
+        flex
+        justify-center
+        items-center
+        h-[320px]
+      "
+    >
+      {/* GLOW */}
+
+      <div
+        className="
+          absolute
+          w-[700px]
+h-[700px]
+          rounded-full
+          bg-red-700/20
+          blur-[180px]
+        "
+      />
+
+      {/* MAIN LOGO */}
+
+      <img
+        src="https://i.ibb.co.com/nMrw6G4N/logodw.png"
+        alt=""
+        className="
+  relative
+  z-20
+  -translate-x-6
+  w-[280px] md:w-[380px]
+  object-contain
+  animate-floating
+  drop-shadow-[0_0_80px_rgba(220,38,38,0.8)]
+"
+      />
+
+    </div>
+
+    {/* BUTTONS */}
+
+    <div className="flex flex-wrap justify-center gap-6 mt-20">
+
+      <Link to="/login">
+
+        <button
+          className="
+            px-14
+            py-5
+            rounded-xl
+            font-[Cinzel]
+            text-lg
+            border
+            border-red-500/30
+            bg-gradient-to-r
+            from-red-900
+            via-red-700
+            to-red-500
+            hover:scale-105
+            transition-all
+            shadow-[0_0_40px_rgba(220,38,38,0.4)]
+            opacity-60
+          "
+        >
+          ENTER ORGANIZATION
+        </button>
+
+      </Link>
+
+      <Link to="/wardrobe">
+
+        <button
+          className="
+            px-14
+            py-5
+            rounded-xl
+            font-[Cinzel]
+            text-lg
+            border
+            border-red-500/20
+            bg-black/50
+            backdrop-blur-xl
+            hover:border-red-500/50
+            hover:scale-105
+            transition-all
+            opacity-75
+          "
+        >
+          DISCOVER OUR LEGACY
+        </button>
+
+      </Link>
+
+    </div>
 
   </div>
 
 </section>
 
-{/* GALLERY */}
-
-<section className="px-6 pb-32">
-
-          <div className="max-w-7xl mx-auto">
-
-            {/* TITLE */}
-            <div className="text-center mb-20">
-
-              <p className="text-purple-400 tracking-[0.3em] uppercase text-sm">
-                Gallery
-              </p>
-
-              <h2 className="text-5xl font-black mt-5">
-                Jigokubara Moments
-              </h2>
-
-              <div className="w-32 min-h-[3px] bg-gradient-to-r from-purple-500 to-red-500 rounded-full mx-auto mt-8" />
-
-            </div>
-
-            {/* GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-
-              {/* IMAGE 1 */}
-              <div
-  onClick={() =>
-    setSelectedImage(
-      "https://i.ibb.co.com/JRW6WTsH/jgb.png"
-    )
-  }
-  className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111] cursor-pointer"
->
-
-                <img
-                  src="https://i.ibb.co.com/JRW6WTsH/jgb.png"
-                  alt=""
-                  className="w-full min-h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-
-                <div className="absolute bottom-0 p-6">
-
-                  <p className="text-purple-300 text-sm tracking-[0.2em] uppercase">
-                    Roxwood
-                  </p>
-
-                  <h3 className="text-2xl font-bold mt-2">
-                    Underground Family
-                  </h3>
-
-                </div>
-
-              </div>
-
-              {/* IMAGE 2 */}
-              <div
-  onClick={() =>
-    setSelectedImage(
-      "https://i.ibb.co.com/p6GzdCtP/Five-M-GTAProcess-2026-02-10-15-05-02.png"
-    )
-  }
-  className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111] cursor-pointer"
->
-
-                <img
-                  src="https://i.ibb.co.com/p6GzdCtP/Five-M-GTAProcess-2026-02-10-15-05-02.png"
-                  alt=""
-                  className="w-full min-h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-
-                <div className="absolute bottom-0 p-6">
-
-                  <p className="text-fuchsia-300 text-sm tracking-[0.2em] uppercase">
-                    Mafia
-                  </p>
-
-                  <h3 className="text-2xl font-bold mt-2">
-                    Elite Organization
-                  </h3>
-
-                </div>
-
-              </div>
-
-              {/* IMAGE 3 */}
-              <div
-  onClick={() =>
-    setSelectedImage(
-      "https://i.ibb.co.com/vWYnGbH/Five-M-GTAProcess-2026-02-07-15-40-45.png"
-    )
-  }
-  className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111] cursor-pointer"
->
-
-                <img
-                  src="https://i.ibb.co.com/vWYnGbH/Five-M-GTAProcess-2026-02-07-15-40-45.png"
-                  alt=""
-                  className="w-full min-h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-
-                <div className="absolute bottom-0 p-6">
-
-                  <p className="text-red-300 text-sm tracking-[0.2em] uppercase">
-                    Power
-                  </p>
-
-                  <h3 className="text-2xl font-bold mt-2">
-                    Shadow Empire
-                  </h3>
-
-                </div>
-
-              </div>
-
-              {/* IMAGE 4 */}
-              <div
-  onClick={() =>
-    setSelectedImage(
-      "https://i.ibb.co.com/zWSYTMLS/Five-M-GTAProcess-2026-02-10-15-03-28.png"
-    )
-  }
-  className="group relative overflow-hidden rounded-[32px] border border-purple-700/20 bg-[#111111] cursor-pointer"
->
-
-                <img
-                  src="https://i.ibb.co.com/zWSYTMLS/Five-M-GTAProcess-2026-02-10-15-03-28.png"
-                  alt=""
-                  className="w-full min-h-[420px] object-cover group-hover:scale-110 transition-all duration-700"
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-
-                <div className="absolute bottom-0 p-6">
-
-                  <p className="text-yellow-300 text-sm tracking-[0.2em] uppercase">
-                    Japanese Style
-                  </p>
-
-                  <h3 className="text-2xl font-bold mt-2">
-                    Jigokubara Clan
-                  </h3>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </section>
-
       </div>
-
-
-      {selectedImage && (
-  <div
-    onClick={() => setSelectedImage(null)}
-    className="
-      fixed
-      inset-0
-      z-[9999]
-      bg-black/90
-      backdrop-blur-md
-      flex
-      items-center
-      justify-center
-      p-6
-      animate-fadeIn
-    "
-  >
-    <img
-      src={selectedImage}
-      alt=""
-      className="
-        max-w-[95vw]
-        max-h-[90vh]
-        rounded-3xl
-        shadow-[0_0_60px_rgba(168,85,247,0.5)]
-      "
-    />
-  </div>
-)}
 
     </div>
   );

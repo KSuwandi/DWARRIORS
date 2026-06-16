@@ -192,7 +192,7 @@ export default function CraftingRequestsPage() {
         {
           status: "Approved",
           approvedBy:
-            user.displayName,
+            user.rpName,
         }
       );
 
@@ -215,7 +215,7 @@ export default function CraftingRequestsPage() {
             request.requestedBy,
 
           approvedBy:
-            user.displayName,
+            user.rpName,
 
           resultItem:
             request.resultItem,
@@ -255,7 +255,7 @@ export default function CraftingRequestsPage() {
         {
           status: "Rejected",
           approvedBy:
-            user.displayName,
+            user.rpName,
         }
       );
 
@@ -281,7 +281,7 @@ export default function CraftingRequestsPage() {
 
           <p className="text-gray-400 mt-2">
             Approval system for
-            Jigokubara crafting
+            DWARRIORS crafting
           </p>
         </div>
 

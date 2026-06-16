@@ -65,7 +65,7 @@ const audioRef =
  const outfits = [
   {
     id: 1,
-    title: "Jigokubara Black Executive Suit",
+    title: "DWARRIORS Black Executive Suit",
     access: "Oyabun & High Command",
     category: "Executive",
     image: "https://i.imgur.com/BIrDV3x.png",
@@ -88,12 +88,12 @@ const audioRef =
     "Season 1",
 
   description:
-    "Formal executive attire reserved for the highest leadership of the Jigokubara Family."
+    "Formal executive attire reserved for the highest leadership of the DWARRIORS Family."
   },
 
   {
     id: 2,
-    title: "Jigokubara White Executive Suit",
+    title: "DWARRIORS White Executive Suit",
     access: "Hashira & Aniki",
     category: "Executive",
     image: "https://i.imgur.com/Z7ojl31.png",
@@ -119,7 +119,7 @@ description:
 
   {
     id: 3,
-    title: "Jigokubara Black Dress Shirt",
+    title: "DWARRIORS Black Dress Shirt",
     access: "All Members",
     category: "Uniform",
     image: "https://i.imgur.com/5JPm3AL.png",
@@ -144,7 +144,7 @@ description:
 
   {
     id: 4,
-    title: "Jigokubara White-A Dress Shirt",
+    title: "DWARRIORS White-A Dress Shirt",
     access: "All Members",
     category: "Uniform",
     image: "https://i.imgur.com/AE0df0f.png",
@@ -168,7 +168,7 @@ description:
   },
   {
     id: 5,
-    title: "Jigokubara White-B Dress Shirt",
+    title: "DWARRIORS White-B Dress Shirt",
     access: "All Members",
     category: "Uniform",
     image: "https://i.imgur.com/JkBVH9g.png",
@@ -193,7 +193,7 @@ description:
 
   {
     id: 6,
-    title: "Jigokubara Purple-Black Dress Shirt",
+    title: "DWARRIORS red-Black Dress Shirt",
     access: "All Members",
     category: "Uniform",
     image: "https://i.imgur.com/nvrluYg.png",
@@ -205,12 +205,12 @@ description:
     acquisition: "Family Supply",
     rarity: "Common",
     version: "Season 1",
-    description: "Standard purple-black dress shirt used by active family members.",
+    description: "Standard red-black dress shirt used by active family members.",
   },
 
   {
     id: 7,
-    title: "Jigokubara White Tracksuit",
+    title: "DWARRIORS White Tracksuit",
     access: "All Members",
     category: "Casual",
     image: "https://i.imgur.com/rV2a8xH.png",
@@ -228,7 +228,7 @@ description:
 
   {
     id: 8,
-    title: "Jigokubara Black Tracksuit",
+    title: "DWARRIORS Black Tracksuit",
     access: "All Members",
     category: "Casual",
     image: "https://i.imgur.com/A55yJMp.png",
@@ -246,7 +246,7 @@ description:
 
   {
     id: 9,
-    title: "Jigokubara Purple-White Tracksuit",
+    title: "DWARRIORS red-White Tracksuit",
     access: "All Members",
     category: "Casual",
     image: "https://i.imgur.com/seMC8v2.png",
@@ -259,12 +259,12 @@ description:
     acquisition: "Family Supply",
     rarity: "Common",
     version: "Season 1",
-    description: "Standard purple-white tracksuit used by active family members.",
+    description: "Standard red-white tracksuit used by active family members.",
   },
 
   {
     id: 10,
-    title: "Jigokubara Purple-Black Tracksuit",
+    title: "DWARRIORS red-Black Tracksuit",
     access: "All Members",
     category: "Casual",
     image: "https://i.imgur.com/Y7vdC1y.png",
@@ -277,11 +277,11 @@ description:
     acquisition: "Family Supply",
     rarity: "Common",
     version: "Season 1",
-    description: "Standard purple-black tracksuit used by active family members.",
+    description: "Standard red-black tracksuit used by active family members.",
   },
   {
     id: 11,
-    title: "Jigokubara Armor",
+    title: "DWARRIORS Armor",
     access: "All Members",
     category: "Combat",
     image: "https://i.imgur.com/db4qF58.png",
@@ -495,7 +495,7 @@ useEffect(() => {
   autoPlay
 >
   <source
-    src="https://res.cloudinary.com/dpyhp3o66/video/upload/v1780386974/Jigokubara_Gumi_1_nitksm.mp3"
+    src="https://res.cloudinary.com/dpyhp3o66/video/upload/v1780386974/DWARRIORS_Gumi_1_nitksm.mp3"
     type="audio/mpeg"
   />
 </audio>
@@ -526,7 +526,7 @@ via-[#12061f]
 to-[#09030f]
 backdrop-blur-xl
 border
-border-fuchsia-700/30
+border-red-700/30
 rounded-3xl
 px-8
 py-8
@@ -546,7 +546,7 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
   right-0
   w-full max-w-[400px]
   min-h-[400px]
-  bg-fuchsia-700/25
+  bg-red-700/25
   blur-[150px]
   rounded-full
   "
@@ -574,7 +574,7 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
       h-32
       rounded-full
       border
-      border-fuchsia-600/40
+      border-red-600/40
       bg-black/50
       flex
       items-center
@@ -585,7 +585,7 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
 
       <img
         src="https://i.ibb.co.com/WWgcd7nf/Asset-18.png"
-        alt="Jigokubara"
+        alt="DWARRIORS"
         className="w-24 h-24 object-contain"
       />
 
@@ -597,7 +597,7 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
 
       <p
         className="
-        text-fuchsia-400
+        text-red-400
         uppercase
         tracking-[0.8em]
         text-xs
@@ -616,7 +616,7 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
         tracking-wider
         "
       >
-        JIGOKUBARA
+        DWARRIORS
       </h1>
 
       <p
@@ -636,8 +636,8 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
         w-24
         min-h-[2px]
         bg-gradient-to-r
-        from-fuchsia-500
-to-purple-700
+        from-red-500
+to-red-700
         mt-4
         mb-4
         "
@@ -651,7 +651,7 @@ to-purple-700
         "
       >
         Official wardrobe archive of the
-        Jigokubara Family. Browse executive
+        DWARRIORS Family. Browse executive
         suits, combat armor, ceremonial
         uniforms, and exclusive outfits
         reserved for family members.
@@ -676,7 +676,7 @@ to-purple-700
 
   <img
     src="https://i.ibb.co.com/TDpRVV6Q/Asset-19.png"
-    alt="Jigokubara Symbol"
+    alt="DWARRIORS Symbol"
     className="
       w-56
       h-56
@@ -734,12 +734,12 @@ to-purple-700
     px-4
     py-2
     rounded-xl
-    bg-fuchsia-900/20
+    bg-red-900/20
     border
-    border-fuchsia-500/30
-    text-fuchsia-300
+    border-red-500/30
+    text-red-300
     text-sm
-    hover:bg-fuchsia-700/20
+    hover:bg-red-700/20
     transition-all
   "
 >
@@ -751,7 +751,7 @@ to-purple-700
   className="
     bg-black/30
     border
-    border-fuchsia-500/20
+    border-red-500/20
     rounded-xl
     px-3
     py-3
@@ -770,7 +770,7 @@ to-purple-700
     <span
       className="
         text-xs
-        text-fuchsia-300
+        text-red-300
       "
     >
       Volume
@@ -779,7 +779,7 @@ to-purple-700
     <span
       className="
         text-xs
-        text-fuchsia-200
+        text-red-200
         font-bold
       "
     >
@@ -826,7 +826,7 @@ to-purple-700
     mb-10
     bg-white/5
     border
-    border-purple-900/40
+    border-red-900/40
     rounded-3xl
     p-3
     backdrop-blur-xl
@@ -845,7 +845,7 @@ to-purple-700
       transition-all
       ${
         activeTab === "wardrobe"
-          ? "bg-gradient-to-r from-purple-700 to-fuchsia-700 text-white shadow-[0_0_25px_rgba(168,85,247,0.4)]"
+          ? "bg-gradient-to-r from-red-900 to-red-600 text-white shadow-[0_0_25px_rgba(168,85,247,0.4)]"
           : "text-gray-400 hover:text-white"
       }
     `}
@@ -865,7 +865,7 @@ to-purple-700
       transition-all
       ${
         activeTab === "hierarchy"
-          ? "bg-gradient-to-r from-purple-700 to-fuchsia-700 text-white shadow-[0_0_25px_rgba(168,85,247,0.4)]"
+          ? "bg-gradient-to-r from-red-900 to-red-600 text-white shadow-[0_0_25px_rgba(168,85,247,0.4)]"
           : "text-gray-400 hover:text-white"
       }
     `}
@@ -886,7 +886,7 @@ to-purple-700
     overflow-hidden
     rounded-[40px]
     border
-    border-purple-800/40
+    border-red-800/40
     bg-gradient-to-br
     from-[#0B0714]
     via-[#12081F]
@@ -938,7 +938,7 @@ to-purple-700
 
       <p
         className="
-          text-fuchsia-400
+          text-red-400
           uppercase
           tracking-[0.4em]
           text-sm
@@ -979,7 +979,7 @@ to-purple-700
       >
 
         <div className="bg-white/5 rounded-2xl p-4">
-          <p className="text-purple-400 text-xs">
+          <p className="text-red-400 text-xs">
             CATEGORY
           </p>
 
@@ -989,7 +989,7 @@ to-purple-700
         </div>
 
         <div className="bg-white/5 rounded-2xl p-4">
-          <p className="text-purple-400 text-xs">
+          <p className="text-red-400 text-xs">
             RARITY
           </p>
 
@@ -1013,8 +1013,8 @@ to-purple-700
           py-4
           rounded-2xl
           bg-gradient-to-r
-          from-purple-700
-          to-fuchsia-700
+          from-red-900
+          to-red-600
           font-bold
           hover:scale-105
           transition-all
@@ -1053,7 +1053,7 @@ to-purple-700
                   e.target.value
                 )
               }
-              className="w-full md:w-[400px] bg-[#12081F]/70 border border-purple-700/30 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500"
+              className="w-full md:w-[400px] bg-[#12081F]/70 border border-red-700/30 rounded-2xl px-5 py-4 outline-none focus:border-red-500"
             />
 
           </div>
@@ -1079,8 +1079,8 @@ to-purple-700
                   className={`px-5 py-3 rounded-2xl transition-all font-semibold ${
                     filter ===
                     category
-                      ? "bg-gradient-to-r from-purple-700 to-fuchsia-700"
-                      : "bg-[#12081F]/70 border border-purple-700/30"
+                      ? "bg-gradient-to-r from-red-900 to-red-600"
+                      : "bg-[#12081F]/70 border border-red-700/30"
                   }`}
                 >
                   {category}
@@ -1119,8 +1119,8 @@ via-[#12081F]
 to-[#050508]
 backdrop-blur-2xl
 border
-border-purple-700/30
-hover:border-fuchsia-500/70
+border-red-700/30
+hover:border-red-500/70
 rounded-[32px]
 transition-all
 duration-500
@@ -1137,9 +1137,9 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
       transition-all
       duration-500
       bg-gradient-to-br
-      from-fuchsia-500/10
+      from-red-500/10
       via-transparent
-      to-purple-500/10
+      to-red-500/10
     "
   />
 
@@ -1160,7 +1160,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
 
                     <div className="absolute top-4 right-4">
 
-                      <span className="px-3 py-1 rounded-full bg-purple-900/70 backdrop-blur-xl border border-purple-500/30 text-xs font-semibold">
+                      <span className="px-3 py-1 rounded-full bg-red-900/70 backdrop-blur-xl border border-red-500/30 text-xs font-semibold">
                         {item.category}
                       </span>
 
@@ -1180,7 +1180,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
 
     <div>
 
-      <p className="text-xs uppercase tracking-widest text-purple-400">
+      <p className="text-xs uppercase tracking-widest text-red-400">
         Category
       </p>
 
@@ -1192,7 +1192,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
 
     <div>
 
-      <p className="text-xs uppercase tracking-widest text-purple-400">
+      <p className="text-xs uppercase tracking-widest text-red-400">
         Authorized Rank
       </p>
 
@@ -1204,8 +1204,8 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
     rounded-full
     bg-red-900/20
     border
-    border-purple-500/30
-    text-fuchsia-200
+    border-red-500/30
+    text-red-200
     font-semibold
   "
 >
@@ -1216,11 +1216,11 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
 
     <div>
 
-      <p className="text-xs uppercase tracking-widest text-purple-400">
+      <p className="text-xs uppercase tracking-widest text-red-400">
         Status
       </p>
 
-      <span className="inline-flex px-3 py-1 rounded-full bg-purple-700/30 border border-purple-500/30 text-purple-200 text-sm">
+      <span className="inline-flex px-3 py-1 rounded-full bg-red-700/30 border border-red-500/30 text-red-200 text-sm">
         Official Uniform
       </span>
 
@@ -1232,8 +1232,8 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
       py-2
       rounded-full
       bg-gradient-to-r
-      from-purple-700
-      to-fuchsia-700
+      from-red-900
+      to-red-600
       text-white
       text-xs
       tracking-widest
@@ -1241,7 +1241,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
       font-bold
     "
   >
-    Jigokubara Family
+    DWARRIORS Family
   </span>
 
 </div>
@@ -1275,7 +1275,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
 
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-10">
 
-            <div className="bg-[#12081F]/70 border border-purple-900/40 rounded-3xl p-5">
+            <div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
               <p className="text-gray-400">
                 Total Outfits
               </p>
@@ -1284,7 +1284,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
               </h2>
             </div>
 
-            <div className="bg-[#12081F]/70 border border-purple-900/40 rounded-3xl p-5">
+            <div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
               <p className="text-gray-400">
                 Executive
               </p>
@@ -1299,7 +1299,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
               </h2>
             </div>
 
-            <div className="bg-[#12081F]/70 border border-purple-900/40 rounded-3xl p-5">
+            <div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
               <p className="text-gray-400">
                 Uniform
               </p>
@@ -1314,7 +1314,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
               </h2>
             </div>
 
-            <div className="bg-[#12081F]/70 border border-purple-900/40 rounded-3xl p-5">
+            <div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
               <p className="text-gray-400">
                 Casual
               </p>
@@ -1329,7 +1329,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
               </h2>
             </div>
 
-            <div className="bg-[#12081F]/70 border border-purple-900/40 rounded-3xl p-5">
+            <div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
 
   <p className="text-gray-400">
     Combat
@@ -1347,7 +1347,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
 
 </div>
 
-<div className="bg-[#12081F]/70 border border-purple-900/40 rounded-3xl p-5">
+<div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
 
   <p className="text-gray-400">
     Exclusive Rank
@@ -1384,12 +1384,12 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
                 disabled={
                   currentPage === 1
                 }
-                className="px-5 py-3 rounded-2xl bg-white/5 border border-purple-900/40 disabled:opacity-40 hover:border-purple-500 transition-all"
+                className="px-5 py-3 rounded-2xl bg-white/5 border border-red-900/40 disabled:opacity-40 hover:border-red-500 transition-all"
               >
                 Previous
               </button>
 
-              <span className="font-semibold text-purple-200">
+              <span className="font-semibold text-red-200">
 
                 Page {currentPage}
                 {" "}
@@ -1413,7 +1413,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
                   currentPage ===
                   totalPages
                 }
-                className="px-5 py-3 rounded-2xl bg-white/5 border border-purple-900/40 disabled:opacity-40 hover:border-purple-500 transition-all"
+                className="px-5 py-3 rounded-2xl bg-white/5 border border-red-900/40 disabled:opacity-40 hover:border-red-500 transition-all"
               >
                 Next
               </button>
@@ -1459,7 +1459,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
 via-[#130909]
 to-[#000000]
         border
-        border-fuchsia-500/30
+        border-red-500/30
         rounded-[40px]
         overflow-hidden
         shadow-[0_0_60px_rgba(168,85,247,0.35)]
@@ -1520,7 +1520,7 @@ to-[#000000]
         transition-all
         ${
           selectedImage === img
-            ? "border-fuchsia-500 scale-110"
+            ? "border-red-500 scale-110"
             : "border-white/20"
         }
       `}
@@ -1542,10 +1542,10 @@ to-[#000000]
                 px-4
                 py-2
                 rounded-full
-                bg-fuchsia-700/30
+                bg-red-700/30
                 border
-                border-fuchsia-500/30
-                text-fuchsia-200
+                border-red-500/30
+                text-red-200
                 text-sm
               "
             >
@@ -1585,7 +1585,7 @@ to-[#000000]
 >
 
   <div className="bg-white/5 rounded-2xl p-4">
-    <p className="text-xs text-purple-400 uppercase">
+    <p className="text-xs text-red-400 uppercase">
       Outfit Code
     </p>
 
@@ -1595,7 +1595,7 @@ to-[#000000]
   </div>
 
   <div className="bg-white/5 rounded-2xl p-4">
-    <p className="text-xs text-purple-400 uppercase">
+    <p className="text-xs text-red-400 uppercase">
       Rarity
     </p>
 
@@ -1605,7 +1605,7 @@ to-[#000000]
   </div>
 
   <div className="bg-white/5 rounded-2xl p-4">
-    <p className="text-xs text-purple-400 uppercase">
+    <p className="text-xs text-red-400 uppercase">
       Acquisition
     </p>
 
@@ -1615,7 +1615,7 @@ to-[#000000]
   </div>
 
   <div className="bg-white/5 rounded-2xl p-4">
-    <p className="text-xs text-purple-400 uppercase">
+    <p className="text-xs text-red-400 uppercase">
       Version
     </p>
 
@@ -1630,7 +1630,7 @@ to-[#000000]
 
             <div>
 
-              <p className="text-purple-400 text-sm uppercase tracking-widest">
+              <p className="text-red-400 text-sm uppercase tracking-widest">
                 Authorized Rank
               </p>
 
@@ -1642,7 +1642,7 @@ to-[#000000]
 
             <div>
 
-              <p className="text-purple-400 text-sm uppercase tracking-widest">
+              <p className="text-red-400 text-sm uppercase tracking-widest">
                 Status
               </p>
 
@@ -1663,12 +1663,12 @@ to-[#000000]
                 py-3
                 rounded-full
                 bg-gradient-to-r
-                from-purple-700
-                to-fuchsia-700
+                from-red-900
+                to-red-600
                 font-bold
               "
             >
-              JIGOKUBARA FAMILY
+              DWARRIORS FAMILY
             </div>
 
           </div>

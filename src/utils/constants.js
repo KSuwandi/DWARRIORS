@@ -1,8 +1,7 @@
 export const INVENTORY_CATEGORIES = [
   "All",
-  "Disnaker",
-  "Barham",
-  "Preparean",
+  "RESOURCE",
+  "PREPAREAN",
 ];
 
 export const CRAFTING_RECIPES = [

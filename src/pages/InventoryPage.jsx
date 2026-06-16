@@ -29,20 +29,39 @@ import { useAuth } from "../contexts/AuthContext";
 import { db } from "../services/firebase/config";
 import { INVENTORY_CATEGORIES } from "../utils/constants";
 import { createActivityLog } from "../utils/activityLogger";
+import { hasPermission } from "../utils/permissions";
 
 const ITEMS_PER_PAGE = 9;
 
 // CLOUDINARY
 const CLOUDINARY_CLOUD_NAME =
-  "dpyhp3o66";
+  "dbn9lgdi4";
 
 const CLOUDINARY_UPLOAD_PRESET =
-  "jigokubara";
+  "DWARRIORS";
 
 export default function InventoryPage() {
 
   const { role, user } =
     useAuth();
+
+  const canManageInventory =
+  hasPermission(
+    role,
+    "APPROVE_CRAFT"
+  );
+
+const canDeleteInventory =
+  hasPermission(
+    role,
+    "DELETE_MEMBER"
+  );
+
+const canApproveInventory =
+  hasPermission(
+    role,
+    "APPROVE_CRAFT"
+  );
 
   const [items, setItems] =
     useState([]);
@@ -69,7 +88,7 @@ export default function InventoryPage() {
   const [form, setForm] =
     useState({
       name: "",
-      category: "DISNAKER",
+      category: "RESOURCE",
       stock: "",
     });
 
@@ -77,31 +96,16 @@ export default function InventoryPage() {
   // NORMALIZE CATEGORY
   // =========================
   const normalizeCategory = (
-    category
-  ) => {
+  category
+) => {
 
-    if (!category)
-      return "";
+  if (!category)
+    return "";
 
-    const value = String(
-      category
-    )
-      .trim()
-      .toUpperCase();
-
-    if (
-      value ===
-        "PREPAREAN" ||
-      value ===
-        "PERSENJATAAN" ||
-      value === "PREPARE"
-    ) {
-
-      return "PREPAREAN";
-    }
-
-    return value;
-  };
+  return String(category)
+    .trim()
+    .toUpperCase();
+};
 
   // =========================
   // REALTIME INVENTORY
@@ -253,10 +257,14 @@ export default function InventoryPage() {
 
       e.preventDefault();
 
-      if (role === "Shatei") {
-    toast.error("Shatei tidak memiliki akses menambah item");
-    return;
-  }
+      if (!canApproveInventory) {
+
+  toast.error(
+    "Tidak memiliki akses"
+  );
+
+  return;
+}
 
       if (
         !form.name ||
@@ -279,51 +287,7 @@ export default function InventoryPage() {
             form.category
           );
 
-        // REQUEST
-        if (
-          role !== "Oyabun"
-        ) {
-
-          await addDoc(
-            collection(
-              db,
-              "inventory_requests"
-            ),
-            {
-              type:
-                "ADD_ITEM",
-              name:
-                form.name,
-              category:
-                normalizedCategory,
-              stock:
-                Number(
-                  form.stock
-                ),
-              requestedBy:
-                user?.rpName ||
-                "Unknown",
-              status:
-                "pending",
-              createdAt:
-                serverTimestamp(),
-            }
-          );
-
-          toast.success(
-            "Request sent to Oyabun"
-          );
-
-          setForm({
-            name: "",
-            category:
-              "DISNAKER",
-            stock: "",
-          });
-
-          return;
-        }
-
+       
         // DIRECT ADD
         await addDoc(
           collection(
@@ -363,7 +327,7 @@ export default function InventoryPage() {
         setForm({
           name: "",
           category:
-            "DISNAKER",
+            "RESOURCE",
           stock: "",
         });
 
@@ -418,45 +382,6 @@ export default function InventoryPage() {
       }
 
       try {
-
-        // REQUEST
-        if (
-          role !== "Oyabun"
-        ) {
-
-          await addDoc(
-            collection(
-              db,
-              "inventory_requests"
-            ),
-            {
-              type:
-                type ===
-                "add"
-                  ? "ADD_STOCK"
-                  : "REDUCE_STOCK",
-              itemId:
-                item.id,
-              itemName:
-                item.name,
-              amount,
-              requestedBy:
-                user?.rpName ||
-                "Unknown",
-              status:
-                "pending",
-              createdAt:
-                serverTimestamp(),
-            }
-          );
-
-          toast.success(
-            "Request sent to Oyabun"
-          );
-
-          return;
-        }
-
         const finalAmount =
           type === "add"
             ? amount
@@ -524,11 +449,11 @@ export default function InventoryPage() {
         return;
 
       if (
-        role !== "Oyabun"
+        !canManageInventory
       ) {
 
         toast.error(
-          "Only Oyabun can upload photo"
+          "Access denied"
         );
 
         return;
@@ -580,15 +505,16 @@ export default function InventoryPage() {
 
       } catch (error) {
 
-        console.error(
-          error
-        );
+  console.error(
+    error.response?.data ||
+    error
+  );
 
-        toast.error(
-          "Upload failed"
-        );
-
-      } finally {
+  toast.error(
+    error.response?.data?.error?.message ||
+    "Upload failed"
+  );
+} finally {
 
         setUploadingImage(
           false
@@ -604,11 +530,11 @@ export default function InventoryPage() {
     async (item) => {
 
       if (
-        role !== "Oyabun"
+        !canManageInventory
       ) {
 
         toast.error(
-          "Only Oyabun can edit"
+          "Access denied"
         );
 
         return;
@@ -656,18 +582,18 @@ export default function InventoryPage() {
   // DELETE ITEM
   // =========================
   const deleteItem =
-    async (item) => {
+  async (item) => {
 
-      if (
-        role !== "Oyabun"
-      ) {
+    if (
+      !canDeleteInventory
+    ) {
 
-        toast.error(
-          "Only Oyabun can delete"
-        );
+      toast.error(
+        "Access denied"
+      );
 
-        return;
-      }
+      return;
+    }
 
       await updateDoc(
         doc(
@@ -694,24 +620,27 @@ export default function InventoryPage() {
       <div className="text-white relative overflow-hidden min-h-screen px-2">
 
         {/* BACKGROUND */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#120018] via-[#1b0126] to-black opacity-95" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#220000] via-[#120000] to-black opacity-95" />
 
-        <div className="absolute top-0 left-0 w-full max-w-[500px] h-[500px] bg-purple-700/20 blur-[180px] rounded-full" />
+        <div className="absolute top-0 left-0 w-full max-w-[500px] min-h-[500px] bg-red-700/20 blur-[180px] rounded-full" />
 
-        <div className="absolute bottom-0 right-0 w-full max-w-[400px] h-[400px] bg-fuchsia-700/20 blur-[160px] rounded-full" />
+        <div className="absolute bottom-0 right-0 w-full max-w-[400px] min-h-[400px] bg-red-700/20 blur-[160px] rounded-full" />
 
         <div className="relative z-10">
 
           {/* HEADER */}
           <div className="mb-10">
+             <h1 className="text-5xl font-black">
 
-            <p className="text-purple-300 tracking-[0.3em] uppercase text-sm mb-3">
-              JIGOKUBARA WAREHOUSE
-            </p>
+  <span className="text-white">
+    DWARRIORS
+  </span>
 
-            <h1 className="text-5xl font-black bg-gradient-to-r from-purple-200 via-fuchsia-300 to-purple-500 bg-clip-text text-transparent">
-              Inventory System
-            </h1>
+  <span className="text-red-500 ml-3">
+    INVENTORY
+  </span>
+
+</h1>
 
           </div>
 
@@ -739,8 +668,8 @@ export default function InventoryPage() {
                     normalizeCategory(
                       category
                     )
-                      ? "bg-gradient-to-r from-purple-700 to-fuchsia-700 border-purple-400 shadow-lg shadow-purple-900/40 scale-105"
-                      : "bg-white/5 border-purple-900/40 hover:border-purple-500 hover:bg-purple-900/20"
+                      ? "bg-gradient-to-r from-red-900 to-red-600 border-red-400 shadow-lg shadow-red-900/40 scale-105"
+                      : "bg-white/5 border-red-900/40 hover:border-red-500 hover:bg-red-900/20"
                   }`}
                 >
                   {category}
@@ -765,16 +694,16 @@ export default function InventoryPage() {
                     .value
                 )
               }
-              className="md:w-full max-w-[420px] bg-white/5 backdrop-blur-xl border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
+              className="md:w-full max-w-[420px] bg-white/5 backdrop-blur-xl border border-red-900/40 rounded-2xl px-5 py-4 outline-none focus:border-red-500 transition-all"
             />
 
           </div>
 
           {/* FORM */}
-{role !== "Shatei" && (
+{canApproveInventory && (
   <form
     onSubmit={handleAddItem}
-    className="bg-white/5 backdrop-blur-2xl border border-purple-900/40 rounded-[32px] p-6 mb-10 grid grid-cols-1 md:grid-cols-4 gap-4 shadow-2xl shadow-purple-950/20"
+    className="bg-white/5 backdrop-blur-2xl border border-red-900/40 rounded-[32px] p-6 mb-10 grid grid-cols-1 md:grid-cols-4 gap-4 shadow-2xl shadow-red-950/20"
   >
 
     <input
@@ -787,7 +716,7 @@ export default function InventoryPage() {
           name: e.target.value,
         })
       }
-      className="bg-black/40 border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
+      className="bg-black/40 border border-red-900/40 rounded-2xl px-5 py-4 outline-none focus:border-red-500 transition-all"
     />
 
     <select
@@ -798,7 +727,7 @@ export default function InventoryPage() {
           category: e.target.value,
         })
       }
-      className="bg-black/40 border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
+      className="bg-black/40 border border-red-900/40 rounded-2xl px-5 py-4 outline-none focus:border-red-500 transition-all"
     >
       {INVENTORY_CATEGORIES
         .filter((c) => c !== "All")
@@ -822,19 +751,17 @@ export default function InventoryPage() {
           stock: e.target.value,
         })
       }
-      className="bg-black/40 border border-purple-900/40 rounded-2xl px-5 py-4 outline-none focus:border-fuchsia-500 transition-all"
+      className="bg-black/40 border border-red-900/40 rounded-2xl px-5 py-4 outline-none focus:border-red-500 transition-all"
     />
 
     <button
       type="submit"
       disabled={loading}
-      className="bg-gradient-to-r from-purple-700 to-fuchsia-700 hover:scale-[1.02] active:scale-100 transition-all rounded-2xl px-4 py-4 font-bold shadow-lg shadow-purple-900/40"
+      className="bg-gradient-to-r from-red-900 to-red-600 hover:scale-[1.02] active:scale-100 transition-all rounded-2xl px-4 py-4 font-bold shadow-lg shadow-red-900/40"
     >
       {loading
-        ? "Loading..."
-        : role === "Oyabun"
-        ? "Add Item"
-        : "Request Item"}
+  ? "Loading..."
+  : "Add Item"}
     </button>
 
   </form>
@@ -850,7 +777,7 @@ export default function InventoryPage() {
                   key={
                     item.id
                   }
-                  className="group bg-white/5 backdrop-blur-2xl border border-purple-900/30 hover:border-fuchsia-500/60 rounded-[32px] p-5 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-950/40"
+                  className="group bg-white/5 backdrop-blur-2xl border border-red-900/30 hover:border-red-500/60 rounded-[32px] p-5 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-red-950/40"
                 >
 
                   {/* IMAGE */}
@@ -877,7 +804,7 @@ export default function InventoryPage() {
 
                     ) : (
 
-                      <div className="w-full h-56 border border-dashed border-purple-900/40 rounded-3xl flex items-center justify-center text-purple-300 bg-black/30">
+                      <div className="w-full h-56 border border-dashed border-red-900/40 rounded-3xl flex items-center justify-center text-red-300 bg-black/30">
                         No Photo
                       </div>
 
@@ -894,35 +821,33 @@ export default function InventoryPage() {
                         {item.name}
                       </h2>
 
-                      <p className="text-purple-300 text-sm mt-2">
-                        Japanese Clan Supply
+                      <p className="text-red-300 text-sm mt-2">
+                        DWARRIORS Warehouse Asset
                       </p>
 
                     </div>
 
-                    <span className="text-xs bg-gradient-to-r from-purple-700/30 to-fuchsia-700/30 border border-purple-500/30 text-purple-200 px-3 py-1 rounded-full">
+                    <span className="text-xs bg-gradient-to-r from-red-900/30 to-red-600/30 border border-red-500/30 text-red-200 px-3 py-1 rounded-full">
                       {item.category}
                     </span>
 
                   </div>
 
                   {/* STOCK */}
-                  <div className="mt-6 bg-black/30 border border-purple-900/20 rounded-2xl p-4">
+                  <div className="mt-6 bg-black/30 border border-red-900/20 rounded-2xl p-4">
 
                     <p className="text-gray-400 text-sm">
                       Current Stock
                     </p>
 
-                    <h3 className="text-5xl font-black mt-2 bg-gradient-to-r from-purple-300 to-fuchsia-400 bg-clip-text text-transparent">
+                    <h3 className="text-5xl font-black mt-2 bg-gradient-to-r from-red-300 to-red-400 bg-clip-text text-transparent">
                       {item.stock}
                     </h3>
 
                   </div>
 
                   {/* BUTTONS */}
-                  {role !==
-                    "Shatei" && (
-
+                  {canApproveInventory && (
                     <div className="flex gap-3 mt-5">
 
                       <button
@@ -952,9 +877,8 @@ export default function InventoryPage() {
                     </div>
                   )}
 
-                  {/* OYABUN */}
-                  {role ===
-                    "Oyabun" && (
+                  {/* MANAGEMENT */}
+{canManageInventory && (
 
                     <div className="flex flex-col gap-3 mt-4">
 
@@ -964,7 +888,7 @@ export default function InventoryPage() {
                             item
                           )
                         }
-                        className="bg-gradient-to-r from-blue-600 to-indigo-700 hover:scale-[1.02] transition-all rounded-2xl py-3 font-semibold"
+                        className="bg-gradient-to-r from-red-800 to-red-600 hover:scale-[1.02] transition-all rounded-2xl py-3 font-semibold"
                       >
                         Edit
                       </button>
@@ -980,7 +904,7 @@ export default function InventoryPage() {
                         Delete
                       </button>
 
-                      <label className="bg-gradient-to-r from-purple-700 to-fuchsia-700 hover:scale-[1.02] transition-all rounded-2xl py-3 text-center cursor-pointer font-semibold">
+                      <label className="bg-gradient-to-r from-red-900 to-red-600 hover:scale-[1.02] transition-all rounded-2xl py-3 text-center cursor-pointer font-semibold">
 
                         {uploadingImage
                           ? "Uploading..."
@@ -1033,12 +957,12 @@ export default function InventoryPage() {
                   currentPage ===
                   1
                 }
-                className="px-5 py-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-purple-900/40 disabled:opacity-40 hover:border-purple-500 transition-all"
+                className="px-5 py-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-red-900/40 disabled:opacity-40 hover:border-red-500 transition-all"
               >
                 Prev
               </button>
 
-              <span className="text-purple-200 font-semibold">
+              <span className="text-red-200 font-semibold">
                 Page{" "}
                 {currentPage} of{" "}
                 {totalPages}
@@ -1058,7 +982,7 @@ export default function InventoryPage() {
                   currentPage ===
                   totalPages
                 }
-                className="px-5 py-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-purple-900/40 disabled:opacity-40 hover:border-purple-500 transition-all"
+                className="px-5 py-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-red-900/40 disabled:opacity-40 hover:border-red-500 transition-all"
               >
                 Next
               </button>
