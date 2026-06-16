@@ -409,6 +409,9 @@ export default function NotificationsPage() {
                     <option value="Event">
                       Event
                     </option>
+                    <option value="Business">
+                      Business
+                    </option>
 
                   </select>
 
