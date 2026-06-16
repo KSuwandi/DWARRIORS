@@ -88,7 +88,6 @@ export function AuthProvider({
           !userSnap.exists()
         ) {
 
-          // EMAIL OYABUN
           const isBoss =
               firebaseUser.email ===
               "kevinsports05@gmail.com";
@@ -97,7 +96,7 @@ export function AuthProvider({
           const newRole =
             isBoss
               ? "BOSS"
-              : "MEMBER";
+              : "Pending";
 
           await setDoc(
             userRef,
@@ -123,19 +122,14 @@ export function AuthProvider({
                 firebaseUser.photoURL ||
                 "",
 
-              role:
-                newRole,
-
-              debtLimit:
-                newRole ===
-                "Oyabun"
-                  ? 999999999
-                  : 500000,
+              role: "PENDING",
 
               totalDebt: 0,
 
               status:
-                "Active",
+  isBoss
+    ? "Active"
+    : "Pending",
 
               createdAt:
                 serverTimestamp(),
