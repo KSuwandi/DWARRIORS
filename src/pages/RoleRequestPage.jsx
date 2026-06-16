@@ -129,7 +129,7 @@ export default function RoleRequestPage() {
                 <div className="w-3 h-3 rounded-full bg-red-400 animate-pulse" />
 
                 <span className="text-red-300 tracking-[0.2em] uppercase text-xs">
-                  DWARRIORS Family
+                  DWARRIORS ORGANIZATION
                 </span>
 
               </div>
@@ -213,12 +213,6 @@ export default function RoleRequestPage() {
   <div className="mt-3 text-2xl font-black text-white">
     MEMBER
   </div>
-
-  <p className="mt-3 text-gray-400 text-sm">
-    Semua pelamar baru akan direview oleh
-    BOSS atau UNDERBOSS sebelum mendapatkan
-    akses ke organisasi DWARRIORS.
-  </p>
 
 </div>
 

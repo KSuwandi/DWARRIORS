@@ -87,7 +87,7 @@ const CRAFTING_RECIPES = [
 },
 
   {
-  name: "Gold Desert Eagle",
+  name: "Desert Eagle Gold",
 
   category: "PREPAREAN",
 
@@ -106,7 +106,7 @@ const CRAFTING_RECIPES = [
 },
 
   {
-  name: "Gold Revolver Mk2",
+  name: "Revolver Mk2 Gold",
 
   category: "PREPAREAN",
 
