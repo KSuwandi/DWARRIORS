@@ -388,60 +388,46 @@ useEffect(() => {
   // =========================
   useEffect(() => {
 
-    if (!selectedMember)
-      return;
+  if (!selectedMember)
+    return;
 
-    const unsub =
-      onSnapshot(
-        collection(
-          db,
-          "users",
-          selectedMember.id,
-          "finance"
-        ),
-        (snap) => {
+  const unsub =
+    onSnapshot(
+      collection(
+        db,
+        "finance_logs"
+      ),
+      (snap) => {
 
-          const sorted =
-            snap.docs
-              .map(
-                (d) => ({
-                  id: d.id,
-                  ...d.data(),
-                })
-              )
+        const data =
+          snap.docs
+            .map((d) => ({
+              id: d.id,
+              ...d.data(),
+            }))
+            .filter(
+              (item) =>
+                item.requesterName ===
+                  selectedMember.rpName &&
+                item.status ===
+                  "Approved"
+            )
+            .sort(
+              (a, b) =>
+                (b.createdAt?.seconds || 0)
+                -
+                (a.createdAt?.seconds || 0)
+            );
 
-              // SORT NEWEST
-              .sort(
-                (a, b) => {
+        setFinanceData(
+          data
+        );
+      }
+    );
 
-                  const aTime =
-                    a
-                      ?.createdAt
-                      ?.seconds ||
-                    0;
+  return () => unsub();
 
-                  const bTime =
-                    b
-                      ?.createdAt
-                      ?.seconds ||
-                    0;
-
-                  return (
-                    bTime -
-                    aTime
-                  );
-                }
-              );
-
-          setFinanceData(
-            sorted
-          );
-        }
-      );
-
-    return () => unsub();
-
-  }, [selectedMember]);
+}, [selectedMember]);
 
   // =========================
   // LOAD CRAFTING

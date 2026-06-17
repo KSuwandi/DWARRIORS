@@ -1921,7 +1921,7 @@ setShowDebtModal(false);
         transition-all
       "
     >
-      BAYAR HUTANG
+      PENGEMBALIAN BARANG
     </button>
 
   </div>

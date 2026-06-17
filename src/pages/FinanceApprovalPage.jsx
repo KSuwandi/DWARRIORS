@@ -622,68 +622,6 @@ console.log(
       serverTimestamp(),
   }
 );
-
-          const financeLogRef =
-            collection(
-              db,
-              "finance_logs"
-            );
-
-         transaction.set(
-  doc(financeLogRef),
-  {
-    type: "finance",
-
-    action: "Rejected",
-
-    requesterName:
-      financeData.createdBy ||
-      financeData.requesterName ||
-      "",
-
-    rpName:
-      user?.rpName || "",
-
-    approverRole:
-      role || "",
-
-    role:
-      financeData.role || "",
-
-    transactionTitle:
-      financeData.title ||
-      "Pelunasan Hutang",
-
-    transactionType:
-      financeData.type || "",
-
-    paymentType:
-      financeData.paymentType || "",
-
-    moneyType:
-      financeData.moneyType || "",
-
-    amount:
-      financeData.amount || 0,
-
-    items:
-      financeData.items ||
-      financeData.withdrawItems ||
-      [],
-
-    note:
-  financeData.note || "",
-
-    imageUrl:
-      financeData.imageUrl || "",
-
-    status:
-      "Rejected",
-
-    createdAt:
-      serverTimestamp(),
-  }
-);
         }
       );
 
@@ -782,7 +720,7 @@ if (
   </span>
 
   <span className="text-red-500 ml-3">
-    ANNOUNCEMENTS
+    APPROVAL 
   </span>
 
 </h1>
