@@ -1965,30 +1965,6 @@ p-5
 
   </div>
 
-  {/* TOTAL PENGELUARAN */}
-  <div className="
-bg-gradient-to-br
-from-black
-to-[#220000]
-border
-border-red-500/20
-rounded-3xl
-p-5
-" >
-
-    <p className="text-sm text-gray-400">
-      Total Withdraw
-    </p>
-
-    <h2 className="text-3xl font-black text-red-400 mt-2">
-      Rp{" "}
-      {totalExpense.toLocaleString(
-        "id-ID"
-      )}
-    </h2>
-
-  </div>
-
 </div>
 
 <div
