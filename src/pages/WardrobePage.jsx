@@ -12,7 +12,7 @@ import AppLayout from "../layouts/AppLayout";
 import EmptyState from "../components/common/EmptyState";
 import FamilyHierarchy from "../components/FamilyHierarchy";
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 4;
 
 export default function WardrobePage() {
 
@@ -65,69 +65,68 @@ const audioRef =
  const outfits = [
   {
     id: 1,
-    title: "DWARRIORS Black Executive Suit",
-    access: "Oyabun & High Command",
-    category: "Executive",
-    image: "https://i.imgur.com/BIrDV3x.png",
+    title: "DWARRIORS Male Black-A Shirt",
+    access: "All Male Member",
+    category: "Casual",
+    image: "https://i.ibb.co.com/GvKcZxL2/kemeja-dw-1-depan-Photoroom.png",
 
     images: [
-    "https://i.imgur.com/BIrDV3x.png",
-    "https://i.imgur.com/ltqYQ22.png",
-    "https://i.imgur.com/3S5Sskg.png",
+    "https://i.ibb.co.com/GvKcZxL2/kemeja-dw-1-depan-Photoroom.png",
+    "https://i.ibb.co.com/xqCCXMzr/kemeja-dw-1-belakang-Photoroom.png",
   ],
 
-     code: "JGK-EX-001",
+     code: "DW-MBS-001",
 
   acquisition:
-    "Family Headquarters",
+    "Family Member",
 
   rarity:
-    "Legendary",
+    "Common",
 
   version:
     "Season 1",
 
   description:
-    "Formal executive attire reserved for the highest leadership of the DWARRIORS Family."
+    "Standard male black shirt used by active family members."
   },
 
   {
     id: 2,
-    title: "DWARRIORS White Executive Suit",
-    access: "Hashira & Aniki",
-    category: "Executive",
-    image: "https://i.imgur.com/Z7ojl31.png",
+    title: "DWARRIORS Male Red Shirt",
+    access: "All Male Member",
+    category: "Casual",
+    image: "https://i.ibb.co.com/CKDSWcvn/kemeja-dw-merah-Photoroom.png",
     images: [
-    "https://i.imgur.com/Z7ojl31.png",
-    "https://i.imgur.com/r9tmtOw.png",
-    "https://i.imgur.com/EfZcjXw.png",
+    "https://i.ibb.co.com/CKDSWcvn/kemeja-dw-merah-Photoroom.png",
+    "https://i.ibb.co.com/JR5JGMLV/kemeja-dw-merah-belakang-Photoroom.png",
   ],
-    code: "JGK-EX-002",
+  code: "DW-MRS-001",
 
-acquisition:
-  "Leadership Reward",
+ acquisition:
+    "Family Member",
 
-rarity:
-  "Epic",
+  rarity:
+    "Common",
 
-version:
-  "Season 1",
+  version:
+    "Season 1",
+
 
 description:
-  "White executive suit representing authority and prestige inside the family.",
+  "Standard male red shirt used by active family members.",
   },
 
   {
     id: 3,
-    title: "DWARRIORS Black Dress Shirt",
-    access: "All Members",
-    category: "Uniform",
-    image: "https://i.imgur.com/5JPm3AL.png",
+    title: "DWARRIORS Male Black-B Shirt ",
+    access: "All Male Members",
+    category: "Casual",
+    image: "https://i.ibb.co.com/mFvjggZ4/kemeja-dw-2-depan-Photoroom.png",
 images: [
-    "https://i.imgur.com/5JPm3AL.png",
-    "https://i.imgur.com/7so7FMi.png",
+    "https://i.ibb.co.com/mFvjggZ4/kemeja-dw-2-depan-Photoroom.png",
+    "https://i.ibb.co.com/twBBSYzN/kemeja-dw-2-belakang-Photoroom.png",
   ],
-    code: "JGK-UN-001",
+    code: "DW-MBS-002",
 
 acquisition:
   "Family Supply",
@@ -136,23 +135,23 @@ rarity:
   "Common",
 
 version:
-  "Season 1",
+  "Season 2",
 
 description:
-  "Standard black dress shirt used by active family members.",
+  "Standard male black shirt used by active family members.",
   },
 
-  {
+   {
     id: 4,
-    title: "DWARRIORS White-A Dress Shirt",
-    access: "All Members",
-    category: "Uniform",
-    image: "https://i.imgur.com/AE0df0f.png",
+    title: "DWARRIORS Female Red Shirt ",
+    access: "All Female Members",
+    category: "Casual",
+    image: "https://i.ibb.co.com/Gfz11rXL/KEMEJA-CEWE-DW-Photoroom.png",
 images: [
-    "https://i.imgur.com/AE0df0f.png",
-    "https://i.imgur.com/9ihCHLh.png",
+    "https://i.ibb.co.com/Gfz11rXL/KEMEJA-CEWE-DW-Photoroom.png",
+    "https://i.ibb.co.com/1fZJy2TK/KEMEJA-CEWE-DW-BELAKANG-Photoroom.png",
   ],
-    code: "JGK-UN-001",
+    code: "DW-FRS-001",
 
 acquisition:
   "Family Supply",
@@ -164,19 +163,20 @@ version:
   "Season 1",
 
 description:
-  "Standard White-A dress shirt used by active family members.",
+  "Standard female red shirt used by active family members.",
   },
+
   {
     id: 5,
-    title: "DWARRIORS White-B Dress Shirt",
-    access: "All Members",
-    category: "Uniform",
-    image: "https://i.imgur.com/JkBVH9g.png",
+    title: "DWARRIORS Female Black-A Shirt ",
+    access: "All Female Members",
+    category: "Casual",
+    image: "https://i.ibb.co.com/bjKWPD2K/KEMEJA-CEWE-2-Photoroom.png",
 images: [
-    "https://i.imgur.com/JkBVH9g.png",
-    "https://i.imgur.com/YRZeynZ.png",
+    "https://i.ibb.co.com/bjKWPD2K/KEMEJA-CEWE-2-Photoroom.png",
+    "https://i.ibb.co.com/CKcmbQ1H/KEMEJA-CEWE-2-BELAKANG-Photoroom.png",
   ],
-    code: "JGK-UN-001",
+    code: "DW-FBS-001",
 
 acquisition:
   "Family Supply",
@@ -188,123 +188,72 @@ version:
   "Season 1",
 
 description:
-  "Standard White-B dress shirt used by active family members.",
+  "Standard female red shirt used by active family members.",
   },
 
   {
     id: 6,
-    title: "DWARRIORS red-Black Dress Shirt",
-    access: "All Members",
-    category: "Uniform",
-    image: "https://i.imgur.com/nvrluYg.png",
-    images: [
-      "https://i.imgur.com/nvrluYg.png",
-      "https://i.imgur.com/YFsHlxa.png",
-    ],
-    code: "JGK-UN-001",
-    acquisition: "Family Supply",
-    rarity: "Common",
-    version: "Season 1",
-    description: "Standard red-black dress shirt used by active family members.",
+    title: "DWARRIORS Female Black-B Shirt ",
+    access: "All Female Members",
+    category: "Casual",
+    image: "https://i.ibb.co.com/1tTqGtzX/KEMEJA-CEWE-1-DW-Photoroom.png",
+images: [
+    "https://i.ibb.co.com/1tTqGtzX/KEMEJA-CEWE-1-DW-Photoroom.png",
+    "https://i.ibb.co.com/DD9HX4g2/KEMEJA-CEWE-1-BELAKANG-DW-Photoroom.png",
+  ],
+    code: "DW-FBS-001",
+
+acquisition:
+  "Family Supply",
+
+rarity:
+  "Common",
+
+version:
+  "Season 2",
+
+description:
+  "Standard female red shirt used by active family members.",
   },
 
   {
     id: 7,
-    title: "DWARRIORS White Tracksuit",
+    title: "DWARRIORS Red Vest",
     access: "All Members",
-    category: "Casual",
-    image: "https://i.imgur.com/rV2a8xH.png",
+    category: "Combat",
+    image: "https://i.ibb.co.com/RTXWWPz7/vest-dw-merah-Photoroom.png",
     images: [
-      "https://i.imgur.com/rV2a8xH.png",
-      "https://i.imgur.com/Qbk2Eqv.png",
-      "https://i.imgur.com/yQ4gdxi.png",
+      "https://i.ibb.co.com/RTXWWPz7/vest-dw-merah-Photoroom.png",
+      "https://i.ibb.co.com/B5G6Rp0z/vest-dw-merah-belakang-Photoroom.png",
     ],
-    code: "JGK-CS-001",
-    acquisition: "Family Supply",
-    rarity: "Common",
+    code: "DW-VR-001",
+    acquisition: "Combat Division",
+    rarity: "Rare",
     version: "Season 1",
-    description: "Standard white tracksuit used by active family members.",
+    description: "Heavy combat armor issued during high-risk operations and warfare.",
   },
 
   {
     id: 8,
-    title: "DWARRIORS Black Tracksuit",
-    access: "All Members",
-    category: "Casual",
-    image: "https://i.imgur.com/A55yJMp.png",
-    images: [
-      "https://i.imgur.com/A55yJMp.png",
-      "https://i.imgur.com/xiP3YQo.png",
-      "https://i.imgur.com/9EibzvR.png",
-    ],
-    code: "JGK-CS-001",
-    acquisition: "Family Supply",
-    rarity: "Common",
-    version: "Season 1",
-    description: "Standard black tracksuit used by active family members.",
-  },
-
-  {
-    id: 9,
-    title: "DWARRIORS red-White Tracksuit",
-    access: "All Members",
-    category: "Casual",
-    image: "https://i.imgur.com/seMC8v2.png",
-    images: [
-      "https://i.imgur.com/seMC8v2.png",
-      "https://i.imgur.com/bFqubMl.png",
-      "https://i.imgur.com/EvfUsPO.png",
-    ],
-    code: "JGK-CS-001",
-    acquisition: "Family Supply",
-    rarity: "Common",
-    version: "Season 1",
-    description: "Standard red-white tracksuit used by active family members.",
-  },
-
-  {
-    id: 10,
-    title: "DWARRIORS red-Black Tracksuit",
-    access: "All Members",
-    category: "Casual",
-    image: "https://i.imgur.com/Y7vdC1y.png",
-    images: [
-      "https://i.imgur.com/Y7vdC1y.png",
-      "https://i.imgur.com/vtiF97j.png",
-      "https://i.imgur.com/m6GvXli.png",
-    ],
-    code: "JGK-CS-001",
-    acquisition: "Family Supply",
-    rarity: "Common",
-    version: "Season 1",
-    description: "Standard red-black tracksuit used by active family members.",
-  },
-  {
-    id: 11,
-    title: "DWARRIORS Armor",
+    title: "DWARRIORS Black Vest",
     access: "All Members",
     category: "Combat",
-    image: "https://i.imgur.com/db4qF58.png",
-    code: "JGK-CB-001",
-
-acquisition:
-  "Combat Division",
-
-rarity:
-  "Legendary",
-
-version:
-  "Season 1",
-
-description:
-  "Heavy combat armor issued during high-risk operations and warfare.",
+    image: "https://i.ibb.co.com/c9Fydgj/vest-dw-hitam-Photoroom.png",
+    images: [
+      "https://i.ibb.co.com/c9Fydgj/vest-dw-hitam-Photoroom.png",
+      "https://i.ibb.co.com/M57R00cs/vest-dw-hitam-belakang-Photoroom.png",
+    ],
+    code: "DW-BV-001",
+    acquisition: "Combat Division",
+    rarity: "Rare",
+    version: "Season 1",
+    description: "Heavy combat armor issued during high-risk operations and warfare.",
   },
+
 ];
 
   const categories = [
   "All",
-  "Executive",
-  "Uniform",
   "Casual",
   "Combat",
 ];
@@ -313,7 +262,7 @@ description:
 const showcaseOutfits = [
   outfits[0],
   outfits[1],
-  outfits[9],
+  outfits[8],
 ];
 
 
@@ -338,7 +287,8 @@ useEffect(() => {
 }, []);
 
 const currentShowcase =
-  showcaseOutfits[showcaseIndex];
+  showcaseOutfits[showcaseIndex] ||
+  outfits[0];
 
 useEffect(() => {
 
@@ -495,7 +445,7 @@ useEffect(() => {
   autoPlay
 >
   <source
-    src="https://res.cloudinary.com/dpyhp3o66/video/upload/v1780386974/DWARRIORS_Gumi_1_nitksm.mp3"
+    src="https://res.cloudinary.com/dbn9lgdi4/video/upload/v1781335095/D.WARRIORS_ANTHEM_-_Prod.By_MANGBORIS_Official_Audio_GTA_jsl6fg.mp3"
     type="audio/mpeg"
   />
 </audio>
@@ -521,9 +471,9 @@ className="
 relative
 overflow-hidden
 bg-gradient-to-br
-from-[#1b0828]
-via-[#12061f]
-to-[#09030f]
+from-[#050505]
+via-[#120000]
+to-[#000000]
 backdrop-blur-xl
 border
 border-red-700/30
@@ -531,7 +481,7 @@ rounded-3xl
 px-8
 py-8
 mb-8
-shadow-[0_0_60px_rgba(168,85,247,0.15)]
+shadow-[0_0_60px_rgba(220,38,38,0.25)]
 "
 >
 
@@ -579,12 +529,12 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
       flex
       items-center
       justify-center
-      shadow-[0_0_40px_rgba(168,85,247,0.35)]
+      shadow-[0_0_40px_rgba(220,38,38,0.45)]
       "
     >
 
       <img
-        src="https://i.ibb.co.com/WWgcd7nf/Asset-18.png"
+        src="https://i.ibb.co.com/nMrw6G4N/logodw.png"
         alt="DWARRIORS"
         className="w-24 h-24 object-contain"
       />
@@ -597,6 +547,7 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
 
       <p
         className="
+        font-[Cinzel]
         text-red-400
         uppercase
         tracking-[0.8em]
@@ -604,14 +555,14 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
         mb-2
         "
       >
-        極道原組
+        DWARRIORS ORGANIZATION
       </p>
 
       <h1
         className="
         text-4xl
         lg:text-5xl
-        font-black
+        font-[Cinzel]
         text-white
         tracking-wider
         "
@@ -623,12 +574,13 @@ shadow-[0_0_60px_rgba(168,85,247,0.15)]
         className="
         text-yellow-500
         tracking-[0.4em]
+        font-[Cinzel]
         uppercase
         text-sm
         mt-2
         "
       >
-        Loyalty • Honor • Power
+        BLOOD • POWER • LEGACY
       </p>
 
       <div
@@ -646,15 +598,13 @@ to-red-700
       <p
         className="
         text-gray-400
+        font-[Cinzel]
         max-w-3xl
         leading-relaxed
         "
       >
-        Official wardrobe archive of the
-        DWARRIORS Family. Browse executive
-        suits, combat armor, ceremonial
-        uniforms, and exclusive outfits
-        reserved for family members.
+       Official clothing archive and uniform regulations
+for every member of the DWARRIORS Organization.
       </p>
 
     </div>
@@ -675,14 +625,14 @@ to-red-700
   {/* BIG LOGO */}
 
   <img
-    src="https://i.ibb.co.com/TDpRVV6Q/Asset-19.png"
+    src="https://i.ibb.co.com/gLwhkLsg/logodw-1.png"
     alt="DWARRIORS Symbol"
     className="
       w-56
       h-56
       object-contain
       opacity-90
-      drop-shadow-[0_0_40px_rgba(168,85,247,0.45)]
+      drop-shadow-[0_0_40px_rgba(220,38,38,0.55)]
     "
   />
 
@@ -826,7 +776,7 @@ to-red-700
     mb-10
     bg-white/5
     border
-    border-red-900/40
+    border-red-600/30
     rounded-3xl
     p-3
     backdrop-blur-xl
@@ -845,12 +795,12 @@ to-red-700
       transition-all
       ${
         activeTab === "wardrobe"
-          ? "bg-gradient-to-r from-red-900 to-red-600 text-white shadow-[0_0_25px_rgba(168,85,247,0.4)]"
+          ? "bg-gradient-to-r from-red-900 to-red-600 text-white shadow-[0_0_25px_rgba(220,38,38,0.35)]"
           : "text-gray-400 hover:text-white"
       }
     `}
   >
-    👘 Wardrobe
+    WARDROBE ARCHIVE
   </button>
 
   <button
@@ -865,12 +815,12 @@ to-red-700
       transition-all
       ${
         activeTab === "hierarchy"
-          ? "bg-gradient-to-r from-red-900 to-red-600 text-white shadow-[0_0_25px_rgba(168,85,247,0.4)]"
+          ? "bg-gradient-to-r from-red-900 to-red-600 text-white shadow-[0_0_25px_rgba(220,38,38,0.35)]"
           : "text-gray-400 hover:text-white"
       }
     `}
   >
-    🏯 Family Hierarchy
+    ORGANIZATION HIERARCHY
   </button>
 
 </div>
@@ -881,36 +831,51 @@ to-red-700
     {/* CURRENT SHOWCASE */}
 
 <div
-  className="
-    relative
-    overflow-hidden
-    rounded-[40px]
-    border
-    border-red-800/40
-    bg-gradient-to-br
-    from-[#0B0714]
-    via-[#12081F]
-    to-[#050508]
-    backdrop-blur-2xl
-    mb-10
-  "
+className="
+relative
+overflow-hidden
+rounded-[40px]
+
+border
+border-red-600/30
+
+bg-gradient-to-br
+from-[#220909]
+via-[#301010]
+to-[#180808]
+
+backdrop-blur-2xl
+
+shadow-[0_0_50px_rgba(220,38,38,0.18)]
+
+mb-10
+"
 >
 
-  <div className="grid lg:grid-cols-2">
+  <div className="grid lg:grid-cols-[500px_1fr]">
 
     {/* IMAGE */}
 
-    <div className="relative">
+   <div
+className="
+relative
+bg-gradient-to-b
+from-[#351010]
+via-[#250909]
+to-[#180808]
+"
+>
 
-      <img
-        src={currentShowcase.image}
-        alt={currentShowcase.title}
-        className="
-          w-full
-          min-h-[600px]
-          object-cover
-        "
-      />
+<img
+src={currentShowcase?.image}
+alt={currentShowcase?.title}
+className="
+w-full
+h-[520px]
+object-contain
+p-8
+"
+/>
 
       <div
         className="
@@ -929,11 +894,11 @@ to-red-700
 
     <div
       className="
-        p-10
-        flex
-        flex-col
-        justify-center
-      "
+p-8
+flex
+flex-col
+justify-center
+"
     >
 
       <p
@@ -945,12 +910,12 @@ to-red-700
           mb-4
         "
       >
-        Featured Uniform
+        DWARRIORS SIGNATURE COLLECTION
       </p>
 
       <h2
         className="
-          text-5xl
+          text-4xl
           font-black
           leading-tight
           mb-6
@@ -978,7 +943,19 @@ to-red-700
         "
       >
 
-        <div className="bg-white/5 rounded-2xl p-4">
+        <div
+className="
+bg-gradient-to-br
+from-red-950/40
+to-red-900/20
+
+border
+border-red-600/20
+
+rounded-2xl
+p-4
+"
+>
           <p className="text-red-400 text-xs">
             CATEGORY
           </p>
@@ -988,7 +965,19 @@ to-red-700
           </h3>
         </div>
 
-        <div className="bg-white/5 rounded-2xl p-4">
+       <div
+className="
+bg-gradient-to-br
+from-red-950/40
+to-red-900/20
+
+border
+border-red-600/20
+
+rounded-2xl
+p-4
+"
+>
           <p className="text-red-400 text-xs">
             RARITY
           </p>
@@ -1053,7 +1042,7 @@ to-red-700
                   e.target.value
                 )
               }
-              className="w-full md:w-[400px] bg-[#12081F]/70 border border-red-700/30 rounded-2xl px-5 py-4 outline-none focus:border-red-500"
+              className="w-full md:w-[400px] bg-black/50 border border-red-700/30 rounded-2xl px-5 py-4 outline-none focus:border-red-500"
             />
 
           </div>
@@ -1080,7 +1069,7 @@ to-red-700
                     filter ===
                     category
                       ? "bg-gradient-to-r from-red-900 to-red-600"
-                      : "bg-[#12081F]/70 border border-red-700/30"
+                      : "bg-black/50 border border-red-700/30"
                   }`}
                 >
                   {category}
@@ -1093,7 +1082,13 @@ to-red-700
 
                     {/* OUTFIT GRID */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="
+grid
+grid-cols-1
+md:grid-cols-2
+gap-6
+items-stretch
+">
 
             {paginatedItems.map(
               (item) => (
@@ -1113,36 +1108,65 @@ group
 relative
 cursor-pointer
 overflow-hidden
+
 bg-gradient-to-br
-from-[#0B0714]
-via-[#12081F]
-to-[#050508]
+from-[#220909]
+via-[#301010]
+to-[#180808]
+
 backdrop-blur-2xl
+
 border
-border-red-700/30
-hover:border-red-500/70
+border-red-600/30
+
+hover:border-red-400
+
 rounded-[32px]
+
 transition-all
 duration-500
+
 hover:-translate-y-2
-hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
+
+hover:shadow-[0_0_50px_rgba(220,38,38,0.45)]
+min-h-[520px]
+h-full
+flex
+flex-col
 "
 >
-                  <div
-    className="
-      absolute
-      inset-0
-      opacity-0
-      group-hover:opacity-100
-      transition-all
-      duration-500
-      bg-gradient-to-br
-      from-red-500/10
-      via-transparent
-      to-red-500/10
-    "
-  />
+                 <div
+className="
+absolute
+inset-0
+opacity-0
+group-hover:opacity-100
+transition-all
+duration-500
 
+bg-gradient-to-br
+from-red-700/20
+via-transparent
+to-red-900/20
+"
+/>
+<div
+className="
+absolute
+top-1/2
+left-1/2
+-translate-x-1/2
+-translate-y-1/2
+
+w-72
+h-72
+
+bg-red-700/20
+blur-[100px]
+
+opacity-40
+"
+/>
                   {/* IMAGE */}
 
                   <div className="relative overflow-hidden">
@@ -1153,14 +1177,47 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
   "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f"
 }
                       alt={item.title}
-                      className="w-full min-h-[450px] object-cover group-hover:scale-125 transition-all duration-700"
+                      className="
+w-full
+h-[340px]
+object-contain
+
+bg-gradient-to-b
+from-[#351010]
+via-[#250909]
+to-[#1a0808]
+
+p-4
+
+group-hover:scale-105
+transition-all
+duration-700
+"
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
                     <div className="absolute top-4 right-4">
 
-                      <span className="px-3 py-1 rounded-full bg-red-900/70 backdrop-blur-xl border border-red-500/30 text-xs font-semibold">
+                      <span
+className="
+px-3
+py-1
+rounded-full
+
+bg-black/80
+
+border
+border-red-500/40
+
+text-red-300
+text-xs
+font-bold
+
+tracking-widest
+uppercase
+"
+>
                         {item.category}
                       </span>
 
@@ -1170,13 +1227,36 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
 
                   {/* CONTENT */}
 
-                  <div className="p-6">
+                  <div
+className="
+p-6
+flex
+flex-col
+flex-1
+
+bg-gradient-to-b
+from-red-950/10
+to-red-900/5
+"
+>
 
   <h2 className="text-2xl font-black text-white mb-4">
-    {item.title}
-  </h2>
+  {item.title}
+</h2>
 
-  <div className="space-y-4">
+<div
+className="
+w-20
+h-[2px]
+rounded-full
+bg-gradient-to-r
+from-red-600
+to-red-900
+mb-5
+"
+/>
+
+  <div className="space-y-4 flex-1">
 
     <div>
 
@@ -1197,17 +1277,24 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
       </p>
 
       <span
-  className="
-    inline-flex
-    px-3
-    py-2
-    rounded-full
-    bg-red-900/20
-    border
-    border-red-500/30
-    text-red-200
-    font-semibold
-  "
+className="
+inline-flex
+
+px-4
+py-2
+
+rounded-full
+
+bg-black/60
+
+border
+border-red-600/40
+
+text-red-300
+
+font-bold
+tracking-wide
+"
 >
   {item.access}
 </span>
@@ -1220,11 +1307,32 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
         Status
       </p>
 
-      <span className="inline-flex px-3 py-1 rounded-full bg-red-700/30 border border-red-500/30 text-red-200 text-sm">
+      <span
+className="
+inline-flex
+
+px-4
+py-2
+
+rounded-full
+
+bg-gradient-to-r
+from-red-950
+to-red-700
+
+border
+border-red-500/40
+
+text-red-100
+
+font-bold
+text-sm
+"
+>
         Official Uniform
       </span>
 
-      <div className="mt-4">
+      <div className="mt-auto pt-6">
 
   <span
     className="
@@ -1241,7 +1349,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
       font-bold
     "
   >
-    DWARRIORS Family
+    DWARRIORS ORGANIZATION
   </span>
 
 </div>
@@ -1272,99 +1380,6 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
             </div>
 
           )}
-
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-10">
-
-            <div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
-              <p className="text-gray-400">
-                Total Outfits
-              </p>
-              <h2 className="text-4xl font-black mt-2">
-                {outfits.length}
-              </h2>
-            </div>
-
-            <div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
-              <p className="text-gray-400">
-                Executive
-              </p>
-              <h2 className="text-4xl font-black mt-2">
-                {
-                  outfits.filter(
-                    (x) =>
-                      x.category ===
-                      "Executive"
-                  ).length
-                }
-              </h2>
-            </div>
-
-            <div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
-              <p className="text-gray-400">
-                Uniform
-              </p>
-              <h2 className="text-4xl font-black mt-2">
-                {
-                  outfits.filter(
-                    (x) =>
-                      x.category ===
-                      "Uniform"
-                  ).length
-                }
-              </h2>
-            </div>
-
-            <div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
-              <p className="text-gray-400">
-                Casual
-              </p>
-              <h2 className="text-4xl font-black mt-2">
-                {
-                  outfits.filter(
-                    (x) =>
-                      x.category ===
-                      "Casual"
-                  ).length
-                }
-              </h2>
-            </div>
-
-            <div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
-
-  <p className="text-gray-400">
-    Combat
-  </p>
-
-  <h2 className="text-4xl font-black mt-2 text-red-400">
-    {
-      outfits.filter(
-        (x) =>
-          x.category ===
-          "Combat"
-      ).length
-    }
-  </h2>
-
-</div>
-
-<div className="bg-[#12081F]/70 border border-red-900/40 rounded-3xl p-5">
-
-  <p className="text-gray-400">
-    Exclusive Rank
-  </p>
-
-  <h2 className="text-4xl font-black mt-2 text-yellow-300">
-    {
-      outfits.filter(
-        (x) =>
-          x.access !==
-          "All Members"
-      ).length
-    }
-  </h2>
-
-</div>
-</div>
           {/* PAGINATION */}
 
           {totalPages > 1 && (
@@ -1384,7 +1399,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
                 disabled={
                   currentPage === 1
                 }
-                className="px-5 py-3 rounded-2xl bg-white/5 border border-red-900/40 disabled:opacity-40 hover:border-red-500 transition-all"
+                className="px-5 py-3 rounded-2xl bg-white/5 border border-red-600/30 disabled:opacity-40 hover:border-red-500 transition-all"
               >
                 Previous
               </button>
@@ -1413,7 +1428,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
                   currentPage ===
                   totalPages
                 }
-                className="px-5 py-3 rounded-2xl bg-white/5 border border-red-900/40 disabled:opacity-40 hover:border-red-500 transition-all"
+                className="px-5 py-3 rounded-2xl bg-white/5 border border-red-600/30 disabled:opacity-40 hover:border-red-500 transition-all"
               >
                 Next
               </button>
@@ -1453,7 +1468,7 @@ hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]
       }
       className="
         w-full
-        max-w-6xl
+        max-w-7xl
         bg-gradient-to-br
         from-[#070707]
 via-[#130909]
@@ -1462,15 +1477,25 @@ to-[#000000]
         border-red-500/30
         rounded-[40px]
         overflow-hidden
-        shadow-[0_0_60px_rgba(168,85,247,0.35)]
+        shadow-[0_0_70px_rgba(220,38,38,0.45)]
       "
     >
 
-      <div className="grid lg:grid-cols-2">
+      <div className="grid lg:grid-cols-[650px_1fr]">
 
         {/* IMAGE */}
 
-        <div className="relative">
+        <div
+className="
+relative
+
+bg-gradient-to-b
+from-[#351010]
+via-[#250909]
+to-[#1a0808]
+"
+>
+  
 
           <img
   src={
@@ -1480,13 +1505,29 @@ to-[#000000]
   alt={selectedOutfit.title}
   className="
     w-full
-    h-full
-    object-cover
-    min-h-[700px]
+    h-[850px]
+    object-contain
+
+    bg-gradient-to-b
+    from-[#351010]
+    via-[#250909]
+    to-[#1a0808]
+
+    p-6
   "
 />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+         <div
+className="
+absolute
+inset-0
+
+bg-gradient-to-t
+from-black/80
+via-transparent
+to-transparent
+"
+/>
           <div
   className="
     absolute
@@ -1511,8 +1552,8 @@ to-[#000000]
         setSelectedImage(img)
       }
       className={`
-        w-20
-        h-20
+        w-28
+        h-28
         rounded-xl
         object-cover
         cursor-pointer
@@ -1520,8 +1561,8 @@ to-[#000000]
         transition-all
         ${
           selectedImage === img
-            ? "border-red-500 scale-110"
-            : "border-white/20"
+? "border-red-500 scale-110 shadow-[0_0_20px_rgba(220,38,38,0.6)]"
+: "border-red-900/30"
         }
       `}
     />
@@ -1646,9 +1687,9 @@ to-[#000000]
                 Status
               </p>
 
-              <h3 className="text-xl font-bold mt-2 text-green-400">
-                Official Uniform
-              </h3>
+              <h3 className="text-xl font-bold mt-2 text-red-300">
+DWARRIORS Official Uniform
+</h3>
 
             </div>
 
@@ -1658,17 +1699,29 @@ to-[#000000]
 
             <div
               className="
-                inline-flex
-                px-5
-                py-3
-                rounded-full
-                bg-gradient-to-r
-                from-red-900
-                to-red-600
-                font-bold
-              "
+px-5
+py-3
+
+rounded-full
+
+bg-gradient-to-r
+from-red-950
+via-red-800
+to-red-600
+
+text-white
+
+text-xs
+tracking-[0.2em]
+
+uppercase
+
+font-black
+
+shadow-[0_0_25px_rgba(220,38,38,0.5)]
+"
             >
-              DWARRIORS FAMILY
+              DWARRIORS ORGANIZATION
             </div>
 
           </div>
@@ -1679,15 +1732,27 @@ to-[#000000]
     setSelectedImage(null);
   }}
             className="
-              mt-10
-              bg-red-700
-              hover:bg-red-800
-              px-6
-              py-4
-              rounded-2xl
-              font-bold
-              transition-all
-            "
+mt-10
+
+bg-gradient-to-r
+from-red-950
+via-red-800
+to-red-600
+
+hover:scale-105
+
+px-6
+py-4
+
+rounded-2xl
+
+font-black
+
+shadow-[0_0_30px_rgba(220,38,38,0.5)]
+
+transition-all
+duration-300
+"
           >
             Close
           </button>

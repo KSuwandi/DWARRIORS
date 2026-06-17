@@ -3,7 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../services/firebase/config";
 import { useNavigate } from "react-router-dom";
 
-export default function ProfileJGBPage() {
+export default function ProfileDwPage() {
   const [users, setUsers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
 
@@ -30,87 +30,148 @@ export default function ProfileJGBPage() {
 
   const hierarchy = [
     {
-      role: "Oyabun",
+      role: "BOSS",
       members: [
         {
           name: "Izaya Rosevale",
           title: "Supreme Leader",
           photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164416/Izaya-fix_c2fvli.png",
           description:
-            "One of the supreme leaders of the DWARRIORS Gumi. Commands absolute authority and oversees all family affairs.",
+            "One of the supreme leaders of the DWARRIORS ORGANIZATION. Commands absolute authority and oversees all family affairs.",
         },
       ],
     },
     {
-      role: "Wakagashira",
+      role: "UNDERBOSS",
       members: [
         {
           name: "Daniel R Hawks",
           title: "Co - Supreme Leader",
           photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164409/Daniel-Photoroom_jcupp8.png",
           description:
-            "Second of the supreme leaders of the DWARRIORS Gumi. Commands absolute authority and oversees all family affairs.",
+            "Second of the supreme leaders of the DWARRIORS ORGANIZATION. Commands absolute authority and oversees all family affairs.",
         },
       ],
     },
     {
-      role: "Hashira",
+      role: "CONSIGLIERE",
       members: [
         {
           name: "Anu Julian Moore",
           title: "Leader of the Hashira",
           photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164405/julian-fix_rnuyoc.png",
           description:
-            "Leader of the Hashira, a key figure in the DWARRIORS Gumi.",
+            "Leader of the Hashira, a key figure in the DWARRIORS ORGANIZATION.",
         },
         {
           name: "Gogon A Moore",
           title: "Hashira of Finance",
           photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164411/gogon-Photoroom_zekavs.png",
           description:
-            "Leader of the Hashira, a key figure in the DWARRIORS Gumi.",
+            "Leader of the Hashira, a key figure in the DWARRIORS ORGANIZATION.",
         },
         {
           name: "Abay B Bowscale",
           title: "Hashira of Inventory",
           photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164418/abay-Photoroom_nks6zt.png",
           description:
-            "Elite executive of the DWARRIORS Gumi.",
+            "Elite executive of the DWARRIORS ORGANIZATION.",
         },
         {
           name: "Doo Sukaroam",
           title: "Hashira of Business",
           photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164414/Doo-fix_nb0j8g.png",
           description:
-            "Elite executive of the DWARRIORS Gumi.",
+            "Elite executive of the DWARRIORS ORGANIZATION.",
         },
         {
           name: "Gig George",
           title: "Hashira of Inventory",
           photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164410/gig-Photoroom_sgtvzr.png",
           description:
-            "Elite executive of the DWARRIORS Gumi.",
+            "Elite executive of the DWARRIORS ORGANIZATION.",
         },
         {
           name: "Enzo Deluca",
           title: "Hashira of Finance",
           photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164416/Enzo-Photoroom_hpldai.png",
           description:
-            "Elite executive of the DWARRIORS Gumi.",
+            "Elite executive of the DWARRIORS ORGANIZATION.",
         },
         {
           name: "Eki Saltia",
           title: "Hashira of Business",
           photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164409/eki-Photoroom_sog6mx.png",
           description:
-            "Elite executive of the DWARRIORS Gumi.",
+            "Elite executive of the DWARRIORS ORGANIZATION.",
         },
         {
           name: "Fabian Elandya",
           title: "Hashira of Finance",
           photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164410/Fabian-Photoroom_bbtfbp.png",
           description:
-            "Elite executive of the DWARRIORS Gumi.",
+            "Elite executive of the DWARRIORS ORGANIZATION.",
+        },
+      ],
+    },
+    {
+      role: "CAPO",
+      members: [
+        {
+          name: "Anu Julian Moore",
+          title: "Leader of the Hashira",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164405/julian-fix_rnuyoc.png",
+          description:
+            "Leader of the Hashira, a key figure in the DWARRIORS ORGANIZATION.",
+        },
+        {
+          name: "Gogon A Moore",
+          title: "Hashira of Finance",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164411/gogon-Photoroom_zekavs.png",
+          description:
+            "Leader of the Hashira, a key figure in the DWARRIORS ORGANIZATION.",
+        },
+        {
+          name: "Abay B Bowscale",
+          title: "Hashira of Inventory",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164418/abay-Photoroom_nks6zt.png",
+          description:
+            "Elite executive of the DWARRIORS ORGANIZATION.",
+        },
+        {
+          name: "Doo Sukaroam",
+          title: "Hashira of Business",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164414/Doo-fix_nb0j8g.png",
+          description:
+            "Elite executive of the DWARRIORS ORGANIZATION.",
+        },
+        {
+          name: "Gig George",
+          title: "Hashira of Inventory",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164410/gig-Photoroom_sgtvzr.png",
+          description:
+            "Elite executive of the DWARRIORS ORGANIZATION.",
+        },
+        {
+          name: "Enzo Deluca",
+          title: "Hashira of Finance",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164416/Enzo-Photoroom_hpldai.png",
+          description:
+            "Elite executive of the DWARRIORS ORGANIZATION.",
+        },
+        {
+          name: "Eki Saltia",
+          title: "Hashira of Business",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164409/eki-Photoroom_sog6mx.png",
+          description:
+            "Elite executive of the DWARRIORS ORGANIZATION.",
+        },
+        {
+          name: "Fabian Elandya",
+          title: "Hashira of Finance",
+          photo: "https://res.cloudinary.com/dpyhp3o66/image/upload/v1780164410/Fabian-Photoroom_bbtfbp.png",
+          description:
+            "Elite executive of the DWARRIORS ORGANIZATION.",
         },
       ],
     },
@@ -119,22 +180,22 @@ export default function ProfileJGBPage() {
   const activeMember =
     selectedMember || hierarchy[0].members[0];
 
-  const shateiMembers = users.filter(
-    (u) => u.role === "Shatei"
-  );
+  const memberList = users.filter(
+(u)=>u.role==="MEMBER"
+);
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
 
       {/* BACKGROUND */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#120012] via-black to-[#09000f]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#120000] via-black to-[#050505]" />
 
       <div className="absolute top-0 left-0 w-full h-full opacity-20">
         <div className="absolute w-full max-w-[500px] min-h-[500px] bg-red-700 blur-[180px] rounded-full top-[-150px] left-[-100px]" />
         <div className="absolute w-full max-w-[400px] min-h-[400px] bg-red-700 blur-[160px] rounded-full bottom-[-120px] right-[-80px]" />
       </div>
 
-      <div className="relative z-10 flex h-screen">
+      <div className="relative z-10 flex min-h-screen">
 
         {/* SIDEBAR */}
         <div
@@ -147,7 +208,7 @@ export default function ProfileJGBPage() {
     backdrop-blur-xl
     p-6
     overflow-y-auto
-    shadow-[0_0_50px_rgba(168,85,247,0.15)]
+    shadow-[0_0_50px_rgba(220,38,38,0.25)]
   "
 >
 
@@ -170,10 +231,10 @@ export default function ProfileJGBPage() {
     to-red-500
     bg-clip-text
     text-transparent
-    drop-shadow-[0_0_20px_rgba(168,85,247,0.8)]
+    drop-shadow-[0_0_20px_rgba(220,38,38,0.7)]
   "
 >
-  DWARRIORS GUMI
+  DWARRIORS ORGANIZATION
 </h1>
 
           {hierarchy.map((group) => (
@@ -213,16 +274,16 @@ export default function ProfileJGBPage() {
             </div>
           ))}
 
-          {/* SHATEI */}
+          {/* MEMBER */}
           <div>
 
             <h2 className="text-red-400 font-black tracking-[0.3em] uppercase mb-4">
-              Aniki
+              MEMBER
             </h2>
 
             <div className="space-y-2">
 
-              {shateiMembers.map((member) => (
+              {memberList.map((member) => (
                 <div
                   key={member.id}
                   className="flex items-center gap-3 bg-white/5 border border-red-700/20 rounded-xl p-2"
@@ -239,7 +300,7 @@ export default function ProfileJGBPage() {
                     </p>
 
                     <p className="text-xs text-red-300">
-                      Shatei
+                      MEMBER
                     </p>
                   </div>
 
@@ -253,7 +314,7 @@ export default function ProfileJGBPage() {
         </div>
 
         {/* CONTENT */}
-        <div className="flex-1 relative overflow-hidden">
+        <div className="flex-1 relative overflow-y-auto">
 
           {/* WATERMARK */}
           <div className="absolute inset-0 pointer-events-none">
@@ -288,11 +349,11 @@ export default function ProfileJGBPage() {
 
           </div>
 
-          <div className="relative z-10 h-full">
+          <div className="relative z-10 min-h-screen">
 
-            <div className="h-full max-w-[1800px] mx-auto px-10">
+            <div className="min-h-screen max-w-[1800px] mx-auto px-10 py-10">
 
-              <div className="grid lg:grid-cols-[850px_1fr] h-full items-center gap-12">
+              <div className="grid lg:grid-cols-[850px_1fr] min-h-screen items-center gap-12">
 
                 {/* FOTO */}
                 <div className="relative flex justify-center items-center">
@@ -307,7 +368,7 @@ export default function ProfileJGBPage() {
                       min-h-[900px]
                       xl:min-h-[1000px]
                       object-contain
-                      drop-shadow-[0_0_90px_rgba(168,85,247,0.8)]
+                      drop-shadow-[0_0_90px_rgba(220,38,38,0.8)]
                     "
                   />
 
@@ -317,7 +378,7 @@ export default function ProfileJGBPage() {
                 <div>
 
                   <p className="tracking-[0.4em] text-red-400 uppercase">
-                    DWARRIORS Family
+                    DWARRIORS ORGANIZATION
                   </p>
 
                   <h1 className="text-[6rem] xl:text-[7rem] font-black leading-none mt-4">
@@ -342,7 +403,7 @@ export default function ProfileJGBPage() {
 
                   <div className="grid grid-cols-2 gap-6 mt-12">
 
-                    <div className="bg-white/5 border border-red-700/20 rounded-3xl p-6 backdrop-blur-xl">
+                    <div className="bg-black/40 border border-red-700/30 rounded-3xl p-6 backdrop-blur-xl">
 
                       <h3 className="text-red-400 text-sm font-bold tracking-[0.2em]">
                         POSITION
