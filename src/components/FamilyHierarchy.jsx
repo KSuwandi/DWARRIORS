@@ -54,6 +54,13 @@ export default function FamilyHierarchy() {
           description:
             "The head of the DWARRIORS family. Commands absolute loyalty and controls every aspect of the organization's bloodline, power, and legacy.",
         },
+        {
+          name: "Armanta D Cosa",
+          title: "BOSS",
+          photo: "https://i.ibb.co.com/L75Dxzf/Armanta-D-Cosa-boss-Photoroom-1.png",
+          description:
+            "The head of the DWARRIORS family. Commands absolute loyalty and controls every aspect of the organization's bloodline, power, and legacy.",
+        },
       ],
     },
     {

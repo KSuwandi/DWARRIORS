@@ -1,12 +1,14 @@
 import {
   useState,
+  useEffect,
 } from "react";
 
 import toast from "react-hot-toast";
 
 import {
-  addDoc,
-  collection,
+  doc,
+  setDoc,
+  getDoc,
   serverTimestamp,
 } from "firebase/firestore";
 
@@ -33,75 +35,142 @@ export default function RoleRequestPage() {
   ] = useState(false);
 
   const [
+  alreadyRequested,
+  setAlreadyRequested,
+] = useState(false);
+
+  const [
   rpName,
   setRpName,
 ] = useState(
   user?.rpName || ""
 );
 
+// =====================================
+// CHECK EXISTING REQUEST
+// =====================================
+async function checkRequest() {
+
+  if (!user) return;
+
+  try {
+
+    const docRef = doc(
+      db,
+      "role_requests",
+      user.uid
+    );
+
+    const snapshot =
+      await getDoc(docRef);
+
+    if (snapshot.exists()) {
+
+      const data =
+        snapshot.data();
+
+      if (
+        data.status === "pending" ||
+        data.status === "approved"
+      ) {
+
+        setAlreadyRequested(true);
+
+      }
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "CHECK REQUEST ERROR",
+      error
+    );
+
+  }
+
+}
+
+useEffect(() => {
+
+  checkRequest();
+
+}, [user]);
+
   // =====================================
   // SUBMIT REQUEST
   // =====================================
-  const submitRequest =
-  async () => {
+  const submitRequest = async () => {
 
-    try {
+  try {
 
-      if (!rpName.trim()) {
+    if (!rpName.trim()) {
 
-        toast.error(
-          "RP Name wajib diisi"
-        );
+      toast.error(
+        "RP Name wajib diisi"
+      );
 
-        return;
+      return;
+
+    }
+
+    if (alreadyRequested) {
+
+      toast.error(
+        "Request already submitted"
+      );
+
+      return;
+
+    }
+
+    setLoading(true);
+
+    await setDoc(
+
+      doc(
+        db,
+        "role_requests",
+        user.uid
+      ),
+
+      {
+        userId: user.uid,
+
+        rpName: rpName.trim(),
+
+        email: user.email,
+
+        requestedRole: "MEMBER",
+
+        status: "pending",
+
+        createdAt: serverTimestamp(),
       }
 
-      setLoading(true);
+    );
 
-      await addDoc(
-          collection(
-            db,
-            "role_requests"
-          ),
-          {
-  userId:
-    user.uid,
+    setAlreadyRequested(true);
 
-  rpName:
-    rpName.trim(),
+    toast.success(
+      "Role request submitted"
+    );
 
-    email:
-      user.email,
+  } catch (error) {
 
-  requestedRole: "MEMBER",
+    console.error(error);
 
-  status:
-    "pending",
+    toast.error(
+      "Failed submit request"
+    );
 
-  createdAt:
-    serverTimestamp(),
-}
-        );
+  } finally {
 
-        toast.success(
-          "Role request submitted"
-        );
+    setLoading(false);
 
-      } catch (error) {
+  }
 
-        console.error(
-          error
-        );
-
-        toast.error(
-          "Failed submit request"
-        );
-
-      } finally {
-
-        setLoading(false);
-      }
-    };
+};
 
   return (
 
@@ -244,8 +313,9 @@ export default function RoleRequestPage() {
             {/* BUTTON */}
             <button
               disabled={
-                loading
-              }
+  loading ||
+  alreadyRequested
+}
               onClick={
                 submitRequest
               }
@@ -273,9 +343,13 @@ disabled:opacity-50
 
               <span className="relative z-10">
 
-                {loading
-                  ? "Submitting..."
-                  : "Submit Request"}
+                {
+loading
+? "Submitting..."
+: alreadyRequested
+? "Request Already Submitted"
+: "Submit Request"
+}
 
               </span>
 
