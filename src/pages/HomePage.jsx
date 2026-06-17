@@ -68,32 +68,110 @@ const handleVolume = (e) => {
   }
 };
 
+
 if (loading) {
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center overflow-hidden relative">
+    <div className="fixed inset-0 bg-black overflow-hidden flex items-center justify-center">
 
-      {/* Background Glow */}
-      <div className="absolute w-[500px] h-[500px] bg-red-700/30 blur-[180px] rounded-full" />
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1a0000] via-black to-black" />
 
-      <div className="relative z-10 text-center animate-fadeIn">
+      {/* Red Glow */}
+      <div className="absolute w-[700px] h-[700px] bg-red-700/30 rounded-full blur-[200px]" />
 
-        <h1 className="text-6xl md:text-8xl font-black tracking-[0.3em] text-white">
+      {/* Watermark */}
+      <img
+        src="https://i.ibb.co.com/nMrw6G4N/logodw.png"
+        className="
+          absolute
+          w-[900px]
+          opacity-[0.03]
+          select-none
+        "
+      />
+
+      <div className="relative z-10 text-center">
+
+        {/* Logo */}
+        <div className="relative flex justify-center">
+
+          <div className="
+            absolute
+            w-[350px]
+            h-[350px]
+            bg-red-600/30
+            rounded-full
+            blur-[120px]
+          " />
+
+          <img
+            src="https://i.ibb.co.com/nMrw6G4N/logodw.png"
+            className="
+              w-[220px]
+              animate-pulse
+              drop-shadow-[0_0_80px_rgba(220,38,38,.8)]
+            "
+          />
+
+        </div>
+
+        <h1
+          className="
+            mt-8
+            text-7xl
+            font-black
+            tracking-[0.25em]
+            bg-gradient-to-b
+            from-white
+            via-red-300
+            to-red-700
+            bg-clip-text
+            text-transparent
+          "
+        >
           DWARRIORS
         </h1>
 
-        <p className="mt-4 text-3xl text-red-400">
+        <p className="
+          mt-3
+          text-red-300
+          tracking-[0.5em]
+          uppercase
+        ">
           BLOOD • POWER • LEGACY
         </p>
 
-        <div className="mt-10 w-72 h-2 bg-white/10 rounded-full overflow-hidden mx-auto">
+        {/* Progress */}
+        <div className="
+          mt-12
+          w-[320px]
+          h-3
+          rounded-full
+          bg-white/10
+          overflow-hidden
+          mx-auto
+        ">
 
           <div
-  className="h-full w-0 bg-gradient-to-r from-red-800 via-red-600 to-red-400 animate-loading"
-/>
+            className="
+              h-full
+              bg-gradient-to-r
+              from-red-900
+              via-red-600
+              to-white
+              animate-loading
+            "
+          />
+
         </div>
 
-        <p className="mt-6 text-gray-400 tracking-[0.3em] uppercase">
-          Loading...
+        <p className="
+          mt-6
+          text-gray-400
+          tracking-[0.4em]
+          uppercase
+        ">
+          INITIALIZING FAMILY DATA...
         </p>
 
       </div>

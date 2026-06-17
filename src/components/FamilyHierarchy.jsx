@@ -9,29 +9,16 @@ export default function FamilyHierarchy() {
   const [users, setUsers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
 
-  useEffect(() => {
-
-  if (!loading && user) {
-    loadMembers();
-  }
-
-}, [loading, user]);
+ useEffect(() => {
+  loadMembers();
+}, []);
 
   async function loadMembers() {
 
   try {
 
-    console.log("===== LOAD MEMBERS =====");
-
-    console.log("USER LOGIN =", user);
-
     const snapshot = await getDocs(
       collection(db, "users")
-    );
-
-    console.log(
-      "TOTAL DOCS =",
-      snapshot.docs.length
     );
 
     const data = snapshot.docs.map((doc) => ({
@@ -39,40 +26,10 @@ export default function FamilyHierarchy() {
       ...doc.data(),
     }));
 
-    console.log(
-      "SEMUA USER =",
-      data
-    );
-
-    data.forEach((u)=>{
-
-console.log(
-  "RP NAME =",
-  u.rpName
-);
-
-console.log(
-  "ROLE =",
-  u.role
-);
-
-console.log(
-  "STATUS =",
-  u.status
-);
-
-});
-
     const memberOnly =
       data.filter(
         (u) => u.role === "MEMBER"
       );
-
-    console.log(
-      "MEMBER SAJA =",
-      memberOnly
-    );
-
     setUsers(data);
 
   } catch (error) {
@@ -205,20 +162,10 @@ console.log(
   const activeMember =
     selectedMember || hierarchy[0].members[0];
 
-  const memberList =
-users.filter(
-
-(u)=>
-
-u.role?.toUpperCase() ===
-"MEMBER"
-
+  const memberList = users.filter(
+  u => u.role?.trim().toUpperCase() === "MEMBER"
 );
 
-console.log(
-  "MEMBER LIST YANG DITAMPILKAN =",
-  memberList
-);
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
