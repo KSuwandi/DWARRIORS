@@ -318,7 +318,7 @@ export default function FamilyHierarchy() {
             </h1>
 
             <img
-              src="https://i.ibb.co.com/tTKwhGt1/Asset-18.png"
+              src="https://i.ibb.co.com/gLwhkLsg/logodw-1.png"
               alt=""
               className="
                 absolute
@@ -326,7 +326,7 @@ export default function FamilyHierarchy() {
                 top-1/2
                 -translate-y-1/2
                 w-full max-w-[1100px]
-                opacity-[0.03]
+                opacity-20
               "
             />
 
