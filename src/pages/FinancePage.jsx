@@ -136,10 +136,6 @@ const [
   setReturnDescription,
 ] = useState("");
 
-const [
-  returnImageUrl,
-  setReturnImageUrl,
-] = useState("");
 
 const loadDebtItems = async () => {
 
@@ -313,79 +309,7 @@ const loadDebtItems = async () => {
     }
   };
 
-  const handleReturnImageUpload =
-async (e) => {
-
-  try {
-
-    const file =
-      e.target.files?.[0];
-
-    if (!file) return;
-
-    setUploadingImage(true);
-
-    const compressedFile =
-      await imageCompression(
-        file,
-        {
-          maxSizeMB: 0.4,
-          maxWidthOrHeight: 1280,
-          useWebWorker: true,
-        }
-      );
-
-    const body =
-      new FormData();
-
-    body.append(
-      "file",
-      compressedFile
-    );
-
-    body.append(
-      "upload_preset",
-      "DWARRIORS"
-    );
-
-    const response =
-      await fetch(
-        "https://api.cloudinary.com/v1_1/dbn9lgdi4/image/upload",
-        {
-          method: "POST",
-          body,
-        }
-      );
-
-    const data =
-      await response.json();
-
-    setReturnImageUrl(
-      data.secure_url.replace(
-        "/upload/",
-        "/upload/f_auto,q_auto/"
-      )
-    );
-
-    toast.success(
-      "Bukti berhasil diupload"
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    toast.error(
-      "Upload gagal"
-    );
-
-  } finally {
-
-    setUploadingImage(false);
-
-  }
-
-};
+  
 
   const loadTransactions =
   async () => {
@@ -1328,16 +1252,6 @@ Klik Cancel untuk membatalkan.`
 };
 const submitItemReturn = async () => {
 
-  if (!returnImageUrl) {
-
-  toast.error(
-    "Upload foto bukti terlebih dahulu"
-  );
-
-  return;
-
-}
-
   if (selectedReturns.length === 0) {
 
     toast.error(
@@ -1375,9 +1289,6 @@ const submitItemReturn = async () => {
 
   items: selectedReturns,
 
-  imageUrl:
-  returnImageUrl,
-
   debtStatus:
   activeTab === "WITHDRAW"
     ? "Masih Hutang"
@@ -1396,8 +1307,6 @@ const submitItemReturn = async () => {
     setSelectedReturns([]);
 
 setReturnDescription("");
-
-setReturnImageUrl("");
 
 setShowDebtModal(false);
 
@@ -3344,45 +3253,7 @@ hasPermission(
   "
 >
 
-<div className="mb-4">
 
-  <label className="block text-sm text-gray-400 mb-2">
-
-    Upload Bukti Pengembalian
-
-  </label>
-
-  <input
-    type="file"
-    accept="image/*"
-    onChange={handleReturnImageUpload}
-    className="
-      w-full
-      bg-[#141021]
-      border
-      border-red-700/40
-      rounded-2xl
-      p-3
-    "
-  />
-
-  {returnImageUrl && (
-
-    <img
-      src={returnImageUrl}
-      alt="Bukti"
-      className="
-        mt-3
-        w-48
-        rounded-2xl
-        border
-        border-red-500/30
-      "
-    />
-
-  )}
-
-</div>
 
   <label
     className="
@@ -3392,7 +3263,7 @@ hasPermission(
       mb-2
     "
   >
-    Deskripsi Pengembalian
+    Catatan Pengembalian
   </label>
 
   <textarea
@@ -3405,11 +3276,11 @@ hasPermission(
       )
     }
     placeholder="
-      Contoh:
-      Barang masih bagus,
-      pengembalian setelah event,
-      dll...
-    "
+Contoh :
+• Kondisi barang masih lengkap.
+• Pengembalian setelah war.
+• Tidak ada pengurangan.
+"
     className="
       w-full
       min-h-[120px]
