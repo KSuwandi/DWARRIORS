@@ -908,7 +908,7 @@ leading-[2.5]
 text-lg
 text-gray-300
 ">
-Dwarriors lahir dari ambisi besar seorang{" "}
+DWARRIORS lahir dari ambisi besar seorang{" "}
 
 <span className="text-red-300 font-bold">
   Portgas D. Memet
