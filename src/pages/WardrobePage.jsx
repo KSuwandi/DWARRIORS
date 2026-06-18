@@ -218,7 +218,7 @@ description:
 
   {
     id: 7,
-    title: "DWARRIORS Red Vest",
+    title: "DWARRIORS Vest Red",
     access: "All Members",
     category: "Combat",
     image: "https://i.ibb.co.com/RTXWWPz7/vest-dw-merah-Photoroom.png",
@@ -235,7 +235,7 @@ description:
 
   {
     id: 8,
-    title: "DWARRIORS Black Vest",
+    title: "DWARRIORS Vest Black",
     access: "All Members",
     category: "Combat",
     image: "https://i.ibb.co.com/c9Fydgj/vest-dw-hitam-Photoroom.png",
@@ -243,7 +243,7 @@ description:
       "https://i.ibb.co.com/c9Fydgj/vest-dw-hitam-Photoroom.png",
       "https://i.ibb.co.com/M57R00cs/vest-dw-hitam-belakang-Photoroom.png",
     ],
-    code: "DW-BV-001",
+    code: "DW-VS-001",
     acquisition: "Combat Division",
     rarity: "Rare",
     version: "Season 1",
