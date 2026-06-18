@@ -6,20 +6,62 @@ export default function HomePage() {
 
 const [loading, setLoading] = useState(true);
 const [selectedImage, setSelectedImage] = useState(null);
+const [currentImage, setCurrentImage] = useState(0);
 const galleryImages = [
-
-"https://LINK1",
-"https://LINK2",
-"https://LINK3",
-"https://LINK4",
-"https://LINK5",
-"https://LINK6",
-"https://LINK7",
-"https://LINK8",
-"https://LINK9",
-"https://LINK10",
-
+"https://i.ibb.co.com/xKpzxwLh/dw4.png",
+"https://i.ibb.co.com/NdbTPTmx/imgdw4.png",
+"https://i.ibb.co.com/PzbXYG1Z/hood-dw.png",
+"https://i.ibb.co.com/4w9g0YMy/dw3.png",
+"https://i.ibb.co.com/CpC77Gy5/dw2.png",
+"https://i.ibb.co.com/V0R9GSd0/dw1.png",
+"https://i.ibb.co.com/QvM9xwR6/imgdw.png",
+"https://i.ibb.co.com/F4pG8B48/imgdw1.png",
+"https://i.ibb.co.com/xSdLQtR0/imgdw2.png",
+"https://i.ibb.co.com/pj9rCtLc/imgdw3.png",
 ];
+function openImage(index) {
+
+  setCurrentImage(index);
+
+  setSelectedImage(
+    galleryImages[index]
+  );
+
+}
+
+function nextImage() {
+
+  const next =
+    (currentImage + 1)
+    %
+    galleryImages.length;
+
+  setCurrentImage(next);
+
+  setSelectedImage(
+    galleryImages[next]
+  );
+
+}
+
+function prevImage() {
+
+  const prev =
+    (
+      currentImage -
+      1 +
+      galleryImages.length
+    )
+    %
+    galleryImages.length;
+
+  setCurrentImage(prev);
+
+  setSelectedImage(
+    galleryImages[prev]
+  );
+
+}
 
 const [isPlaying, setIsPlaying] = useState(false);
 const [volume, setVolume] = useState(30);
@@ -786,7 +828,7 @@ className="w-[1000px]"
 
 </div>
 
-<div className="relative z-10 max-w-6xl mx-auto">
+<div className="relative z-10 max-w-5xl mx-auto">
 
 <div className="text-center">
 
@@ -830,41 +872,140 @@ backdrop-blur-xl
 border
 border-red-700/30
 rounded-[40px]
-p-12
+p-16
 shadow-[0_0_80px_rgba(220,38,38,.15)]
 ">
 
+<div className="space-y-14 text-gray-300">
+
+{/* CHAPTER 1 */}
+
+<div>
+
 <p className="
-text-gray-300
-leading-[2.2]
-text-lg
+text-red-300
+uppercase
+tracking-[0.4em]
+text-sm
+mb-6
+font-semibold
 ">
+CHAPTER I
+</p>
 
-Dwarriors lahir dari ambisi besar seorang
+<h2 className="
+text-3xl
+font-black
+text-white
+mb-8
+font-[Cinzel]
+">
+The Rise of Portgas D. Memet
+</h2>
+
+<p className="
+leading-[2.5]
+text-lg
+text-gray-300
+">
+Dwarriors lahir dari ambisi besar seorang{" "}
+
 <span className="text-red-300 font-bold">
- Portgas D. Memet
-</span>,
-sosok yang membangun kekuasaan dari kegelapan hingga berhasil menancapkan pengaruhnya di kota asal.
+  Portgas D. Memet
+</span>
 
-<br/><br/>
+{" "}sosok yang membangun kekuasaan dari kegelapan hingga berhasil menancapkan pengaruhnya di kota asal.
 
-Namun bagi Memet, kekuasaan yang tidak berkembang hanyalah awal dari kehancuran.
+Baginya, kekuasaan yang tidak berkembang hanyalah awal dari kehancuran.
+</p>
 
-Ia kemudian mengarahkan pandangannya ke sebuah kota besar yang sedang tumbuh, dan mengutus tangan kanannya,
+</div>
+
+
+{/* CHAPTER 2 */}
+
+<div>
+
+<p className="
+text-red-300
+uppercase
+tracking-[0.4em]
+text-sm
+mb-6
+font-semibold
+">
+CHAPTER II
+</p>
+
+<h2 className="
+text-3xl
+font-black
+text-white
+mb-8
+font-[Cinzel]
+">
+The Arrival
+</h2>
+
+<p className="
+leading-[2.5]
+text-lg
+text-gray-300
+">
+Memet kemudian mengarahkan pandangannya ke kota besar yang sedang tumbuh.
+
+ia mengutus tangan kanannya{" "}
+
 <span className="text-red-300 font-bold">
- Juan Elpatron
-</span>,
-bersama 70 pasukan setia.
+  Juan El Patron
+</span>
 
-<br/><br/>
+{" "}bersama 70 pasukan setia.
 
-Mereka datang bukan sebagai penakluk, melainkan bayangan yang bergerak dalam diam, membangun pengaruh dan loyalitas.
+Mereka datang bukan sebagai penakluk, melainkan sebagai bayangan yang bergerak dalam diam.
+</p>
 
-<br/><br/>
+</div>
+
+
+{/* CHAPTER 3 */}
+
+<div>
+
+<p className="
+text-red-300
+uppercase
+tracking-[0.4em]
+text-sm
+mb-6
+font-semibold
+">
+CHAPTER III
+</p>
+
+<h2 className="
+text-3xl
+font-black
+text-white
+mb-8
+font-[Cinzel]
+">
+DWARRIORS Power
+</h2>
+
+<p className="
+leading-[2.5]
+text-lg
+text-gray-300
+">
+Di balik setiap langkah yang tampak kecil, tersimpan ambisi besar untuk membangun fondasi yang tak mudah runtuh.
 
 Dalam dunia yang dikuasai oleh kesabaran dan strategi, bukan yang paling cepat yang bertahan, melainkan yang paling siap untuk menguasai segalanya tanpa terlihat.
-
 </p>
+
+</div>
+
+</div>
 
 </div>
 
@@ -904,10 +1045,10 @@ GALLERY
 
 <div className="
 mt-20
-grid
-md:grid-cols-2
-lg:grid-cols-3
-xl:grid-cols-4
+columns-1
+md:columns-2
+xl:columns-3
+space-y-8
 gap-8
 ">
 
@@ -915,16 +1056,21 @@ gap-8
 
 <div
 key={index}
-onClick={()=>setSelectedImage(image)}
+onClick={()=>
+  openImage(index)
+}
 className="
 group
+mb-8
+break-inside-avoid
 overflow-hidden
 cursor-pointer
-rounded-3xl
+rounded-[40px]
+relative
 border
-border-red-700/30
-bg-black/50
-shadow-[0_0_50px_rgba(220,38,38,.15)]
+border-red-700/20
+bg-black/40
+shadow-[0_0_60px_rgba(220,38,38,.15)]
 "
 >
 
@@ -932,13 +1078,50 @@ shadow-[0_0_50px_rgba(220,38,38,.15)]
 src={image}
 className="
 w-full
-h-[300px]
 object-cover
 group-hover:scale-110
-transition-all
 duration-700
+transition-all
 "
 />
+<div
+className="
+absolute
+inset-0
+bg-gradient-to-t
+from-black
+via-transparent
+to-transparent
+opacity-0
+group-hover:opacity-100
+duration-500
+"
+/>
+
+<div
+className="
+absolute
+bottom-0
+left-0
+p-8
+translate-y-8
+group-hover:translate-y-0
+duration-500
+"
+>
+
+<p className="
+text-red-300
+tracking-[0.4em]
+uppercase
+text-xs
+">
+
+DWARRIORS
+
+</p>
+
+</div>
 
 </div>
 
@@ -956,30 +1139,123 @@ duration-700
 selectedImage && (
 
 <div
-onClick={()=>setSelectedImage(null)}
 className="
 fixed
 inset-0
 z-[999]
-bg-black/90
-backdrop-blur-md
+bg-black/95
+backdrop-blur-xl
 flex
 items-center
 justify-center
-p-10
-">
+"
+>
+
+{/* CLOSE */}
+
+<button
+onClick={() =>
+setSelectedImage(null)
+}
+className="
+absolute
+top-8
+right-10
+text-5xl
+text-red-400
+hover:scale-125
+duration-300
+"
+>
+
+×
+
+</button>
+
+{/* PREV */}
+
+<button
+onClick={prevImage}
+className="
+absolute
+left-8
+text-7xl
+text-red-400
+hover:text-white
+hover:scale-125
+duration-300
+"
+>
+
+‹
+
+</button>
+
+{/* IMAGE */}
 
 <img
 src={selectedImage}
 className="
-max-w-[90vw]
-max-h-[90vh]
+max-h-[85vh]
 rounded-[40px]
 border
 border-red-700
-shadow-[0_0_100px_rgba(220,38,38,.7)]
+shadow-[0_0_120px_rgba(220,38,38,.8)]
 "
 />
+
+{/* NEXT */}
+
+<button
+onClick={nextImage}
+className="
+absolute
+right-8
+text-7xl
+text-red-400
+hover:text-white
+hover:scale-125
+duration-300
+"
+>
+
+›
+
+</button>
+
+{/* COUNTER */}
+
+<div
+className="
+absolute
+bottom-8
+left-1/2
+-translate-x-1/2
+bg-black/70
+border
+border-red-700/30
+rounded-full
+px-8
+py-3
+backdrop-blur-xl
+"
+>
+
+<p
+className="
+tracking-[0.3em]
+text-red-300
+uppercase
+"
+>
+
+{currentImage + 1}
+ /
+{galleryImages.length}
+
+</p>
+
+</div>
 
 </div>
 
