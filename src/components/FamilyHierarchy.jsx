@@ -151,14 +151,14 @@ export default function FamilyHierarchy() {
          {
           name: "Nico",
           title: "CAPO",
-          photo: "https://i.ibb.co.com/BVyMQ3Rh/NICO-CAPO-Photoroom.png",
+          photo: "https://i.ibb.co.com/HT3HhMQm/NICO-CAPO-Photoroom.png",
           description:
             "The field commanders of the DWARRIORS ORGANIZATION. Each CAPO oversees their own crew and safeguards the family's influence, reputation, and strength.",
         },
          {
           name: "Malfoy",
           title: "CAPO",
-          photo: "https://i.ibb.co.com/BVyMQ3Rh/MALFOY-CAPO-Photoroom.png",
+          photo: "https://i.ibb.co.com/dFM6B18/MALFOY-CAPO-Photoroom.png",
           description:
             "The field commanders of the DWARRIORS ORGANIZATION. Each CAPO oversees their own crew and safeguards the family's influence, reputation, and strength.",
         },

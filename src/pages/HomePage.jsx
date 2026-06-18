@@ -6,6 +6,20 @@ export default function HomePage() {
 
 const [loading, setLoading] = useState(true);
 const [selectedImage, setSelectedImage] = useState(null);
+const galleryImages = [
+
+"https://LINK1",
+"https://LINK2",
+"https://LINK3",
+"https://LINK4",
+"https://LINK5",
+"https://LINK6",
+"https://LINK7",
+"https://LINK8",
+"https://LINK9",
+"https://LINK10",
+
+];
 
 const [isPlaying, setIsPlaying] = useState(false);
 const [volume, setVolume] = useState(30);
@@ -182,7 +196,7 @@ if (loading) {
 
 
   return (
-    <div className="fixed inset-0 bg-black text-white overflow-hidden">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden">
 
       {/* MAIN BACKGROUND */}
 
@@ -745,7 +759,232 @@ h-[700px]
 
 </section>
 
+<section className="relative py-40 px-6">
+
+<div className="
+absolute inset-0
+bg-gradient-to-b
+from-black
+via-[#120000]
+to-black
+"/>
+
+<div className="
+absolute
+left-1/2
+top-1/2
+-translate-x-1/2
+-translate-y-1/2
+opacity-[0.03]
+pointer-events-none
+">
+
+<img
+src="https://i.ibb.co.com/nMrw6G4N/logodw.png"
+className="w-[1000px]"
+/>
+
+</div>
+
+<div className="relative z-10 max-w-6xl mx-auto">
+
+<div className="text-center">
+
+<p className="
+uppercase
+tracking-[0.5em]
+text-red-300
+">
+DWARRIORS
+</p>
+
+<h1 className="
+mt-4
+text-6xl
+font-black
+bg-gradient-to-b
+from-white
+via-red-300
+to-red-700
+bg-clip-text
+text-transparent
+">
+BACKGROUND STORY
+</h1>
+
+<div className="
+w-40
+h-[3px]
+bg-red-600
+mx-auto
+mt-8
+rounded-full
+"/>
+
+</div>
+
+<div className="
+mt-20
+bg-black/40
+backdrop-blur-xl
+border
+border-red-700/30
+rounded-[40px]
+p-12
+shadow-[0_0_80px_rgba(220,38,38,.15)]
+">
+
+<p className="
+text-gray-300
+leading-[2.2]
+text-lg
+">
+
+Dwarriors lahir dari ambisi besar seorang
+<span className="text-red-300 font-bold">
+ Portgas D. Memet
+</span>,
+sosok yang membangun kekuasaan dari kegelapan hingga berhasil menancapkan pengaruhnya di kota asal.
+
+<br/><br/>
+
+Namun bagi Memet, kekuasaan yang tidak berkembang hanyalah awal dari kehancuran.
+
+Ia kemudian mengarahkan pandangannya ke sebuah kota besar yang sedang tumbuh, dan mengutus tangan kanannya,
+<span className="text-red-300 font-bold">
+ Juan Elpatron
+</span>,
+bersama 70 pasukan setia.
+
+<br/><br/>
+
+Mereka datang bukan sebagai penakluk, melainkan bayangan yang bergerak dalam diam, membangun pengaruh dan loyalitas.
+
+<br/><br/>
+
+Dalam dunia yang dikuasai oleh kesabaran dan strategi, bukan yang paling cepat yang bertahan, melainkan yang paling siap untuk menguasai segalanya tanpa terlihat.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section className="relative py-40 px-6">
+
+<div className="relative z-10 max-w-7xl mx-auto">
+
+<div className="text-center">
+
+<p className="
+text-red-300
+tracking-[0.5em]
+uppercase
+">
+DWARRIORS
+</p>
+
+<h1 className="
+mt-4
+text-6xl
+font-black
+bg-gradient-to-b
+from-white
+via-red-300
+to-red-700
+bg-clip-text
+text-transparent
+">
+GALLERY
+</h1>
+
+</div>
+
+<div className="
+mt-20
+grid
+md:grid-cols-2
+lg:grid-cols-3
+xl:grid-cols-4
+gap-8
+">
+
+{galleryImages.map((image,index)=>(
+
+<div
+key={index}
+onClick={()=>setSelectedImage(image)}
+className="
+group
+overflow-hidden
+cursor-pointer
+rounded-3xl
+border
+border-red-700/30
+bg-black/50
+shadow-[0_0_50px_rgba(220,38,38,.15)]
+"
+>
+
+<img
+src={image}
+className="
+w-full
+h-[300px]
+object-cover
+group-hover:scale-110
+transition-all
+duration-700
+"
+/>
+
+</div>
+
+))}
+
+</div>
+
+</div>
+
+</section>
+
       </div>
+
+      {
+selectedImage && (
+
+<div
+onClick={()=>setSelectedImage(null)}
+className="
+fixed
+inset-0
+z-[999]
+bg-black/90
+backdrop-blur-md
+flex
+items-center
+justify-center
+p-10
+">
+
+<img
+src={selectedImage}
+className="
+max-w-[90vw]
+max-h-[90vh]
+rounded-[40px]
+border
+border-red-700
+shadow-[0_0_100px_rgba(220,38,38,.7)]
+"
+/>
+
+</div>
+
+)
+}
 
     </div>
   );
