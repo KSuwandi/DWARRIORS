@@ -954,7 +954,7 @@ text-gray-300
 ">
 Memet kemudian mengarahkan pandangannya ke kota besar yang sedang tumbuh.
 
-ia mengutus tangan kanannya{" "}
+Ia mengutus tangan kanannya{" "}
 
 <span className="text-red-300 font-bold">
   Juan El Patron
