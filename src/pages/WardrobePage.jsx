@@ -188,7 +188,7 @@ version:
   "Season 1",
 
 description:
-  "Standard female red shirt used by active family members.",
+  "Standard female black shirt used by active family members.",
   },
 
   {
@@ -213,7 +213,7 @@ version:
   "Season 2",
 
 description:
-  "Standard female red shirt used by active family members.",
+  "Standard female black shirt used by active family members.",
   },
 
   {
