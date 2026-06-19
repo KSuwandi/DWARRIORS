@@ -322,21 +322,21 @@ menu.push({
       return {
         label: "⚖ CONSIGLIERE",
         className:
-          "bg-gray-500/20 text-gray-200 border-gray-400/30",
+          "bg-orange-900/30 text-orange-300 border-orange-500/30",
       };
 
     case "CAPO":
       return {
         label: "★ CAPO",
         className:
-          "bg-orange-500/20 text-orange-200 border-orange-400/30",
+          "bg-green-900/30 text-green-300 border-green-500/30",
       };
 
     default:
       return {
         label: "● MEMBER",
         className:
-          "bg-zinc-500/20 text-zinc-200 border-zinc-400/30",
+          "bg-blue-800/40 text-blue-300 border-blue-500/30",
       };
   }
 };
